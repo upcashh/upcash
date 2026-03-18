@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UPCASH | Secure Deposit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: radial-gradient(circle at top left, #1e293b, #0f172a); 
+            min-height: 100vh; 
+            color: #e2e8f0; 
+            margin: 0; 
+            padding: 0; 
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .btn-gradient { background: linear-gradient(135deg, #3b82f6, #8b5cf6); border: none; color: white; }
+        .text-gradient { background: linear-gradient(90deg, #60a5fa, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        input::placeholder { color: rgba(148, 163, 184, 0.4); }
+        header { min-height: 70px; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <header class="w-full bg-slate-900/90 backdrop-blur-md border-b border-white/10 sticky top-0 z-[999]">
+        <div class="max-w-lg mx-auto h-full flex items-center justify-between px-5 py-4">
+            
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2 rounded-lg flex-shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight whitespace-nowrap">
+                    UP<span class="text-blue-500">CASH</span>
+                </h1>
+            </div>
+            
+            <div class="flex items-center">
+                <a href="dashboard.html" class="p-2 bg-white/5 hover:bg-white/10 rounded-full text-slate-300 transition-all border border-white/5">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <main class="p-4 max-w-lg mx-auto space-y-6">
+        
+        <div class="glass-card rounded-3xl p-6 border-white/10 shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="bg-purple-500/20 p-2 rounded-lg">
+                    <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </div>
+                <span class="font-bold text-lg">Reinvest</span>
+            </div>
+            <div class="relative mb-4">
+                <input 
+                    type="number" 
+                    id="reinvestAmount"
+                    min="10000"
+                    placeholder="Enter amount" 
+                    class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-lg font-bold text-white focus:outline-none focus:border-purple-500 transition"
+                >
+            </div>
+            <button onclick="handleReinvest()" class="w-full py-3 rounded-xl border border-purple-500/30 text-purple-400 font-bold hover:bg-purple-500/10 transition active:scale-95">
+                CONFIRM REINVESTMENT
+            </button>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 border-white/10 shadow-2xl">
+            <label class="block text-slate-400 text-sm font-medium mb-4">
+                Minimum deposit is <span class="text-blue-400 font-bold">UGX 10,000</span>
+            </label>
+            
+            <div class="relative mb-6">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">UGX</span>
+                <input 
+                    type="number" 
+                    id="depositAmount"
+                    min="10000"
+                    placeholder="Enter amount" 
+                    class="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-14 pr-4 text-xl font-bold text-white focus:outline-none focus:border-blue-500 transition"
+                >
+            </div>
+
+            <button onclick="handleDeposit()" class="w-full py-4 rounded-xl btn-gradient font-black text-lg tracking-wide shadow-lg shadow-blue-500/20 active:scale-95 transition">
+                <span class="drop-shadow-md text-white">DEPOSIT NOW</span>
+            </button>
+        </div>
+
+        <div class="space-y-4">
+            <h4 class="text-lg font-bold flex items-center gap-2 text-gradient">
+                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Recent Deposits
+            </h4>
+            
+            <div class="glass-card rounded-2xl overflow-hidden border-white/10">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead class="bg-white/5 text-slate-400 text-[10px] uppercase tracking-widest">
+                        <tr>
+                            <th class="p-4 border-b border-white/5">Date & Time</th>
+                            <th class="p-4 text-right border-b border-white/5">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="depositTableBody" class="divide-y divide-white/5">
+                        <tr>
+                            <td class="p-4 py-10 text-center text-slate-500 italic" colspan="2">
+                                No recent transactions found.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex justify-center pt-4">
+            <a href="mailto:admin@upcash.com" class="flex flex-col items-center gap-1 text-slate-500 hover:text-blue-400 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="text-[10px] uppercase font-bold tracking-widest">Help Center</span>
+            </a>
+        </div>
+    </main>
+
+    <script>
+        function handleDeposit() {
+            const amount = document.getElementById('depositAmount').value;
+            if (!amount || amount < 10000) {
+                alert("Minimum deposit is UGX 10,000");
+                return;
+            }
+            alert("Processing Deposit: UGX " + Number(amount).toLocaleString());
+        }
+
+        function handleReinvest() {
+            const amount = document.getElementById('reinvestAmount').value;
+            if (!amount || amount < 10000) {
+                alert("Minimum reinvestment is UGX 10,000");
+                return;
+            }
+            alert("Processing Reinvestment: UGX " + Number(amount).toLocaleString());
+        }
+    </script>
+</body>
+</html>
