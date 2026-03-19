@@ -19,11 +19,9 @@
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .text-gradient { background: linear-gradient(90deg, #60a5fa, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        /* Range Slider Styling */
         input[type=range] { -webkit-appearance: none; width: 100%; background: rgba(255,255,255,0.1); height: 8px; border-radius: 10px; outline: none; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; background: #3b82f6; border-radius: 50%; cursor: pointer; border: 3px solid #fff; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); position: relative; z-index: 2; }
 
-        /* Bubble for slider value */
         .slider-value-bubble {
             position: absolute;
             top: -35px;
@@ -47,7 +45,6 @@
             border-top: 4px solid #3b82f6;
         }
 
-        /* Skeleton Animation */
         .skeleton { background: rgba(255, 255, 255, 0.05); overflow: hidden; position: relative; }
         .skeleton::after {
             content: "";
@@ -59,7 +56,6 @@
         }
         @keyframes shimmer { 100% { transform: translateX(100%); } }
 
-        /* Error Glow */
         .error-glow { border-color: #ef4444 !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); animation: shake 0.2s ease-in-out 0s 2; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
@@ -114,7 +110,7 @@
         </div>
 
         <div class="space-y-12 pt-6">
-            <div class="relative w-full">
+            <div class="relative w-full px-2">
                 <div id="bubble" class="slider-value-bubble">UGX 10,000</div>
                 <input type="range" id="profitSlider" min="10000" max="108000" step="1000" value="10000" oninput="calculateProfit()">
                 <div class="flex justify-between text-[10px] font-extrabold text-slate-500 uppercase tracking-tighter px-1 mt-2">
@@ -169,7 +165,10 @@
 
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
+
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('skeleton-view').classList.add('hidden');
@@ -182,17 +181,11 @@
             const slider = document.getElementById('profitSlider');
             const bubble = document.getElementById('bubble');
             const val = slider.value;
-            
-            // Profit calculation
             const total = val * 0.08 * 40;
             document.getElementById('profitResult').innerText = Math.floor(total).toLocaleString();
-            
-            // Dynamic value label update
             bubble.innerText = "UGX " + Number(val).toLocaleString();
-            
-            // Positioning the bubble exactly over the thumb
             const percent = (val - slider.min) / (slider.max - slider.min);
-            const offset = percent * slider.offsetWidth;
+            const offset = percent * (slider.offsetWidth - 22) + 11;
             bubble.style.left = offset + "px";
         }
 
@@ -202,7 +195,7 @@
             const error = document.getElementById(`${type}Error`);
             const val = parseFloat(input.value);
 
-            if (val >= 10000 && val < 108000) {
+            if (val >= 10000 && val <= 108000) {
                 wrapper.classList.remove('error-glow');
                 error.classList.add('hidden');
                 return true;
@@ -215,13 +208,41 @@
             }
         }
 
-        function processAction(type) {
+        async function processAction(type) {
             const isValid = validateForm(type);
-            const amount = document.getElementById(`${type}Amount`).value;
+            const amount = parseFloat(document.getElementById(`${type}Amount`).value);
+            const btn = event.currentTarget;
+
             if (!isValid) return;
-            alert(`Processing ${type} for UGX ${amount}...`);
+
+            if (type === 'reinvest') {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) return alert("Please log in first.");
+
+                const originalText = btn.innerText;
+                btn.innerText = "PROCESSING...";
+                btn.disabled = true;
+
+                try {
+                    const { error } = await supabaseClient.rpc('reinvest_basic_plan', {
+                        user_id: user.id,
+                        invest_amount: amount
+                    });
+
+                    if (error) throw error;
+
+                    alert("Basic Plan reinvestment successful!");
+                    window.location.href = "profile.html";
+
+                } catch (err) {
+                    alert("Failed: " + err.message);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            } else {
+                alert(`Direct Deposit of UGX ${amount.toLocaleString()} initiated.`);
+            }
         }
     </script>
 </body>
-                      </html>
-
+</html>
