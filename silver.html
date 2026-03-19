@@ -19,11 +19,9 @@
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .text-gradient { background: linear-gradient(90deg, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        /* Range Slider Styling */
         input[type=range] { -webkit-appearance: none; width: 100%; background: rgba(255,255,255,0.1); height: 8px; border-radius: 10px; outline: none; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; background: #a855f7; border-radius: 50%; cursor: pointer; border: 3px solid #fff; box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); position: relative; z-index: 2; }
 
-        /* Bubble for slider value */
         .slider-value-bubble {
             position: absolute;
             top: -35px;
@@ -47,7 +45,6 @@
             border-top: 4px solid #a855f7;
         }
 
-        /* Skeleton Animation */
         .skeleton { background: rgba(255, 255, 255, 0.05); overflow: hidden; position: relative; }
         .skeleton::after {
             content: "";
@@ -59,7 +56,6 @@
         }
         @keyframes shimmer { 100% { transform: translateX(100%); } }
 
-        /* Error Glow */
         .error-glow { border-color: #ef4444 !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); animation: shake 0.2s ease-in-out 0s 2; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
@@ -109,7 +105,7 @@
         </div>
 
         <div class="glass-card p-6 rounded-3xl leading-relaxed text-slate-300 border-white/10 shadow-xl">
-            Get started with our <span class="text-purple-400 font-bold">Silver Plan</span>, and earn<span class="text-white font-bold">10%</span> of your investment daily for <span class="text-white font-bold">30 days</span>. 
+            Get started with our <span class="text-purple-400 font-bold">Silver Plan</span>, and earn <span class="text-white font-bold">10%</span> of your investment daily for <span class="text-white font-bold">30 days</span>. 
             <p class="mt-3 text-sm text-slate-400 font-medium">Use the profits calculator below to realize your total profits at the end of the period.</p>
         </div>
 
@@ -143,7 +139,7 @@
                         <input type="number" id="depositAmount" placeholder="Enter amount" class="w-full bg-transparent p-4 outline-none font-bold text-white placeholder:text-slate-700" oninput="validateForm('deposit')">
                     </div>
                 </div>
-                <p id="depositError" class="text-red-500 text-[10px] font-black uppercase hidden px-2 tracking-tighter">Min UGX 108,000, Less than UGX 525,000</p>
+                <p id="depositError" class="text-red-500 text-[10px] font-black uppercase hidden px-2 tracking-tighter">Min UGX 108,000, Max UGX 524,000</p>
                 <button onclick="processAction('deposit')" class="ripple-btn w-full py-5 bg-purple-600 hover:bg-purple-500 rounded-2xl font-extrabold text-white shadow-lg shadow-purple-900/40 transition-colors">
                     DEPOSIT NOW
                 </button>
@@ -160,7 +156,7 @@
                         <input type="number" id="reinvestAmount" placeholder="Enter amount" class="w-full bg-transparent p-4 outline-none font-bold text-white placeholder:text-slate-700" oninput="validateForm('reinvest')">
                     </div>
                 </div>
-                <p id="reinvestError" class="text-red-500 text-[10px] font-black uppercase hidden px-2 tracking-tighter">Min UGX 108,000, Less than UGX 525,000</p>
+                <p id="reinvestError" class="text-red-500 text-[10px] font-black uppercase hidden px-2 tracking-tighter">Min UGX 108,000, Max UGX 524,000</p>
                 <button onclick="processAction('reinvest')" class="ripple-btn w-full py-5 bg-[#7c3aed] hover:bg-[#8b5cf6] rounded-2xl font-extrabold text-white shadow-lg shadow-purple-900/40 transition-colors">
                     CONFIRM REINVESTMENT
                 </button>
@@ -169,7 +165,11 @@
 
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Supabase Initialization
+        const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
+
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('skeleton-view').classList.add('hidden');
@@ -182,17 +182,11 @@
             const slider = document.getElementById('profitSlider');
             const bubble = document.getElementById('bubble');
             const val = slider.value;
-            
-            // Formula: Input * 10% * 30 days
             const total = val * 0.10 * 30;
             document.getElementById('profitResult').innerText = Math.floor(total).toLocaleString();
-            
-            // Dynamic value label update
             bubble.innerText = "UGX " + Number(val).toLocaleString();
-            
-            // Positioning the bubble over the thumb
             const percent = (val - slider.min) / (slider.max - slider.min);
-            const offset = percent * (slider.offsetWidth - 22) + 11; // Adjusting for thumb width
+            const offset = percent * (slider.offsetWidth - 22) + 11;
             bubble.style.left = offset + "px";
         }
 
@@ -215,13 +209,42 @@
             }
         }
 
-        function processAction(type) {
+        async function processAction(type) {
             const isValid = validateForm(type);
-            const amount = document.getElementById(`${type}Amount`).value;
+            const amount = parseFloat(document.getElementById(`${type}Amount`).value);
+            const btn = event.currentTarget;
+
             if (!isValid) return;
-            alert(`Processing Silver ${type} for UGX ${amount}...`);
+
+            if (type === 'reinvest') {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) return alert("Please log in first.");
+
+                const originalText = btn.innerText;
+                btn.innerText = "PROCESSING...";
+                btn.disabled = true;
+
+                try {
+                    // Call the Silver Plan specific function
+                    const { error } = await supabaseClient.rpc('reinvest_silver_plan', {
+                        user_id: user.id,
+                        invest_amount: amount
+                    });
+
+                    if (error) throw error;
+
+                    alert("Silver Plan reinvestment successful!");
+                    window.location.href = "profile.html";
+
+                } catch (err) {
+                    alert("Failed: " + err.message);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            } else {
+                alert(`Direct Deposit of UGX ${amount.toLocaleString()} initiated.`);
+            }
         }
     </script>
 </body>
 </html>
-
