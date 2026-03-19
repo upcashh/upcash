@@ -114,7 +114,7 @@
         // Replace with your keys
         const SUPABASE_URL = 'https://wbodpfbmilhperccgzei.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN';
-        const supabaseClient = supabaseClient.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function loadAffiliatePage() {
             const { data: { user } } = await supabaseClient.auth.getUser();
