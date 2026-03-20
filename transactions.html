@@ -43,7 +43,7 @@
                         </tr>
                     </thead>
                     <tbody id="history-body" class="divide-y divide-white/5 text-sm">
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
             <div id="loading" class="p-10 text-center text-slate-500 animate-pulse">Syncing ledger...</div>
@@ -56,45 +56,57 @@
 
         function getCategoryIcon(category) {
             const cat = category.toLowerCase();
+            // Green icons for positive inflows
             if (cat.includes('deposit')) return `<svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>`;
-            if (cat.includes('reinvest')) return `<svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>`;
             if (cat.includes('earning')) return `<svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>`;
-            if (cat.includes('bonus')) return `<svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>`;
+            if (cat.includes('bonus') || cat.includes('commission')) return `<svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>`;
+            
+            // Blue/Red icons for outflows/investments
+            if (cat.includes('reinvest')) return `<svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>`;
+            
             return `<svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
         }
 
         async function loadHistory() {
             const { data: { user } } = await supabaseClient.auth.getUser();
-            const { data, error } = await supabaseClient.from('user_history').select('*').eq('userid', user.id).order('created_at', { ascending: false });
+            if(!user) return;
+
+            const { data, error } = await supabaseClient
+                .from('user_history')
+                .select('*')
+                .eq('userid', user.id)
+                .order('created_at', { ascending: false });
             
             document.getElementById('loading').classList.add('hidden');
             const tbody = document.getElementById('history-body');
 
-            data.forEach(row => {
-                const isPos = row.amount > 0;
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-white/[0.02] transition-colors";
-                tr.innerHTML = `
-                    <td class="px-6 py-5 flex items-center gap-3">
-                        <div class="p-2 bg-white/5 rounded-xl">${getCategoryIcon(row.category)}</div>
-                        <div>
-                            <span class="text-[9px] font-black text-slate-500 uppercase block">Completed</span>
-                            <span class="text-xs text-slate-400 font-medium">${new Date(row.created_at).toLocaleDateString()}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-5">
-                        <span class="font-bold text-white block">${row.category}</span>
-                        <span class="text-[10px] text-slate-500 italic block opacity-60">${row.description || ''}</span>
-                    </td>
-                    <td class="px-6 py-5 text-right font-black ${isPos ? 'text-green-400' : 'text-red-500'}">
-                        ${isPos ? '+' : '-'}UGX ${Math.abs(row.amount).toLocaleString()}
-                    </td>
-                    <td class="px-6 py-5 text-right font-mono text-slate-400 text-xs">
-                        ${Number(row.new_balance).toLocaleString()}
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+            if (data) {
+                data.forEach(row => {
+                    const isPos = row.amount > 0;
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-white/[0.02] transition-colors";
+                    tr.innerHTML = `
+                        <td class="px-6 py-5 flex items-center gap-3">
+                            <div class="p-2 bg-white/5 rounded-xl">${getCategoryIcon(row.category)}</div>
+                            <div>
+                                <span class="text-[9px] font-black text-slate-500 uppercase block">Completed</span>
+                                <span class="text-xs text-slate-400 font-medium">${new Date(row.created_at).toLocaleDateString()}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-5">
+                            <span class="font-bold text-white block">${row.category}</span>
+                            <span class="text-[10px] text-slate-500 italic block opacity-60">${row.description || ''}</span>
+                        </td>
+                        <td class="px-6 py-5 text-right font-black ${isPos ? 'text-green-400' : 'text-red-500'}">
+                            ${isPos ? '+' : '-'}UGX ${Math.abs(row.amount).toLocaleString()}
+                        </td>
+                        <td class="px-6 py-5 text-right font-mono text-slate-400 text-xs">
+                            ${Number(row.new_balance).toLocaleString()}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
         }
         loadHistory();
     </script>
