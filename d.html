@@ -10,67 +10,73 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: radial-gradient(circle at top left, #1e293b, #0f172a); 
-            min-height: 100vh; 
-            color: #e2e8f0; 
-            -webkit-font-smoothing: antialiased;
-        }
-        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .btn-gradient { background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; color: white; transition: all 0.3s ease; }
-        .text-gradient { background: linear-gradient(90deg, #60a5fa, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        .ripple-btn {
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.3s;
-        }
-        .ripple-btn:active { transform: scale(0.96); }
-        .ripple-btn:hover {
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        /* Base Dark Theme (Default) */
+        :root {
+            --bg-gradient: radial-gradient(circle at top left, #1e293b, #0f172a);
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --header-bg: rgba(15, 23, 42, 0.5);
+            --ripple-color: rgba(255, 255, 255, 0.3);
         }
 
-        .plan-row {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
+        /* Professional Light Theme (Slate & Cobalt) */
+        body.light-theme {
+            --bg-gradient: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --header-bg: rgba(255, 255, 255, 0.8);
+            --ripple-color: rgba(0, 0, 0, 0.1);
         }
-        .plan-row:hover {
-            background: rgba(255, 255, 255, 0.07) !important;
-            transform: scale(1.02);
-            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.05), 0 5px 15px rgba(0,0,0,0.3);
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-gradient); 
+            min-height: 100vh; 
+            color: var(--text-main); 
+            transition: background 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
         }
-        .plan-row:active { transform: scale(0.98); }
+
+        .glass-card { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid var(--card-border); 
+            transition: all 0.3s ease;
+        }
+
+        .light-theme .glass-card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .btn-gradient { background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; color: white; }
+        .text-gradient { background: linear-gradient(90deg, #60a5fa, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .ripple-btn { position: relative; overflow: hidden; transition: transform 0.2s; }
+        .ripple-btn:active { transform: scale(0.96); }
 
         .ripple {
             position: absolute;
-            background: rgba(255, 255, 255, 0.4);
+            background: var(--ripple-color);
             border-radius: 50%;
             transform: scale(0);
             animation: ripple-animation 0.6s linear;
             pointer-events: none;
         }
-        @keyframes ripple-animation {
-            to { transform: scale(4); opacity: 0; }
-        }
+        @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
 
-        .skeleton { background: rgba(255, 255, 255, 0.05); overflow: hidden; position: relative; }
-        .skeleton::after {
-            content: "";
-            position: absolute;
-            top: 0; right: 0; bottom: 0; left: 0;
-            transform: translateX(-100%);
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-            animation: shimmer 1.5s infinite;
-        }
-        @keyframes shimmer { 100% { transform: translateX(100%); } }
+        .plan-row { transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden; }
+        .plan-row:hover { background: var(--card-border) !important; }
+
+        .skeleton { background: var(--card-border); overflow: hidden; position: relative; }
     </style>
 </head>
 <body class="pb-20">
 
-    <header class="flex items-center justify-between p-5 sticky top-0 bg-slate-900/50 backdrop-blur-md z-50 border-b border-white/5">
+    <header class="flex items-center justify-between p-5 sticky top-0 bg-[var(--header-bg)] backdrop-blur-md z-50 border-b border-black/5">
         <div class="flex items-center gap-2">
             <div class="bg-blue-600 p-2 rounded-lg">
                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
@@ -78,164 +84,95 @@
             <h1 class="text-xl font-bold tracking-tight">UP<span class="text-blue-500">CASH</span></h1>
         </div>
         <div class="flex items-center gap-2">
+            <button onclick="toggleTheme()" class="ripple-btn p-2 hover:bg-slate-500/10 rounded-full transition-colors" id="theme-toggle">
+                <svg id="theme-icon" class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+                </svg>
+            </button>
             <button onclick="handleLogout()" class="ripple-btn p-2 hover:bg-red-500/10 rounded-full transition-colors">
                 <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
             </button>
-            <a href="profile.html" class="block">
-                <button class="ripple-btn p-2 hover:bg-slate-800 rounded-full">
-                    <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+            <a href="profile.html">
+                <button class="ripple-btn p-2 hover:bg-slate-500/10 rounded-full">
+                    <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </button>
             </a>
         </div>
     </header>
 
-    <div id="skeleton-container" class="p-4 max-w-lg mx-auto space-y-6">
-        <div class="flex justify-between items-center px-1">
-            <div class="h-4 w-32 skeleton rounded"></div>
-            <div class="h-4 w-20 skeleton rounded-full"></div>
+    <div id="dashboard-content" class="p-4 max-w-lg mx-auto space-y-6">
+        <div class="flex items-center justify-between w-full px-1">
+            <p class="text-slate-500 text-sm font-medium">Welcome back, <span class="text-gradient font-bold" id="username">User</span></p>
+            <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Verified</span>
         </div>
-        <div class="rounded-3xl p-6 h-56 skeleton border border-white/5">
-            <div class="h-4 w-24 bg-white/10 rounded mb-4"></div>
-            <div class="h-10 w-48 bg-white/10 rounded mb-8"></div>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="h-16 bg-white/5 rounded-2xl"></div>
-                <div class="h-16 bg-white/5 rounded-2xl"></div>
+
+        <div class="rounded-3xl p-6 shadow-2xl relative overflow-hidden text-white" style="background: linear-gradient(135deg, #2563eb, #7c3aed);">
+            <div class="flex justify-between items-start mb-1">
+                <p class="text-blue-100/80 text-sm font-medium">Available Balance</p>
+                <button onclick="toggleBalance()" class="text-blue-100/60 hover:text-white"><svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button>
             </div>
-        </div>
-    </div>
-
-    <div id="dashboard-content" class="hidden">
-        <div class="flex items-center justify-between w-full px-5 py-4">
-            <p class="text-slate-400 text-sm font-medium">
-                Welcome back, <span class="text-gradient font-bold" id="username">User</span>
-            </p>
-            <span id="verified-badge" class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                Verified Account
-            </span>
-        </div>
-
-        <main class="p-4 max-w-lg mx-auto space-y-6">
-            <div class="rounded-3xl p-6 shadow-2xl border border-white/10 relative overflow-hidden" style="background: linear-gradient(135deg, #2563eb, #7c3aed);">
-                <div class="flex justify-between items-start mb-1">
-                    <p class="text-blue-100/80 text-sm font-medium">Available Balance</p>
-                    <button onclick="toggleBalance()" class="ripple-btn text-blue-100/60 hover:text-white transition-colors">
-                        <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>
-                        </svg>
-                    </button>
+            <h3 class="text-4xl font-black mb-6">UGX <span id="balance">50,000</span></h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white/10 rounded-2xl p-3 border border-white/5">
+                    <p class="text-[10px] text-blue-100/60 uppercase">Total Investment</p>
+                    <p class="font-bold text-lg">UGX 100,000</p>
                 </div>
-                <h3 class="text-4xl font-black mb-6">UGX <span id="balance">*****</span></h3>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/5">
-                        <p class="text-xs text-blue-100/60 uppercase">Total Investment</p>
-                        <p class="font-bold text-lg" id="totalInv">UGX 0</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/5">
-                        <p class="text-xs text-blue-100/60 uppercase">Total Withdrawn</p>
-                        <p class="font-bold text-lg" id="totalWith">UGX 0</p>
-                    </div>
+                <div class="bg-white/10 rounded-2xl p-3 border border-white/5">
+                    <p class="text-[10px] text-blue-100/60 uppercase">Total Withdrawn</p>
+                    <p class="font-bold text-lg">UGX 25,000</p>
                 </div>
             </div>
+        </div>
 
-            <div class="flex gap-4">
-                <a href="transactions.html" class="flex-1"> 
-                    <button class="ripple-btn btn-gradient w-full h-14 font-bold rounded-xl flex items-center justify-center gap-2 text-sm">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01"></path>
-                        </svg> My Transactions
-                    </button>
-                </a>
-                <a href="withdraw.html" class="flex-1"> 
-                    <button class="ripple-btn glass-card w-full h-14 font-bold rounded-xl flex items-center justify-center gap-2 text-sm border-white/20 hover:border-blue-500/50">
-                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8l4-4m0 0l4 4m-4-4v12m-4 0h8"></path></svg> Withdraw
-                    </button> 
-                </a>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="copyLink()" id="referral-btn" class="ripple-btn glass-card h-14 font-bold rounded-xl flex items-center justify-center gap-2 text-sm border-white/20">
-                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg> Referral Link
+        <div class="flex gap-4">
+            <a href="transactions.html" class="flex-1"> 
+                <button class="ripple-btn btn-gradient w-full h-14 font-bold rounded-xl flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-500/20">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01"></path></svg> Transactions
                 </button>
-                <a href="https://chat.whatsapp.com/HEusxMonb275LAHnJbooY2" target="_blank" class="ripple-btn bg-[#25D366]/20 border border-[#25D366]/30 h-14 font-bold rounded-xl flex flex-col items-center justify-center gap-0.5 text-sm text-[#25D366]">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg> 
-                        Community
-                    </div>
-                </a>
-            </div>
+            </a>
+            <a href="withdraw.html" class="flex-1"> 
+                <button class="ripple-btn glass-card w-full h-14 font-bold rounded-xl flex items-center justify-center gap-2 text-sm">
+                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8l4-4m0 0l4 4m-4-4v12m-4 0h8"></path></svg> Withdraw
+                </button> 
+            </a>
+        </div>
 
-            <div class="space-y-2">
-                <div>
-                    <h4 class="text-lg font-bold flex items-center gap-2 text-gradient">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> Investment Plans
-                    </h4>
-                    <p class="text-[11px] text-slate-500 font-medium ml-7">Choose your plan and deposit any amount.</p>
-                </div>
-
-                <div class="glass-card rounded-2xl overflow-hidden border border-white/10 shadow-lg">
-                    <table class="w-full text-left text-sm table-fixed">
-                        <thead class="bg-white/5 text-slate-400 text-[10px] uppercase">
-                            <tr>
-                                <th class="p-4 w-1/4">Plan</th>
-                                <th class="p-4 w-1/4 text-center">ROI</th>
-                                <th class="p-4 w-1/4 text-center">Days</th>
-                                <th class="p-4 w-1/4 text-right">Min Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-white/5">
-                            <tr onclick="location.href='basic.html'" class="plan-row">
-                                <td class="p-4 font-bold text-blue-400 truncate">Basic</td>
-                                <td class="p-4 text-center">8%</td>
-                                <td class="p-4 text-center">40</td>
-                                <td class="p-4 text-right font-medium">10,000</td>
-                            </tr>
-                            <tr onclick="location.href='silver.html'" class="plan-row">
-                                <td class="p-4 font-bold text-purple-400 truncate">Silver</td>
-                                <td class="p-4 text-center">10%</td>
-                                <td class="p-4 text-center">30</td>
-                                <td class="p-4 text-right font-medium">108,000</td>
-                            </tr>
-                            <tr onclick="location.href='gold.html'" class="plan-row">
-                                <td class="p-4 font-bold text-pink-400 truncate">Gold</td>
-                                <td class="p-4 text-center">12%</td>
-                                <td class="p-4 text-center">25</td>
-                                <td class="p-4 text-right font-medium">525,000</td>
-                            </tr>
-                            <tr onclick="location.href='diamond.html'" class="plan-row">
-                                <td class="p-4 font-bold text-orange-400 truncate">Diamond</td>
-                                <td class="p-4 text-center">14%</td>
-                                <td class="p-4 text-center">21</td>
-                                <td class="p-4 text-right font-medium">1,215,000</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="space-y-3">
+            <h4 class="text-lg font-bold text-gradient">Investment Plans</h4>
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-500/5 text-slate-400 text-[10px] uppercase">
+                        <tr><th class="p-4">Plan</th><th class="p-4 text-center">ROI</th><th class="p-4 text-right">Min</th></tr>
+                    </thead>
+                    <tbody class="divide-y divide-black/5">
+                        <tr class="plan-row"><td class="p-4 font-bold text-blue-500">Basic</td><td class="p-4 text-center">8%</td><td class="p-4 text-right">10,000</td></tr>
+                        <tr class="plan-row"><td class="p-4 font-bold text-purple-500">Silver</td><td class="p-4 text-center">10%</td><td class="p-4 text-right">108,000</td></tr>
+                    </tbody>
+                </table>
             </div>
-
-            <div class="space-y-4">
-                <h4 class="text-lg font-bold flex items-center gap-2 text-gradient mt-6">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> Affiliate Bonuses
-                </h4>
-                <div class="glass-card rounded-2xl overflow-hidden border border-white/10">
-                    <table class="w-full text-left text-sm table-fixed">
-                        <thead class="bg-white/5 text-slate-400 text-[10px] uppercase">
-                            <tr><th class="p-3 w-1/2">Referral Type</th><th class="p-3 w-1/4 text-center">Bonus (%)</th><th class="p-3 w-1/4 text-right">Example (100,000)</th></tr>
-                        </thead>
-                        <tbody class="divide-y divide-white/5">
-                            <tr class="ripple-btn"><td class="p-3 font-bold text-emerald-400 truncate">Direct Referral</td><td class="p-3 text-center">10%</td><td class="p-3 text-right font-medium">10,000</td></tr>
-                            <tr class="ripple-btn"><td class="p-3 font-bold text-cyan-400 truncate">First Indirect</td><td class="p-3 text-center">2%</td><td class="p-3 text-right font-medium">2,000</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Ripple Effect Handler
+        // Theme Toggle Logic
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            body.classList.toggle('light-theme');
+            
+            const isLight = body.classList.contains('light-theme');
+            
+            // Swap Icons
+            if (isLight) {
+                // Moon Icon
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>`;
+            } else {
+                // Sun Icon
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>`;
+            }
+        }
+
+        // Ripple Logic
         document.body.addEventListener('click', function(e) {
             const target = e.target.closest('.ripple-btn, .plan-row');
             if (target) {
@@ -244,99 +181,11 @@
                 const y = e.clientY - rect.top;
                 const ripple = document.createElement('span');
                 ripple.classList.add('ripple');
-                ripple.style.left = x + 'px';
-                ripple.style.top = y + 'px';
+                ripple.style.left = x + 'px'; ripple.style.top = y + 'px';
                 target.appendChild(ripple);
                 setTimeout(() => ripple.remove(), 600);
             }
         });
-
-        const supabaseClient = supabase.createClient(
-            'https://wbodpfbmilhperccgzei.supabase.co', 
-            'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN'
-        );
-
-        let realBalance = 0;
-        let isHidden = true;
-
-        async function checkAuthAndLoad() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session) {
-                window.location.href = "signin.html";
-                return;
-            }
-
-            const userId = session.user.id;
-            const { data, error: fetchError } = await supabaseClient
-                .from('userinfo')
-                .select('username, available_balance, total_investment, total_withdrawn')
-                .eq('userid', userId)
-                .single();
-
-            if (fetchError) {
-                console.error("Error fetching data:", fetchError.message);
-                return;
-            }
-
-            if (data) {
-                realBalance = data.available_balance || 0;
-                document.getElementById('username').innerText = data.username || "User";
-                updateBalanceDisplay();
-                document.getElementById('totalInv').innerText = "UGX " + Number(data.total_investment || 0).toLocaleString();
-                document.getElementById('totalWith').innerText = "UGX " + Number(data.total_withdrawn || 0).toLocaleString();
-                
-                document.getElementById('skeleton-container').classList.add('hidden');
-                document.getElementById('dashboard-content').classList.remove('hidden');
-            }
-        }
-
-        function toggleBalance() {
-            isHidden = !isHidden;
-            updateBalanceDisplay();
-        }
-
-        function updateBalanceDisplay() {
-            const balanceSpan = document.getElementById('balance');
-            const eyeIcon = document.getElementById('eyeIcon');
-            
-            if (isHidden) {
-                balanceSpan.innerText = "*****";
-                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>`;
-            } else {
-                balanceSpan.innerText = Number(realBalance).toLocaleString();
-                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`;
-            }
-        }
-
-        async function copyLink() {
-            const btn = document.getElementById('referral-btn');
-            const originalContent = btn.innerHTML;
-
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session) return;
-
-            const { data } = await supabaseClient
-                .from('userinfo')
-                .select('username')
-                .eq('userid', session.user.id)
-                .single();
-
-            if (data) {
-                const link = `https://upcashh.github.io/upcash/register.html?ref=${data.username}`;
-                navigator.clipboard.writeText(link).then(() => {
-                    btn.innerHTML = `<span class="text-emerald-400">Link Copied!</span>`;
-                    setTimeout(() => { btn.innerHTML = originalContent; }, 2000);
-                });
-            }
-        }
-        
-        function handleLogout() { 
-            supabaseClient.auth.signOut().then(() => {
-                window.location.href = "signin.html";
-            }); 
-        }
-
-        window.onload = checkAuthAndLoad;
     </script>
 </body>
 </html>
