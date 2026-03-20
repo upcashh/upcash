@@ -3,115 +3,343 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Transactions | UPCASH</title>
+    <title>UPCASH | Professional Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background: radial-gradient(circle at top left, #1e293b, #0f172a); color: #e2e8f0; min-height: 100vh; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: radial-gradient(circle at top left, #1e293b, #0f172a); 
+            min-height: 100vh; 
+            color: #e2e8f0; 
+            -webkit-font-smoothing: antialiased;
+        }
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        /* Removed horizontal scroll - table is now static/fixed */
-        .table-container { width: 100%; overflow: hidden; }
-        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
-        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .btn-gradient-blue { background: linear-gradient(135deg, #2563eb, #3b82f6); border: none; color: white; transition: all 0.3s ease; }
+        .text-gradient { background: linear-gradient(90deg, #60a5fa, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        /* Ensure table columns don't squish too much but stay within screen */
-        table { table-layout: fixed; width: 100%; }
+        .ripple-btn {
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+        .ripple-btn:active { transform: scale(0.96); }
+        .ripple-btn:hover {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .plan-row {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .plan-row:hover {
+            background: rgba(255, 255, 255, 0.07) !important;
+            transform: scale(1.02);
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.05), 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .plan-row:active { transform: scale(0.98); }
+
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+        @keyframes ripple-animation {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        .skeleton { background: rgba(255, 255, 255, 0.05); overflow: hidden; position: relative; }
+        .skeleton::after {
+            content: "";
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
     </style>
 </head>
-<body class="pb-10">
+<body class="pb-20">
 
-    <header class="flex items-center justify-between p-5 sticky top-0 bg-[#0f172a]/80 backdrop-blur-md z-50 border-b border-white/5">
-        <div class="flex items-center gap-3">
-            <div class="bg-blue-600 p-2 rounded-lg shadow-lg shadow-blue-500/20">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                </svg>
+    <header class="flex items-center justify-between p-5 sticky top-0 bg-slate-900/50 backdrop-blur-md z-50 border-b border-white/5">
+        <div class="flex items-center gap-2">
+            <div class="bg-blue-600 p-2 rounded-lg">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
             </div>
-            <h1 class="text-xl font-extrabold tracking-tighter text-white">UP<span class="text-blue-500">CASH</span></h1>
+            <h1 class="text-xl font-bold tracking-tight">UP<span class="text-blue-500">CASH</span></h1>
         </div>
-        <a href="dashboard.html" class="p-2 bg-white/5 rounded-full border border-white/10 transition-all hover:bg-white/10">
-            <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-        </a>
+        <div class="flex items-center gap-2">
+            <button onclick="handleLogout()" class="ripple-btn p-2 hover:bg-red-500/10 rounded-full transition-colors">
+                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            </button>
+            <a href="profile.html" class="block">
+                <button class="ripple-btn p-2 hover:bg-slate-800 rounded-full">
+                    <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </button>
+            </a>
+        </div>
     </header>
 
-    <main class="p-4 max-w-4xl mx-auto space-y-6">
-        <h2 class="text-2xl font-extrabold text-white tracking-tight mt-4">My Transactions</h2>
-
-        <div class="glass-card rounded-3xl overflow-hidden shadow-2xl">
-            <div class="table-container">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-white/5 text-[9px] uppercase tracking-wider text-slate-500 font-black">
-                        <tr>
-                            <th class="px-4 py-4 w-[35%]">Status</th>
-                            <th class="px-2 py-4 w-[35%] text-right">Amount</th>
-                            <th class="px-4 py-4 w-[30%] text-right">Balance</th>
-                        </tr>
-                    </thead>
-                    <tbody id="history-body" class="divide-y divide-white/5 text-sm">
-                        <tr class="skeleton-row"><td class="px-4 py-5"><div class="h-8 w-8 skeleton rounded-lg mb-2"></div><div class="h-3 w-16 skeleton rounded"></div></td><td class="px-2 py-5"><div class="h-4 w-20 skeleton rounded ml-auto"></div></td><td class="px-4 py-5"><div class="h-3 w-14 skeleton rounded ml-auto"></div></td></tr>
-                        <tr class="skeleton-row"><td class="px-4 py-5"><div class="h-8 w-8 skeleton rounded-lg mb-2"></div><div class="h-3 w-16 skeleton rounded"></div></td><td class="px-2 py-5"><div class="h-4 w-20 skeleton rounded ml-auto"></div></td><td class="px-4 py-5"><div class="h-3 w-14 skeleton rounded ml-auto"></div></td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <div id="loading-text" class="p-10 text-center text-slate-500 animate-pulse text-[10px] font-bold uppercase tracking-widest">Syncing ledger...</div>
+    <div id="skeleton-container" class="p-4 max-w-lg mx-auto space-y-6">
+        <div class="flex justify-between items-center px-1">
+            <div class="h-4 w-32 skeleton rounded"></div>
+            <div class="h-4 w-20 skeleton rounded-full"></div>
         </div>
-    </main>
+        <div class="rounded-3xl p-6 h-56 skeleton border border-white/5">
+            <div class="h-4 w-24 bg-white/10 rounded mb-4"></div>
+            <div class="h-10 w-48 bg-white/10 rounded mb-8"></div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="h-16 bg-white/5 rounded-2xl"></div>
+                <div class="h-16 bg-white/5 rounded-2xl"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboard-content" class="hidden">
+        <div class="flex items-center justify-between w-full px-5 py-4">
+            <p class="text-slate-400 text-sm font-medium">
+                Welcome back, <span class="text-gradient font-bold" id="username">User</span>
+            </p>
+            <span id="verified-badge" class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                Verified Account
+            </span>
+        </div>
+
+        <main class="p-4 max-w-lg mx-auto space-y-6">
+            <div class="rounded-3xl p-6 shadow-2xl border border-white/10 relative overflow-hidden" style="background: linear-gradient(135deg, #2563eb, #7c3aed);">
+                <div class="flex justify-between items-start mb-1">
+                    <p class="text-blue-100/80 text-sm font-medium">Available Balance</p>
+                    <button onclick="toggleBalance()" class="ripple-btn text-blue-100/60 hover:text-white transition-colors">
+                        <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>
+                        </svg>
+                    </button>
+                </div>
+                <h3 class="text-4xl font-black mb-6">UGX <span id="balance">*****</span></h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/5">
+                        <p class="text-xs text-blue-100/60 uppercase">Total Investment</p>
+                        <p class="font-bold text-lg" id="totalInv">UGX 0</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/5">
+                        <p class="text-xs text-blue-100/60 uppercase">Total Withdrawn</p>
+                        <p class="font-bold text-lg" id="totalWith">UGX 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <a href="history.html" class="flex-1"> 
+                    <button class="ripple-btn btn-gradient-blue w-full h-14 font-bold rounded-xl flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-500/20">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01"></path></svg> Transactions
+                    </button>
+                </a>
+                <a href="withdraw.html" class="flex-1"> 
+                    <button class="ripple-btn glass-card w-full h-14 font-bold rounded-xl flex items-center justify-center gap-2 text-sm border-white/20 hover:border-blue-500/50">
+                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8l4-4m0 0l4 4m-4-4v12m-4 0h8"></path></svg> Withdraw
+                    </button> 
+                </a>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="copyLink()" id="referral-btn" class="ripple-btn glass-card h-14 font-bold rounded-xl flex items-center justify-center gap-2 text-sm border-white/20">
+                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg> Referral Link
+                </button>
+                <a href="https://chat.whatsapp.com/HEusxMonb275LAHnJbooY2" target="_blank" class="ripple-btn bg-[#25D366]/20 border border-[#25D366]/30 h-14 font-bold rounded-xl flex flex-col items-center justify-center gap-0.5 text-sm text-[#25D366]">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg> 
+                        Community
+                    </div>
+                </a>
+            </div>
+
+            <div class="space-y-2">
+                <div>
+                    <h4 class="text-lg font-bold flex items-center gap-2 text-gradient">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> Investment Plans
+                    </h4>
+                    <p class="text-[11px] text-slate-500 font-medium ml-7">Choose your plan and deposit any amount.</p>
+                </div>
+
+                <div class="glass-card rounded-2xl overflow-hidden border border-white/10 shadow-lg">
+                    <table class="w-full text-left text-sm table-fixed">
+                        <thead class="bg-white/5 text-slate-400 text-[10px] uppercase">
+                            <tr>
+                                <th class="p-4 w-1/4">Plan</th>
+                                <th class="p-4 w-1/4 text-center">ROI</th>
+                                <th class="p-4 w-1/4 text-center">Days</th>
+                                <th class="p-4 w-1/4 text-right">Min Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            <tr onclick="location.href='basic.html'" class="plan-row ripple-btn">
+                                <td class="p-4 font-bold text-blue-400 truncate">Basic</td>
+                                <td class="p-4 text-center">8%</td>
+                                <td class="p-4 text-center">40</td>
+                                <td class="p-4 text-right font-medium">10,000</td>
+                            </tr>
+                            <tr onclick="location.href='silver.html'" class="plan-row ripple-btn">
+                                <td class="p-4 font-bold text-purple-400 truncate">Silver</td>
+                                <td class="p-4 text-center">10%</td>
+                                <td class="p-4 text-center">30</td>
+                                <td class="p-4 text-right font-medium">108,000</td>
+                            </tr>
+                            <tr onclick="location.href='gold.html'" class="plan-row ripple-btn">
+                                <td class="p-4 font-bold text-pink-400 truncate">Gold</td>
+                                <td class="p-4 text-center">12%</td>
+                                <td class="p-4 text-center">25</td>
+                                <td class="p-4 text-right font-medium">525,000</td>
+                            </tr>
+                            <tr onclick="location.href='diamond.html'" class="plan-row ripple-btn">
+                                <td class="p-4 font-bold text-orange-400 truncate">Diamond</td>
+                                <td class="p-4 text-center">14%</td>
+                                <td class="p-4 text-center">21</td>
+                                <td class="p-4 text-right font-medium">1,215,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="text-lg font-bold flex items-center gap-2 text-gradient mt-6">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> Affiliate Bonuses
+                </h4>
+                <div class="glass-card rounded-2xl overflow-hidden border border-white/10">
+                    <table class="w-full text-left text-sm table-fixed">
+                        <thead class="bg-white/5 text-slate-400 text-[10px] uppercase">
+                            <tr><th class="p-3 w-1/2">Referral Type</th><th class="p-3 w-1/4 text-center">Bonus (%)</th><th class="p-3 w-1/4 text-right">Example (100,000)</th></tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            <tr class="ripple-btn"><td class="p-3 font-bold text-emerald-400 truncate">Direct Referral</td><td class="p-3 text-center">10%</td><td class="p-3 text-right font-medium">10,000</td></tr>
+                            <tr class="ripple-btn"><td class="p-3 font-bold text-cyan-400 truncate">First Indirect</td><td class="p-3 text-center">2%</td><td class="p-3 text-right font-medium">2,000</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
+        // Universal Ripple Effect Handler
+        function createRipple(e) {
+            const button = e.currentTarget;
+            const rect = button.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
-        function getCategoryIcon(category) {
-            const cat = category.toLowerCase();
-            if (cat.includes('deposit')) return `<svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>`;
-            if (cat.includes('earning')) return `<svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>`;
-            if (cat.includes('bonus') || cat.includes('commission')) return `<svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>`;
-            if (cat.includes('plan purchase')) return `<svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>`;
-            return `<svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+
+            button.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
         }
 
-        async function loadHistory() {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if(!user) return;
+        // Apply ripples to all elements with ripple-btn class
+        document.querySelectorAll('.ripple-btn').forEach(button => {
+            button.addEventListener('click', createRipple);
+        });
 
-            const { data, error } = await supabaseClient
-                .from('user_history')
-                .select('*')
-                .eq('userid', user.id)
-                .order('created_at', { ascending: false });
-            
-            const tbody = document.getElementById('history-body');
-            tbody.innerHTML = '';
-            document.getElementById('loading-text').classList.add('hidden');
+        const supabaseClient = supabase.createClient(
+            'https://wbodpfbmilhperccgzei.supabase.co', 
+            'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN'
+        );
 
-            if (data && data.length > 0) {
-                data.forEach(row => {
-                    const isPos = row.amount > 0;
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-white/[0.02] transition-colors";
-                    tr.innerHTML = `
-                        <td class="px-4 py-5">
-                            <div class="flex items-center gap-2 mb-1">
-                                <div class="p-1.5 bg-white/5 rounded-lg">${getCategoryIcon(row.category)}</div>
-                                <span class="font-bold text-white text-xs truncate">${row.category}</span>
-                            </div>
-                            <span class="text-[9px] text-slate-500 uppercase block font-medium">${new Date(row.created_at).toLocaleDateString()}</span>
-                        </td>
-                        <td class="px-2 py-5 text-right font-black ${isPos ? 'text-green-400' : 'text-red-500'} text-xs">
-                            ${isPos ? '+' : '-'}${Math.abs(row.amount).toLocaleString()}
-                        </td>
-                        <td class="px-4 py-5 text-right font-mono text-slate-400 text-[10px]">
-                            ${Number(row.new_balance).toLocaleString()}
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="3" class="p-10 text-center text-slate-500">No transactions</td></tr>';
+        let realBalance = 0;
+        let isHidden = true;
+
+        async function checkAuthAndLoad() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) {
+                window.location.href = "signin.html";
+                return;
+            }
+
+            const userId = session.user.id;
+            const { data, error: fetchError } = await supabaseClient
+                .from('userinfo')
+                .select('username, available_balance, total_investment, total_withdrawn')
+                .eq('userid', userId)
+                .single();
+
+            if (fetchError) {
+                console.error("Error fetching data:", fetchError.message);
+                return;
+            }
+
+            if (data) {
+                realBalance = data.available_balance || 0;
+                document.getElementById('username').innerText = data.username || "User";
+                updateBalanceDisplay();
+                document.getElementById('totalInv').innerText = "UGX " + Number(data.total_investment || 0).toLocaleString();
+                document.getElementById('totalWith').innerText = "UGX " + Number(data.total_withdrawn || 0).toLocaleString();
+                
+                document.getElementById('skeleton-container').classList.add('hidden');
+                document.getElementById('dashboard-content').classList.remove('hidden');
             }
         }
-        loadHistory();
+
+        function toggleBalance() {
+            isHidden = !isHidden;
+            updateBalanceDisplay();
+        }
+
+        function updateBalanceDisplay() {
+            const balanceSpan = document.getElementById('balance');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (isHidden) {
+                balanceSpan.innerText = "*****";
+                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>`;
+            } else {
+                balanceSpan.innerText = Number(realBalance).toLocaleString();
+                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`;
+            }
+        }
+
+        async function copyLink() {
+            const btn = document.getElementById('referral-btn');
+            const originalContent = btn.innerHTML;
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) return;
+
+            const { data } = await supabaseClient
+                .from('userinfo')
+                .select('username')
+                .eq('userid', session.user.id)
+                .single();
+
+            if (data) {
+                const link = `https://upcashh.github.io/upcash/register.html?ref=${data.username}`;
+                navigator.clipboard.writeText(link).then(() => {
+                    btn.innerHTML = `<span class="text-emerald-400">Link Copied!</span>`;
+                    setTimeout(() => { btn.innerHTML = originalContent; }, 2000);
+                });
+            }
+        }
+        
+        function handleLogout() { 
+            supabaseClient.auth.signOut().then(() => {
+                window.location.href = "signin.html";
+            }); 
+        }
+
+        window.onload = checkAuthAndLoad;
     </script>
 </body>
 </html>
-
