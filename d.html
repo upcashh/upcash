@@ -161,7 +161,7 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <button onclick="copyLink()" id="referral-btn" class="ripple-btn glass-card h-14 font-bold rounded-xl flex items-center justify-center gap-2 text-sm border-white/20">
-                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg> Referral Link
+                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg> Referral Link
                 </button>
                 <a href="https://chat.whatsapp.com/HEusxMonb275LAHnJbooY2" target="_blank" class="ripple-btn bg-[#25D366]/20 border border-[#25D366]/30 h-14 font-bold rounded-xl flex flex-col items-center justify-center gap-0.5 text-sm text-[#25D366]">
                     <div class="flex items-center gap-2">
@@ -327,5 +327,21 @@
                 .single();
 
             if (data) {
-                const link = `
+                const link = `https://upcashh.github.io/upcash/register.html?ref=${data.username}`;
+                navigator.clipboard.writeText(link).then(() => {
+                    btn.innerHTML = `<span class="text-emerald-400">Link Copied!</span>`;
+                    setTimeout(() => { btn.innerHTML = originalContent; }, 2000);
+                });
+            }
+        }
         
+        function handleLogout() { 
+            supabaseClient.auth.signOut().then(() => {
+                window.location.href = "signin.html";
+            }); 
+        }
+
+        window.onload = checkAuthAndLoad;
+    </script>
+</body>
+</html>
