@@ -129,11 +129,12 @@
                 document.getElementById('recipientNum').textContent = profile.telephone;
             }
 
+            // FIX: Using .ilike for case-insensitive matching to ensure 'Withdraw' is found regardless of 'c' vs 'C'
             const { data: history } = await supabaseClient
                 .from('user_history')
                 .select('created_at, amount, status, category')
                 .eq('userid', user.id)
-                .eq('category', 'Withdraw') 
+                .ilike('category', 'Withdraw') 
                 .order('created_at', { ascending: false });
 
             const tbody = document.getElementById('withdrawTableBody');
@@ -143,6 +144,9 @@
                     const statusStr = row.status ? row.status.toLowerCase() : 'pending';
                     const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
                     
+                    // Fallback to calculation if amount column is negative or stored as difference
+                    const amt = row.amount ? Math.abs(row.amount) : 0;
+
                     return `
                     <tr class="hover:bg-white/[0.02]">
                         <td class="p-4">
@@ -155,7 +159,7 @@
                             </span>
                         </td>
                         <td class="p-4 text-right">
-                            <span class="font-bold text-red-400 block">UGX ${Math.abs(row.amount).toLocaleString()}</span>
+                            <span class="font-bold text-red-400 block">UGX ${amt.toLocaleString()}</span>
                             <span class="text-[9px] text-slate-600">Mobile Money</span>
                         </td>
                     </tr>`;
@@ -165,9 +169,8 @@
             }
 
         } catch (err) {
-            console.error(err);
+            console.error("Load Error:", err);
         } finally {
-            // Ensure UI shows even if data fetch fails slightly
             document.getElementById('skeleton-ui').classList.add('hidden');
             document.getElementById('main-content').classList.remove('hidden');
         }
