@@ -13,7 +13,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
         body { 
             font-family: 'Inter', sans-serif; 
@@ -27,7 +29,6 @@
         .btn-gradient { background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; color: white; transition: all 0.3s ease; }
         .text-gradient { background: linear-gradient(90deg, #60a5fa, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        /* Status Badges */
         .badge-pending { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
         .badge-completed { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
 
@@ -68,7 +69,7 @@
                 <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
             </div>
             <div>
-                <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Mobile Money Recipient</p>
+                <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Recipient Number</p>
                 <p class="font-bold text-lg text-white" id="recipientNum">---</p>
             </div>
         </div>
@@ -100,7 +101,7 @@
                         </tr>
                     </thead>
                     <tbody id="withdrawTableBody" class="divide-y divide-white/5">
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -110,61 +111,66 @@
     const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
 
     async function loadUserData() {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (!user) return;
+        try {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) {
+                window.location.href = "signin.html";
+                return;
+            }
 
-        // 1. Fetch user balance and telephone
-        const { data: profile } = await supabaseClient
-            .from('userinfo')
-            .select('available_balance, telephone')
-            .eq('userid', user.id)
-            .single();
+            const { data: profile } = await supabaseClient
+                .from('userinfo')
+                .select('available_balance, telephone')
+                .eq('userid', user.id)
+                .single();
 
-        if (profile) {
-            document.getElementById('availBalance').textContent = 'UGX ' + profile.available_balance.toLocaleString();
-            document.getElementById('recipientNum').textContent = profile.telephone;
+            if (profile) {
+                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance).toLocaleString();
+                document.getElementById('recipientNum').textContent = profile.telephone;
+            }
+
+            const { data: history } = await supabaseClient
+                .from('user_history')
+                .select('created_at, amount, status, category')
+                .eq('userid', user.id)
+                .eq('category', 'Withdraw') 
+                .order('created_at', { ascending: false });
+
+            const tbody = document.getElementById('withdrawTableBody');
+            
+            if (history && history.length > 0) {
+                tbody.innerHTML = history.map(row => {
+                    const statusStr = row.status ? row.status.toLowerCase() : 'pending';
+                    const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
+                    
+                    return `
+                    <tr class="hover:bg-white/[0.02]">
+                        <td class="p-4">
+                            <span class="text-white font-semibold text-xs block">${new Date(row.created_at).toLocaleDateString()}</span>
+                            <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </td>
+                        <td class="p-4 text-center">
+                            <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass}">
+                                ${row.status || 'Processing'}
+                            </span>
+                        </td>
+                        <td class="p-4 text-right">
+                            <span class="font-bold text-red-400 block">UGX ${Math.abs(row.amount).toLocaleString()}</span>
+                            <span class="text-[9px] text-slate-600">Mobile Money</span>
+                        </td>
+                    </tr>`;
+                }).join('');
+            } else {
+                tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs" colspan="3">No records found.</td></tr>`;
+            }
+
+        } catch (err) {
+            console.error(err);
+        } finally {
+            // Ensure UI shows even if data fetch fails slightly
+            document.getElementById('skeleton-ui').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
         }
-
-        // 2. Fetch History - MATCHING YOUR CATEGORY: "Withdraw"
-        const { data: history, error: historyError } = await supabaseClient
-            .from('user_history')
-            .select('created_at, amount, status, category')
-            .eq('userid', user.id)
-            .eq('category', 'Withdraw') // Exact match for your DB label
-            .order('created_at', { ascending: false });
-
-        const tbody = document.getElementById('withdrawTableBody');
-        
-        if (history && history.length > 0) {
-            tbody.innerHTML = history.map(row => {
-                // Determine badge color based on status
-                const statusStr = row.status ? row.status.toLowerCase() : 'pending';
-                const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                
-                return `
-                <tr class="hover:bg-white/[0.02] transition-colors">
-                    <td class="p-4">
-                        <span class="text-white font-semibold text-xs block">${new Date(row.created_at).toLocaleDateString()}</span>
-                        <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                    </td>
-                    <td class="p-4 text-center">
-                        <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass}">
-                            ${row.status || 'Processing'}
-                        </span>
-                    </td>
-                    <td class="p-4 text-right">
-                        <span class="font-bold text-red-400 block">UGX ${Math.abs(row.amount).toLocaleString()}</span>
-                        <span class="text-[9px] text-slate-600">Mobile Money</span>
-                    </td>
-                </tr>
-            `}).join('');
-        } else {
-            tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs" colspan="3">No withdrawal records found for "Withdraw".</td></tr>`;
-        }
-
-        // Swap UI
-        document.getElementById('skeleton-ui').classList.add('hidden');
-        document.getElementById('main-content').classList.remove('hidden');
     }
 
     async function handleWithdraw() {
@@ -172,20 +178,12 @@
         const btn = document.getElementById('withdrawBtn');
         const amount = parseFloat(input.value);
         
-        if (!amount || amount < 10000) {
-            alert("Minimum withdrawal is UGX 10,000");
-            return;
-        }
-
-        const confirmCheck = confirm(`Confirm withdrawal of UGX ${amount.toLocaleString()}?`);
-        if(!confirmCheck) return;
+        if (!amount || amount < 10000) return alert("Minimum withdrawal is UGX 10,000");
 
         btn.disabled = true;
-        btn.innerHTML = `<span class="animate-pulse">PROCESSING...</span>`;
+        btn.innerHTML = `PROCESSING...`;
 
         const { data: { user } } = await supabaseClient.auth.getUser();
-        
-        // Ensure your RPC 'withdraw_funds' sets the category to 'Withdraw'
         const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
             user_id_param: user.id, 
             amount_to_withdraw: amount 
@@ -201,9 +199,7 @@
         }
     }
 
-    loadUserData();
+    window.onload = loadUserData;
 </script>
-
 </body>
 </html>
-
