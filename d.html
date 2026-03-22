@@ -24,44 +24,73 @@
             color: #e2e8f0; 
             -webkit-font-smoothing: antialiased;
         }
-        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .btn-gradient { background: linear-gradient(135deg, #60a5fa, #3b82f6); border: none; color: white; transition: all 0.3s ease; font-weight: 700; letter-spacing: 0.01em; }
+        .glass-card { background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.12); }
+        .btn-gradient { 
+            background: linear-gradient(135deg, #60a5fa, #3b82f6); 
+            border: none; 
+            color: white; 
+            transition: transform 0.18s ease, background 0.18s ease; 
+        }
+        .btn-gradient:hover { 
+            background: linear-gradient(135deg, #93c5fd, #60a5fa); 
+            transform: scale(1.05); 
+        }
+        .btn-gradient:active { transform: scale(0.97); }
+
         .text-gradient { background: linear-gradient(90deg, #60a5fa, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
+        /* Remove ALL default tap highlight and outline */
+        * { -webkit-tap-highlight-color: transparent !important; outline: none !important; }
+
         .ripple-btn {
             position: relative;
             overflow: hidden;
-            transition: transform 0.2s ease, filter 0.2s ease;
+            cursor: pointer;
+            transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
         }
-        .ripple-btn:active { transform: scale(0.96); filter: none; }
-        .ripple-btn:hover {
+        /* NO glow, NO box-shadow on active/tap */
+        .ripple-btn:active { transform: scale(0.97); box-shadow: none !important; }
+        .ripple-btn:hover { transform: scale(1.04); }
+
+        /* Make glass-card buttons brighter on hover */
+        .ripple-btn.glass-card:hover {
+            background: rgba(255, 255, 255, 0.10) !important;
+            border-color: rgba(96, 165, 250, 0.5) !important;
+        }
+
+        /* WhatsApp button hover */
+        a.ripple-btn:hover {
             transform: scale(1.04);
-            filter: brightness(1.3) saturate(1.2);
+            background-color: rgba(37, 211, 102, 0.30) !important;
         }
 
         .plan-row {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             position: relative;
             overflow: hidden;
         }
         .plan-row:hover {
-            background: rgba(255, 255, 255, 0.07) !important;
+            background: rgba(255, 255, 255, 0.08) !important;
             transform: scale(1.02);
-            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.05), 0 5px 15px rgba(0,0,0,0.3);
         }
         .plan-row:active { transform: scale(0.98); }
 
+        /* Ripple ink — no glow, pure white burst */
         .ripple {
             position: absolute;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.35);
             border-radius: 50%;
+            width: 10px;
+            height: 10px;
+            margin-left: -5px;
+            margin-top: -5px;
             transform: scale(0);
-            animation: ripple-animation 0.6s linear;
+            animation: ripple-animation 0.55s ease-out forwards;
             pointer-events: none;
         }
         @keyframes ripple-animation {
-            to { transform: scale(4); opacity: 0; }
+            to { transform: scale(30); opacity: 0; }
         }
 
         .skeleton { background: rgba(255, 255, 255, 0.05); overflow: hidden; position: relative; }
@@ -318,30 +347,4 @@
 
         async function copyLink() {
             const btn = document.getElementById('referral-btn');
-            const originalContent = btn.innerHTML;
-
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session) return;
-
-            const { data } = await supabaseClient
-                .from('userinfo')
-                .select('username')
-                .eq('userid', session.user.id)
-                .single();
-
-            if (data) {
-                const link = `https://upcashh.github.io/upcash/register.html?ref=${data.username}`;
-                navigator.clipboard.writeText(link).then(() => {
-                    btn.innerHTML = `<span class="text-emerald-400">Link Copied!</span>`;
-                    setTimeout(() => { btn.innerHTML = originalContent; }, 2000);
-                });
-            }
-        }
-        
-        function handleLogout() { 
-            supabaseClient.auth.signOut().then(() => {
-                window.location.href = "signin.html";
-            }); 
-        }
-
-        window.onload = che
+            co
