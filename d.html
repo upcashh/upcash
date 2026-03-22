@@ -130,7 +130,7 @@
             .from('user_history')
             .select('created_at, amount, status')
             .eq('userid', user.id)
-            .eq('category', 'withdrawal') // Filter specifically for withdrawals
+            .eq('category', 'Withdraw') // Filter specifically for withdrawals
             .order('created_at', { ascending: false });
 
         const tbody = document.getElementById('withdrawTableBody');
