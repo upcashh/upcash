@@ -106,7 +106,6 @@
         </div>
     </main>
     
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
 
@@ -114,6 +113,7 @@
         const { data: { user } } = await supabaseClient.auth.getUser();
         if (!user) return;
 
+        // 1. Fetch user balance and telephone
         const { data: profile } = await supabaseClient
             .from('userinfo')
             .select('available_balance, telephone')
@@ -125,38 +125,44 @@
             document.getElementById('recipientNum').textContent = profile.telephone;
         }
 
-        // IMPROVED: Only fetch REAL withdrawals, excluding reinvestments
-        const { data: history } = await supabaseClient
+        // 2. Fetch History - MATCHING YOUR CATEGORY: "Withdraw"
+        const { data: history, error: historyError } = await supabaseClient
             .from('user_history')
-            .select('created_at, amount, status')
+            .select('created_at, amount, status, category')
             .eq('userid', user.id)
-            .eq('category', 'Withdraw') // Filter specifically for withdrawals
+            .eq('category', 'Withdraw') // Exact match for your DB label
             .order('created_at', { ascending: false });
 
         const tbody = document.getElementById('withdrawTableBody');
+        
         if (history && history.length > 0) {
             tbody.innerHTML = history.map(row => {
-                const statusClass = row.status?.toLowerCase() === 'completed' ? 'badge-completed' : 'badge-pending';
+                // Determine badge color based on status
+                const statusStr = row.status ? row.status.toLowerCase() : 'pending';
+                const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
+                
                 return `
-                <tr class="hover:bg-white/[0.02]">
+                <tr class="hover:bg-white/[0.02] transition-colors">
                     <td class="p-4">
-                        <span class="text-white font-medium text-xs block">${new Date(row.created_at).toLocaleDateString()}</span>
+                        <span class="text-white font-semibold text-xs block">${new Date(row.created_at).toLocaleDateString()}</span>
                         <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                     </td>
                     <td class="p-4 text-center">
-                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${statusClass}">
-                            ${row.status || 'Pending'}
+                        <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass}">
+                            ${row.status || 'Processing'}
                         </span>
                     </td>
-                    <td class="p-4 text-right font-bold text-red-400">
-                        -${Math.abs(row.amount).toLocaleString()}
+                    <td class="p-4 text-right">
+                        <span class="font-bold text-red-400 block">UGX ${Math.abs(row.amount).toLocaleString()}</span>
+                        <span class="text-[9px] text-slate-600">Mobile Money</span>
                     </td>
                 </tr>
             `}).join('');
         } else {
-            tbody.innerHTML = `<tr><td class="p-8 text-center text-slate-500 italic text-xs" colspan="3">No withdrawal history found.</td></tr>`;
+            tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs" colspan="3">No withdrawal records found for "Withdraw".</td></tr>`;
         }
 
+        // Swap UI
         document.getElementById('skeleton-ui').classList.add('hidden');
         document.getElementById('main-content').classList.remove('hidden');
     }
@@ -166,27 +172,30 @@
         const btn = document.getElementById('withdrawBtn');
         const amount = parseFloat(input.value);
         
-        if (!amount || amount < 10000) return alert("Minimum withdrawal is UGX 10,000");
+        if (!amount || amount < 10000) {
+            alert("Minimum withdrawal is UGX 10,000");
+            return;
+        }
 
-        const confirmCheck = confirm(`Withdraw UGX ${amount.toLocaleString()}?`);
+        const confirmCheck = confirm(`Confirm withdrawal of UGX ${amount.toLocaleString()}?`);
         if(!confirmCheck) return;
 
         btn.disabled = true;
-        btn.innerText = "PROCESSING...";
+        btn.innerHTML = `<span class="animate-pulse">PROCESSING...</span>`;
 
         const { data: { user } } = await supabaseClient.auth.getUser();
         
-        // This RPC handles the deduction and ensures category is set to 'withdrawal'
+        // Ensure your RPC 'withdraw_funds' sets the category to 'Withdraw'
         const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
             user_id_param: user.id, 
             amount_to_withdraw: amount 
         });
 
         if (data?.success) { 
-            alert("Success! Your withdrawal is being processed."); 
+            alert("Withdrawal request successful!"); 
             location.reload(); 
         } else { 
-            alert("Error: " + (data?.message || "Insufficient Balance")); 
+            alert("Request Failed: " + (data?.message || "Check your balance.")); 
             btn.disabled = false;
             btn.innerText = "INITIATE CASH-OUT";
         }
@@ -194,6 +203,7 @@
 
     loadUserData();
 </script>
+
 </body>
 </html>
 
