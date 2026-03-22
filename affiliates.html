@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#030712">
     <title>Affiliates | UPCASH</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -111,7 +112,6 @@
     </main>
 
     <script>
-        // Replace with your keys
         const SUPABASE_URL = 'https://wbodpfbmilhperccgzei.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -138,7 +138,6 @@
             const tableBody = document.getElementById('affiliate-list');
             const totalDisplay = document.getElementById('total-bonuses');
             
-            // Switch Skeletons off
             document.getElementById('summary-skeleton').classList.add('hidden-load');
             document.getElementById('summary-real').classList.remove('hidden-load');
 
@@ -197,3 +196,4 @@
     </script>
 </body>
 </html>
+
