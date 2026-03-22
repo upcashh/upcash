@@ -2,99 +2,200 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UPCASH | Login</title>
-    
-    <meta name="theme-color" content="#0f172a">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10b981">
+    <title>Professional Login</title>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            /* Matches theme-color exactly at the top for seamless blending */
-            background-color: #0f172a;
-            background-image: radial-gradient(circle at center top, #1e293b 0%, #0f172a 100%);
-            min-height: 100vh;
+        :root {
+            --primary-green: #10b981;
+            --dark-green: #059669;
+            --bg-gray: #f3f4f6;
+            --text-main: #1f2937;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-gray);
             display: flex;
             flex-direction: column;
-            color: #e2e8f0;
+            min-height: 100vh;
         }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* Header Section */
+        header {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .input-field {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 1.2rem;
         }
 
-        .input-field:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        /* Main Container */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 400px;
+            transition: transform 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        p.subtitle {
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        /* Form Elements */
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
             outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-login:hover {
+            background-color: var(--dark-green);
+        }
+
+        .footer-links {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .footer-links a {
+            color: var(--dark-green);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
-<body class="items-center justify-center p-6">
+<body>
 
-    <div class="w-full max-w-md">
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center bg-blue-600 p-3 rounded-2xl mb-4 shadow-lg shadow-blue-500/20">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                </svg>
-            </div>
-            <h1 class="text-3xl font-bold tracking-tight">UP<span class="text-blue-500">CASH</span></h1>
-            <p class="text-slate-400 mt-2">Sign in to manage your growth</p>
+    <header>
+        <div class="logo-area">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <span>EcoSystem</span>
         </div>
+        <nav>
+            <small>v2.4.0</small>
+        </nav>
+    </header>
 
-        <div class="glass-panel rounded-3xl p-8 shadow-2xl">
-            <form action="#" class="space-y-5">
-                <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Email Address</label>
-                    <input type="email" placeholder="name@company.com" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-slate-500">
+    <main>
+        <div class="login-card">
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Please enter your details to continue</p>
+
+            <form id="loginForm">
+                <div class="input-group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <input type="email" placeholder="Email Address" required>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Password</label>
-                    <input type="password" placeholder="••••••••" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-slate-500">
+                <div class="input-group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <input type="password" placeholder="Password" required>
                 </div>
 
-                <div class="flex items-center justify-between text-xs px-1">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" class="rounded border-slate-700 bg-slate-800 text-blue-500">
-                        <span class="text-slate-400">Remember me</span>
-                    </label>
-                    <a href="#" class="text-blue-400 hover:text-blue-300 font-semibold">Forgot password?</a>
-                </div>
-
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-blue-600/20 mt-2">
-                    Sign In
-                </button>
+                <button type="submit" class="btn-login">Sign In</button>
             </form>
 
-            <div class="mt-8 text-center">
-                <p class="text-sm text-slate-400">
-                    Don't have an account? 
-                    <a href="register.html" class="text-blue-400 font-bold hover:underline ml-1">Create Account</a>
-                </p>
+            <div class="footer-links">
+                <a href="#">Forgot password?</a>
+                <p style="margin-top: 10px; color: #9ca3af;">Don't have an account? <a href="#">Create one</a></p>
             </div>
         </div>
+    </main>
 
-        <p class="text-center text-slate-500 text-[10px] uppercase tracking-widest mt-8">
-            &copy; 2026 UPCASH Business Platform
-        </p>
-    </div>
-
+    <script>
+        // Interactive feedback
+        const form = document.getElementById('loginForm');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = form.querySelector('.btn-login');
+            btn.textContent = 'Authenticating...';
+            btn.style.opacity = '0.7';
+            
+            // Simulate a login delay
+            setTimeout(() => {
+                alert('Login successful (Demo)');
+                btn.textContent = 'Sign In';
+                btn.style.opacity = '1';
+            }, 1500);
+        });
+    </script>
 </body>
 </html>
