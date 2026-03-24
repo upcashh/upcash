@@ -3,74 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#0a0f1a">
     <title>My Transactions | UPCASH</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Inter', sans-serif; background: radial-gradient(circle at top left, #1e293b, #0f172a); color: #e2e8f0; min-height: 100vh; }
-        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        body { 
+            font-family: 'DM Sans', sans-serif; 
+            background-color: #0a0f1a;
+            color: #e2e8f0; 
+            min-height: 100vh;
+            margin: 0;
+            -webkit-font-smoothing: antialiased; 
+        }
+
+        .outfit { font-family: 'Outfit', sans-serif; }
+        
+        .glass-card { 
+            background: linear-gradient(160deg, #111827 0%, #0d1321 100%); 
+            border: 1px solid rgba(0, 206, 156, 0.15);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .icon-box {
+            background: #00ce9c;
+            border-radius: 12px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 206, 156, 0.4);
+        }
+
         .table-container { overflow-x: auto; }
-        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
+
+        /* Skeleton Animation */
+        .skeleton { 
+            background: linear-gradient(90deg, rgba(0, 206, 156, 0.03) 25%, rgba(0, 206, 156, 0.08) 50%, rgba(0, 206, 156, 0.03) 75%); 
+            background-size: 200% 100%; 
+            animation: loading 1.5s infinite; 
+            border-radius: 8px;
+        }
         @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
 <body class="pb-10">
 
-    <header class="flex items-center justify-between p-5 sticky top-0 bg-[#0f172a]/80 backdrop-blur-md z-50 border-b border-white/5">
+    <div style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:0;">
+        <div style="position:absolute;top:-20%;right:-15%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.08) 0%,transparent 70%);"></div>
+        <div style="position:absolute;bottom:-10%;left:-10%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.05) 0%,transparent 70%);"></div>
+    </div>
+
+    <header class="flex items-center justify-between p-5 sticky top-0 bg-[#0a0f1a]/80 backdrop-blur-md z-50 border-b border-white/5">
         <div class="flex items-center gap-3">
-            <div class="bg-blue-600 p-2 rounded-lg shadow-lg shadow-blue-500/20">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                </svg>
+            <div class="icon-box">
+                <i data-lucide="trending-up" class="w-5 h-5 text-[#0a0f1a]" style="stroke-width: 3px;"></i>
             </div>
-            <h1 class="text-xl font-extrabold tracking-tighter text-white">UP<span class="text-blue-500">CASH</span></h1>
+            <h1 class="outfit text-xl font-extrabold tracking-tighter text-white uppercase">UP<span style="color: #00ce9c;">CASH</span></h1>
         </div>
         <a href="dashboard.html" class="p-2 bg-white/5 rounded-full border border-white/10 transition-all hover:bg-white/10">
-            <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            <i data-lucide="arrow-left" class="w-6 h-6 text-slate-300"></i>
         </a>
     </header>
 
-    <main class="p-5 max-w-4xl mx-auto space-y-6">
-        <h2 class="text-2xl font-extrabold text-white tracking-tight mt-4">My Transactions</h2>
+    <main class="relative z-10 p-5 max-w-4xl mx-auto space-y-6">
+        <h2 class="outfit text-2xl font-extrabold text-white tracking-tight mt-4">My Transactions</h2>
 
         <div class="glass-card rounded-3xl overflow-hidden shadow-2xl">
             <div class="table-container">
                 <table class="w-full text-left border-collapse">
-                    <thead class="bg-white/5 text-[10px] uppercase tracking-widest text-slate-500 font-black">
+                    <thead class="bg-white/5 text-[10px] uppercase tracking-widest text-slate-500 font-black outfit">
                         <tr>
                             <th class="px-6 py-4">Status & Date</th>
                             <th class="px-6 py-4">Action</th>
                             <th class="px-6 py-4 text-right">Amount</th>
-                            <th class="px-6 py-4 text-right">Running Balance</th>
+                            <th class="px-6 py-4 text-right">Balance</th>
                         </tr>
                     </thead>
                     <tbody id="history-body" class="divide-y divide-white/5 text-sm">
-                        <tr class="skeleton-row"><td class="px-6 py-5"><div class="h-10 w-10 skeleton rounded-xl"></div></td><td class="px-6 py-5"><div class="h-4 w-24 skeleton rounded mb-2"></div><div class="h-3 w-32 skeleton rounded"></div></td><td class="px-6 py-5"><div class="h-4 w-20 skeleton rounded ml-auto"></div></td><td class="px-6 py-5"><div class="h-4 w-16 skeleton rounded ml-auto"></div></td></tr>
-                        <tr class="skeleton-row"><td class="px-6 py-5"><div class="h-10 w-10 skeleton rounded-xl"></div></td><td class="px-6 py-5"><div class="h-4 w-24 skeleton rounded mb-2"></div><div class="h-3 w-32 skeleton rounded"></div></td><td class="px-6 py-5"><div class="h-4 w-20 skeleton rounded ml-auto"></div></td><td class="px-6 py-5"><div class="h-4 w-16 skeleton rounded ml-auto"></div></td></tr>
-                        <tr class="skeleton-row"><td class="px-6 py-5"><div class="h-10 w-10 skeleton rounded-xl"></div></td><td class="px-6 py-5"><div class="h-4 w-24 skeleton rounded mb-2"></div><div class="h-3 w-32 skeleton rounded"></div></td><td class="px-6 py-5"><div class="h-4 w-20 skeleton rounded ml-auto"></div></td><td class="px-6 py-5"><div class="h-4 w-16 skeleton rounded ml-auto"></div></td></tr>
+                        <tr class="skeleton-row"><td class="px-6 py-5"><div class="h-10 w-10 skeleton"></div></td><td class="px-6 py-5"><div class="h-4 w-24 skeleton mb-2"></div><div class="h-3 w-32 skeleton"></div></td><td class="px-6 py-5"><div class="h-4 w-20 skeleton ml-auto"></div></td><td class="px-6 py-5"><div class="h-4 w-16 skeleton ml-auto"></div></td></tr>
+                        <tr class="skeleton-row"><td class="px-6 py-5"><div class="h-10 w-10 skeleton"></div></td><td class="px-6 py-5"><div class="h-4 w-24 skeleton mb-2"></div><div class="h-3 w-32 skeleton"></div></td><td class="px-6 py-5"><div class="h-4 w-20 skeleton ml-auto"></div></td><td class="px-6 py-5"><div class="h-4 w-16 skeleton ml-auto"></div></td></tr>
                     </tbody>
                 </table>
             </div>
-            <div id="loading-text" class="p-10 text-center text-slate-500 animate-pulse text-xs font-bold uppercase tracking-widest">Syncing ledger...</div>
+            <div id="loading-text" class="p-10 text-center text-[#00ce9c] animate-pulse text-xs font-bold uppercase tracking-widest outfit">Syncing ledger...</div>
         </div>
+        
+        <footer class="text-center pt-4">
+            <p class="outfit text-[10px] font-bold text-slate-600 tracking-widest uppercase">&copy; UPCASH BUSINESS PLATFORM 2026</p>
+        </footer>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        lucide.createIcons();
         const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
 
         function getCategoryIcon(category) {
             const cat = category.toLowerCase();
-            if (cat.includes('deposit')) return `<svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>`;
-            if (cat.includes('earning')) return `<svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>`;
-            if (cat.includes('bonus') || cat.includes('commission')) return `<svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>`;
+            if (cat.includes('deposit')) return `<i data-lucide="plus-circle" class="w-5 h-5 text-[#00ce9c]"></i>`;
+            if (cat.includes('earning')) return `<i data-lucide="trending-up" class="w-5 h-5 text-yellow-400"></i>`;
+            if (cat.includes('bonus') || cat.includes('commission')) return `<i data-lucide="gift" class="w-5 h-5 text-purple-400"></i>`;
+            if (cat.includes('plan purchase')) return `<i data-lucide="shopping-bag" class="w-5 h-5 text-[#00ce9c]"></i>`;
+            if (cat.includes('reinvest')) return `<i data-lucide="refresh-ccw" class="w-5 h-5 text-blue-400"></i>`;
             
-            // Updated Shopping Bag icon for 'Plan purchase'
-            if (cat.includes('plan purchase')) return `<svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>`;
-            if (cat.includes('reinvest')) return `<svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>`;
-            
-            return `<svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            return `<i data-lucide="minus-circle" class="w-5 h-5 text-red-400"></i>`;
         }
 
         async function loadHistory() {
@@ -84,7 +125,7 @@
                 .order('created_at', { ascending: false });
             
             const tbody = document.getElementById('history-body');
-            tbody.innerHTML = ''; // Remove skeletons
+            tbody.innerHTML = ''; 
             document.getElementById('loading-text').classList.add('hidden');
 
             if (data && data.length > 0) {
@@ -96,15 +137,15 @@
                         <td class="px-6 py-5 flex items-center gap-3">
                             <div class="p-2 bg-white/5 rounded-xl">${getCategoryIcon(row.category)}</div>
                             <div>
-                                <span class="text-[9px] font-black text-slate-500 uppercase block">Completed</span>
+                                <span class="text-[9px] font-black text-slate-500 uppercase block outfit">Completed</span>
                                 <span class="text-xs text-slate-400 font-medium">${new Date(row.created_at).toLocaleDateString()}</span>
                             </div>
                         </td>
                         <td class="px-6 py-5">
-                            <span class="font-bold text-white block">${row.category}</span>
+                            <span class="font-bold text-white block outfit">${row.category}</span>
                             <span class="text-[10px] text-slate-500 italic block opacity-60">${row.description || ''}</span>
                         </td>
-                        <td class="px-6 py-5 text-right font-black ${isPos ? 'text-green-400' : 'text-red-500'}">
+                        <td class="px-6 py-5 text-right font-black outfit ${isPos ? 'text-[#00ce9c]' : 'text-red-500'}">
                             ${isPos ? '+' : '-'}UGX ${Math.abs(row.amount).toLocaleString()}
                         </td>
                         <td class="px-6 py-5 text-right font-mono text-slate-400 text-xs">
@@ -113,12 +154,12 @@
                     `;
                     tbody.appendChild(tr);
                 });
+                lucide.createIcons(); // Re-run for dynamic icons
             } else {
-                tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-500">No transactions found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-500 outfit">No transactions found</td></tr>';
             }
         }
         loadHistory();
     </script>
 </body>
-    </html>
-    
+</html>
