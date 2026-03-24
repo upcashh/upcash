@@ -251,7 +251,7 @@
 
                 try {
                     const { error } = await supabaseClient.rpc('reinvest_basic_plan', {
-                        user_id_param: user.id,
+                        user_id: user.id,
                         invest_amount: amount
                     });
 
