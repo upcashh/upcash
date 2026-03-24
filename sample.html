@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPCASH Business Flyer</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    .plan-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .plan-card:hover { transform: translateY(-6px); }
+    .shimmer { background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%); background-size: 200% 100%; animation: shimmer 3s infinite; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { animation: fadeUp 0.7s ease forwards; opacity: 0; }
+    .fade-up-1 { animation-delay: 0.1s; }
+    .fade-up-2 { animation-delay: 0.25s; }
+    .fade-up-3 { animation-delay: 0.4s; }
+    .fade-up-4 { animation-delay: 0.55s; }
+    .fade-up-5 { animation-delay: 0.7s; }
+    .glow-ring { box-shadow: 0 0 0 1px rgba(0,206,156,0.15), 0 8px 32px rgba(0,0,0,0.3); }
+    .glow-ring:hover { box-shadow: 0 0 0 1px rgba(0,206,156,0.35), 0 12px 40px rgba(0,0,0,0.4); }
+    .diamond-glow:hover { box-shadow: 0 0 24px rgba(0,206,156,0.25), 0 12px 40px rgba(0,0,0,0.4); }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="flyer-wrapper" class="h-full w-full overflow-auto" style="background-color: #0a0f1a;"><!-- Decorative BG -->
+   <div style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:0;">
+    <div style="position:absolute;top:-20%;right:-15%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.08) 0%,transparent 70%);"></div>
+    <div style="position:absolute;bottom:-10%;left:-10%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.05) 0%,transparent 70%);"></div>
+   </div>
+   <div class="relative z-10 max-w-4xl mx-auto px-5 py-10 sm:py-14"><!-- Header -->
+    <header class="text-center mb-10 fade-up fade-up-1">
+     <div class="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full" style="background:rgba(0,206,156,0.1);border:1px solid rgba(0,206,156,0.2);">
+      <svg width="20" height="20" viewbox="0 0 24 24" fill="none">
+       <circle cx="12" cy="12" r="10" stroke="#00CE9C" stroke-width="2" /><path d="M8 12l3 3 5-6" stroke="#00CE9C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg><span id="el-badge" style="color:#00CE9C;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.5px;">TRUSTED INVESTMENT PLATFORM</span>
+     </div>
+     <h1 id="el-brand" style="font-family:'Outfit',sans-serif;font-weight:900;font-size:clamp(2.2rem,5vw,3.6rem);letter-spacing:-1px;line-height:1.05;color:#ffffff;">UPCASH BUSINESS<br>
+      PLATFORM</h1>
+     <p id="el-tagline" class="mt-3" style="font-family:'Outfit',sans-serif;font-weight:300;font-size:clamp(1.1rem,2.5vw,1.5rem);color:#00CE9C;letter-spacing:1px;">Invest Smart. Earn Big.</p>
+     <p id="el-hero-desc" class="mt-4 max-w-lg mx-auto" style="font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.7;color:#8a95a8;">Join thousands of investors earning consistent returns. Choose a plan that fits your goals and watch your money grow.</p>
+    </header><!-- Plans -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10"><!-- BASIC -->
+     <div class="plan-card glow-ring rounded-2xl p-6 fade-up fade-up-2" style="background:linear-gradient(160deg,#111827 0%,#0d1321 100%);">
+      <div class="flex items-center gap-3 mb-4">
+       <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(0,206,156,0.1);">
+        <i data-lucide="zap" style="width:20px;height:20px;color:#00CE9C;"></i>
+       </div>
+       <div><span class="block text-xs font-semibold tracking-widest" style="color:#00CE9C;font-family:'DM Sans',sans-serif;">BASIC</span> <span class="block text-xs" style="color:#5a6477;font-family:'DM Sans',sans-serif;">Starter Plan</span>
+       </div>
+      </div>
+      <div class="mb-3">
+       <span id="el-basic-price" style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#ffffff;">$50</span><span style="color:#5a6477;font-family:'DM Sans',sans-serif;font-size:13px;"> min invest</span>
+      </div>
+      <ul style="font-family:'DM Sans',sans-serif;font-size:13px;color:#8a95a8;line-height:2;">
+       <li>✦ 5% weekly returns</li>
+       <li>✦ 24/7 support access</li>
+       <li>✦ Instant withdrawals</li>
+      </ul>
+     </div><!-- SILVER -->
+     <div class="plan-card glow-ring rounded-2xl p-6 fade-up fade-up-3" style="background:linear-gradient(160deg,#111827 0%,#0d1321 100%);">
+      <div class="flex items-center gap-3 mb-4">
+       <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(192,192,210,0.1);">
+        <i data-lucide="shield" style="width:20px;height:20px;color:#C0C0D2;"></i>
+       </div>
+       <div><span class="block text-xs font-semibold tracking-widest" style="color:#C0C0D2;font-family:'DM Sans',sans-serif;">SILVER</span> <span class="block text-xs" style="color:#5a6477;font-family:'DM Sans',sans-serif;">Growth Plan</span>
+       </div>
+      </div>
+      <div class="mb-3">
+       <span id="el-silver-price" style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#ffffff;">$200</span><span style="color:#5a6477;font-family:'DM Sans',sans-serif;font-size:13px;"> min invest</span>
+      </div>
+      <ul style="font-family:'DM Sans',sans-serif;font-size:13px;color:#8a95a8;line-height:2;">
+       <li>✦ 10% weekly returns</li>
+       <li>✦ Priority support</li>
+       <li>✦ Referral bonuses</li>
+      </ul>
+     </div><!-- GOLD -->
+     <div class="plan-card glow-ring rounded-2xl p-6 fade-up fade-up-4" style="background:linear-gradient(160deg,#111827 0%,#0d1321 100%);">
+      <div class="flex items-center gap-3 mb-4">
+       <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(255,195,0,0.1);">
+        <i data-lucide="award" style="width:20px;height:20px;color:#FFC300;"></i>
+       </div>
+       <div><span class="block text-xs font-semibold tracking-widest" style="color:#FFC300;font-family:'DM Sans',sans-serif;">GOLD</span> <span class="block text-xs" style="color:#5a6477;font-family:'DM Sans',sans-serif;">Premium Plan</span>
+       </div>
+      </div>
+      <div class="mb-3">
+       <span id="el-gold-price" style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#ffffff;">$500</span><span style="color:#5a6477;font-family:'DM Sans',sans-serif;font-size:13px;"> min invest</span>
+      </div>
+      <ul style="font-family:'DM Sans',sans-serif;font-size:13px;color:#8a95a8;line-height:2;">
+       <li>✦ 18% weekly returns</li>
+       <li>✦ Dedicated manager</li>
+       <li>✦ Early access features</li>
+      </ul>
+     </div><!-- DIAMOND -->
+     <div class="plan-card diamond-glow rounded-2xl p-6 fade-up fade-up-5 relative overflow-hidden" style="background:linear-gradient(160deg,#0c2a23 0%,#0d1321 100%);border:1px solid rgba(0,206,156,0.25);">
+      <div class="shimmer absolute inset-0 rounded-2xl"></div>
+      <div class="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-xs font-bold" style="background:#00CE9C;color:#0a0f1a;font-family:'DM Sans',sans-serif;">
+       POPULAR
+      </div>
+      <div class="relative z-10">
+       <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(0,206,156,0.15);">
+         <i data-lucide="gem" style="width:20px;height:20px;color:#00CE9C;"></i>
+        </div>
+        <div><span class="block text-xs font-semibold tracking-widest" style="color:#00CE9C;font-family:'DM Sans',sans-serif;">DIAMOND</span> <span class="block text-xs" style="color:#5a6477;font-family:'DM Sans',sans-serif;">Elite Plan</span>
+        </div>
+       </div>
+       <div class="mb-3">
+        <span id="el-diamond-price" style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#ffffff;">$1,000</span><span style="color:#5a6477;font-family:'DM Sans',sans-serif;font-size:13px;"> min invest</span>
+       </div>
+       <ul style="font-family:'DM Sans',sans-serif;font-size:13px;color:#8a95a8;line-height:2;">
+        <li>✦ 30% weekly returns</li>
+        <li>✦ VIP exclusive perks</li>
+        <li>✦ Compounding bonuses</li>
+       </ul>
+      </div>
+     </div>
+    </section><!-- CTA -->
+    <div class="text-center fade-up fade-up-5"><a id="el-cta-btn" href="#" onclick="event.preventDefault()" class="inline-block px-10 py-4 rounded-full font-bold text-base tracking-wide transition-all duration-300 hover:scale-105" style="background:#00CE9C;color:#0a0f1a;font-family:'Outfit',sans-serif;"> Start Investing Today </a>
+     <p id="el-website" class="mt-4" style="font-family:'DM Sans',sans-serif;font-size:14px;color:#5a6477;">🌐 www.upcash.com</p>
+    </div><!-- Footer trust -->
+    <footer class="mt-10 pt-6 text-center" style="border-top:1px solid rgba(255,255,255,0.05);">
+     <div class="flex flex-wrap justify-center gap-6" style="font-family:'DM Sans',sans-serif;font-size:12px;color:#3e4a5c;"><span class="flex items-center gap-1.5"><i data-lucide="lock" style="width:14px;height:14px;"></i> Secure Platform</span> <span class="flex items-center gap-1.5"><i data-lucide="users" style="width:14px;height:14px;"></i> 10,000+ Investors</span> <span class="flex items-center gap-1.5"><i data-lucide="globe" style="width:14px;height:14px;"></i> Available Worldwide</span>
+     </div>
+    </footer>
+   </div>
+  </div>
+  <script>
+  lucide.createIcons();
+
+  const defaultConfig = {
+    background_color: "#0a0f1a",
+    surface_color: "#111827",
+    text_color: "#ffffff",
+    primary_action_color: "#00CE9C",
+    secondary_action_color: "#8a95a8",
+    font_family: "Outfit",
+    font_size: 16,
+    brand_name: "UPCASH BUSINESS\nPLATFORM",
+    tagline: "Invest Smart. Earn Big.",
+    hero_description: "Join thousands of investors earning consistent returns. Choose a plan that fits your goals and watch your money grow.",
+    basic_price: "$50",
+    silver_price: "$200",
+    gold_price: "$500",
+    diamond_price: "$1,000",
+    cta_text: "Start Investing Today",
+    website_url: "www.upcash.com"
+  };
+
+  async function onConfigChange(config) {
+    const c = key => config[key] || defaultConfig[key];
+
+    // Colors
+    document.getElementById('flyer-wrapper').style.backgroundColor = c('background_color');
+    document.querySelectorAll('.plan-card').forEach(card => {
+      card.style.background = `linear-gradient(160deg, ${c('surface_color')} 0%, ${c('background_color')} 100%)`;
+    });
+
+    // Text color
+    document.getElementById('el-brand').style.color = c('text_color');
+    document.querySelectorAll('.plan-card span[id^="el-"]').forEach(el => el.style.color = c('text_color'));
+    ['el-basic-price','el-silver-price','el-gold-price','el-diamond-price'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.color = c('text_color');
+    });
+
+    // Primary action
+    const primaryColor = c('primary_action_color');
+    document.getElementById('el-tagline').style.color = primaryColor;
+    document.getElementById('el-cta-btn').style.background = primaryColor;
+
+    // Secondary
+    document.getElementById('el-hero-desc').style.color = c('secondary_action_color');
+    document.getElementById('el-website').style.color = c('secondary_action_color');
+
+    // Fonts
+    const font = c('font_family');
+    const baseSize = c('font_size');
+    const headingStack = `${font}, Outfit, sans-serif`;
+    const bodyStack = `${font}, DM Sans, sans-serif`;
+
+    document.getElementById('el-brand').style.fontFamily = headingStack;
+    document.getElementById('el-tagline').style.fontFamily = headingStack;
+    document.getElementById('el-cta-btn').style.fontFamily = headingStack;
+    document.getElementById('el-hero-desc').style.fontFamily = bodyStack;
+
+    document.getElementById('el-brand').style.fontSize = `${baseSize * 2.4}px`;
+    document.getElementById('el-tagline').style.fontSize = `${baseSize * 1.3}px`;
+    document.getElementById('el-hero-desc').style.fontSize = `${baseSize * 0.94}px`;
+
+    // Text content
+    document.getElementById('el-brand').innerHTML = c('brand_name').replace('\n','<br>');
+    document.getElementById('el-tagline').textContent = c('tagline');
+    document.getElementById('el-hero-desc').textContent = c('hero_description');
+    document.getElementById('el-basic-price').textContent = c('basic_price');
+    document.getElementById('el-silver-price').textContent = c('silver_price');
+    document.getElementById('el-gold-price').textContent = c('gold_price');
+    document.getElementById('el-diamond-price').textContent = c('diamond_price');
+    document.getElementById('el-cta-btn').textContent = c('cta_text');
+    document.getElementById('el-website').innerHTML = '🌐 ' + c('website_url');
+  }
+
+  function mapToCapabilities(config) {
+    const c = key => config[key] || defaultConfig[key];
+    function mut(key) {
+      return {
+        get: () => c(key),
+        set: (v) => { config[key] = v; window.elementSdk.setConfig({ [key]: v }); }
+      };
+    }
+    return {
+      recolorables: [mut('background_color'), mut('surface_color'), mut('text_color'), mut('primary_action_color'), mut('secondary_action_color')],
+      borderables: [],
+      fontEditable: mut('font_family'),
+      fontSizeable: mut('font_size')
+    };
+  }
+
+  function mapToEditPanelValues(config) {
+    const c = key => config[key] || defaultConfig[key];
+    return new Map([
+      ["brand_name", c("brand_name")],
+      ["tagline", c("tagline")],
+      ["hero_description", c("hero_description")],
+      ["basic_price", c("basic_price")],
+      ["silver_price", c("silver_price")],
+      ["gold_price", c("gold_price")],
+      ["diamond_price", c("diamond_price")],
+      ["cta_text", c("cta_text")],
+      ["website_url", c("website_url")]
+    ]);
+  }
+
+  window.elementSdk.init({ defaultConfig, onConfigChange, mapToCapabilities, mapToEditPanelValues });
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e172a5bc2d72065',t:'MTc3NDM3MDkyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  </html>
