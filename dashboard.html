@@ -323,7 +323,7 @@
             if (!session) return;
             const { data } = await supabaseClient.from('userinfo').select('username').eq('userid', session.user.id).single();
             if (data) {
-                const link = `https://upcashh.github.io/upcash/register.html?ref=${data.username}`;
+                const link = `https://upcashh.github.io/upcash/index.html?ref=${data.username}`;
                 navigator.clipboard.writeText(link);
                 alert("Link Copied!");
             }
