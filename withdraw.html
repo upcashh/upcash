@@ -163,6 +163,7 @@
                 document.getElementById('recipientNum').textContent = profile.telephone;
             }
 
+            // PRIMARY FILTER: Fetch only rows where category is exactly 'Withdraw'
             const { data: history } = await supabaseClient
                 .from('user_history')
                 .select('created_at, amount, status, category')
@@ -173,7 +174,9 @@
             const tbody = document.getElementById('withdrawTableBody');
             
             if (history && history.length > 0) {
-                tbody.innerHTML = history.map(row => {
+                tbody.innerHTML = history
+                .filter(row => row.category === 'Withdraw') // SECONDARY GUARD: Ensures only withdrawals render
+                .map(row => {
                     const statusStr = row.status ? row.status.toLowerCase() : 'pending';
                     const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
                     const amt = row.amount ? Math.abs(row.amount) : 0;
@@ -236,4 +239,5 @@
     window.onload = loadUserData;
 </script>
 </body>
-</html>
+    </html>
+    
