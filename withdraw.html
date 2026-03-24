@@ -219,7 +219,7 @@
 
         const { data: { user } } = await supabaseClient.auth.getUser();
         const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
-            user_id_param: user.id, 
+            user_id: user.id, 
             amount_to_withdraw: amount 
         });
 
