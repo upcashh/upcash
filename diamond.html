@@ -251,7 +251,7 @@
 
                 try {
                     const { error } = await supabaseClient.rpc('reinvest_diamond_plan', {
-                        user_id_param: user.id, // Ensure this matches your Supabase function param name
+                        user_id: user.id, // Ensure this matches your Supabase function param name
                         invest_amount: amount
                     });
 
