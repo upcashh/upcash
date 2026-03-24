@@ -13,7 +13,6 @@
         body { background-color: #0a0f1a; font-family: 'DM Sans', sans-serif; }
         .outfit { font-family: 'Outfit', sans-serif; }
         
-        /* The Icon Box from your Flyer */
         .icon-box {
             background: #00ce9c;
             border-radius: 12px;
@@ -30,19 +29,46 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
         
+        /* Floating Label Logic */
+        .input-container { position: relative; }
+
         .field { 
             width: 100%; 
-            padding: 0.75rem 1rem 0.75rem 3rem; 
+            padding: 1rem 1rem 1rem 3rem; 
             border-radius: 0.75rem; 
             background: rgba(10, 15, 26, 0.5); 
-            border: 1px solid rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.08); 
             color: white; 
             outline: none; 
-            transition: all 0.3s; 
+            transition: all 0.3s ease; 
         }
-        .field:focus { border-color: #00CE9C; box-shadow: 0 0 10px rgba(0, 206, 156, 0.2); }
+
+        /* The Animated Label */
+        .floating-label {
+            position: absolute;
+            left: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #111827; /* Matches card background to "cut" the line */
+            padding: 0 5px;
+            color: #5a6477;
+            font-size: 0.875rem;
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+
+        /* Animation Trigger: When focused or when input has text */
+        .field:focus + .floating-label,
+        .field:not(:placeholder-shown) + .floating-label {
+            top: 0;
+            font-size: 0.75rem;
+            color: #00CE9C;
+            transform: translateY(-50%) scale(0.9);
+        }
+
+        .field:focus { border-color: #00CE9C; box-shadow: 0 0 10px rgba(0, 206, 156, 0.1); }
         
-        .input-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #00CE9C; opacity: 0.7; }
+        .input-icon { position: absolute; left: 1rem; top: 1.1rem; color: #00CE9C; opacity: 0.7; z-index: 10; }
         
         .btn-primary {
             background: #00CE9C;
@@ -79,47 +105,51 @@
                </h1>
             </div>
             <p class="outfit font-300 text-lg text-[#00CE9C] tracking-[3px] uppercase">Invest Smart. Earn Big.</p>
-            <p class="mt-4 text-[#8a95a8] text-sm max-w-xs mx-auto">Automated instant withdrawals and deposits for smart investors.</p>
         </header>
 
         <div class="glass-card rounded-3xl p-6 sm:p-10">
-            <form id="signupForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form id="signupForm" class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6">
                 
-                <div class="relative sm:col-span-2">
+                <div class="input-container sm:col-span-2">
                     <i data-lucide="user" class="input-icon w-5 h-5"></i>
-                    <input type="text" id="username" required placeholder="Username" class="field">
-                    <div id="username-feedback" class="text-[10px] mt-1 ml-2 text-slate-500">Lowercase letters only.</div>
+                    <input type="text" id="username" required placeholder=" " class="field">
+                    <label class="floating-label">Username</label>
+                    <div id="username-feedback" class="text-[10px] absolute -bottom-5 left-2 text-slate-500">Lowercase letters only.</div>
                 </div>
 
-                <div class="relative">
+                <div class="input-container">
                     <i data-lucide="mail" class="input-icon w-5 h-5"></i>
-                    <input type="email" id="email" required placeholder="Email Address" class="field">
+                    <input type="email" id="email" required placeholder=" " class="field">
+                    <label class="floating-label">Email Address</label>
                 </div>
 
-                <div class="relative">
+                <div class="input-container">
                     <i data-lucide="phone" class="input-icon w-5 h-5"></i>
-                    <input type="tel" id="phone" required placeholder="Phone Number" class="field">
+                    <input type="tel" id="phone" required placeholder=" " class="field">
+                    <label class="floating-label">Phone Number</label>
                 </div>
 
-                <div class="relative">
+                <div class="input-container">
                     <i data-lucide="lock" class="input-icon w-5 h-5"></i>
-                    <input type="password" id="password" required placeholder="Create Password" class="field">
+                    <input type="password" id="password" required placeholder=" " class="field">
+                    <label class="floating-label">Password</label>
                 </div>
 
-                <div class="relative">
+                <div class="input-container">
                     <i data-lucide="shield-check" class="input-icon w-5 h-5"></i>
-                    <input type="password" id="confirmPassword" required placeholder="Confirm Password" class="field">
-                    <div id="pass-feedback" class="text-[10px] mt-1 ml-2 text-red-400"></div>
+                    <input type="password" id="confirmPassword" required placeholder=" " class="field">
+                    <label class="floating-label">Confirm Password</label>
+                    <div id="pass-feedback" class="text-[10px] absolute -bottom-5 left-2 text-red-400"></div>
                 </div>
 
                 <input type="hidden" id="referrerInput" name="referred_by" value="">
 
-                <button type="submit" id="submitBtn" disabled class="btn-primary sm:col-span-2 w-full py-4 rounded-xl outfit font-bold text-lg mt-2">
+                <button type="submit" id="submitBtn" disabled class="btn-primary sm:col-span-2 w-full py-4 rounded-xl outfit font-bold text-lg mt-4">
                     Register Now
                 </button>
             </form>
 
-            <div class="mt-6 text-center pt-4 border-t border-white/5">
+            <div class="mt-10 text-center pt-4 border-t border-white/5">
                 <p class="text-slate-500 text-sm">Already a member? <a href="signin.html" class="text-[#00CE9C] font-bold hover:underline">Sign In</a></p>
             </div>
         </div>
@@ -137,14 +167,11 @@
 <script>
     lucide.createIcons();
 
-    // Referrer Capture Logic (Both URL and Storage)
     document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);
         let referrer = urlParams.get('ref') || localStorage.getItem('affiliate_user');
-        
         if (referrer) {
             document.getElementById('referrerInput').value = referrer;
-            console.log("Referral active: " + referrer);
         }
     });
 
