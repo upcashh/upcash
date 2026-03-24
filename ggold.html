@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0f1a">
+    <title>Gold Plan | UPCASH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'DM Sans', sans-serif; 
+            background-color: #0a0f1a;
+            color: #e2e8f0; 
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Decorative Background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 206, 156, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(0, 206, 156, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .glass-card { 
+            background: linear-gradient(160deg, #111827 0%, #0d1321 100%); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(0, 206, 156, 0.15); 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .text-gradient { 
+            color: #00CE9C;
+            font-family: 'Outfit', sans-serif; 
+            font-weight: 800; 
+        }
+        
+        /* Themed Slider */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: rgba(0, 206, 156, 0.1); height: 8px; border-radius: 10px; outline: none; }
+        input[type=range]::-webkit-slider-thumb { 
+            -webkit-appearance: none; appearance: none; width: 22px; height: 22px; 
+            background: #00CE9C; border-radius: 50%; cursor: pointer; border: 3px solid #fff; 
+            box-shadow: 0 0 15px rgba(0, 206, 156, 0.5); 
+        }
+
+        .slider-value-bubble {
+            position: absolute;
+            top: -35px;
+            transform: translateX(-50%);
+            background: #00CE9C;
+            color: #0a0f1a;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            white-space: nowrap;
+        }
+        .slider-value-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #00CE9C;
+        }
+
+        .btn-primary { 
+            background: #00CE9C; 
+            color: #0a0f1a; 
+            font-family: 'Outfit', sans-serif; 
+            font-weight: 800;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover { box-shadow: 0 0 20px rgba(0, 206, 156, 0.4); transform: translateY(-1px); }
+
+        .skeleton { background: rgba(0, 206, 156, 0.05); overflow: hidden; position: relative; }
+        .error-glow { border-color: #ef4444 !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
+
+        .header-bg {
+            background: rgba(10, 15, 26, 0.8);
+            border-bottom: 1px solid rgba(0, 206, 156, 0.1);
+            backdrop-filter: blur(15px);
+        }
+    </style>
+</head>
+<body class="pb-10">
+
+    <header class="header-bg flex items-center justify-between p-5 sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="bg-[#00CE9C] p-2 rounded-lg">
+                <svg class="w-5 h-5 text-[#0a0f1a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+            </div>
+            <h1 class="text-xl font-bold tracking-tight font-['Outfit'] text-white">UP<span style="color: #00CE9C;">CASH</span></h1>
+        </div>
+        <a href="dashboard.html" class="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-all border border-white/10">
+            <svg class="w-6 h-6 text-[#00CE9C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </a>
+    </header>
+
+    <div id="skeleton-view" class="p-5 max-w-lg mx-auto space-y-6">
+        <div class="h-20 w-full skeleton rounded-3xl"></div>
+        <div class="h-32 w-full skeleton rounded-3xl"></div>
+        <div class="h-48 w-full skeleton rounded-3xl"></div>
+    </div>
+
+    <main id="main-content" class="hidden p-5 max-w-lg mx-auto space-y-8">
+        
+        <div class="flex items-center gap-4 mt-2">
+            <div class="p-4 bg-amber-500/10 rounded-2xl border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+                <svg class="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"></path>
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-3xl font-black text-white tracking-tight font-['Outfit']">Gold Plan</h2>
+                <span class="text-amber-500 font-bold text-xs tracking-widest uppercase">VIP Elite Tier</span>
+            </div>
+        </div>
+
+        <div class="glass-card p-6 rounded-[24px] leading-relaxed text-slate-400 border-white/5 shadow-xl">
+            Experience the pinnacle of growth with our <span class="text-amber-500 font-bold">Gold Plan</span>. Earn a premium <span class="text-white font-bold">12% daily ROI</span> for a period of <span class="text-white font-bold">25 days</span>. 
+        </div>
+
+        <div class="space-y-12 pt-4">
+            <div class="relative w-full px-2">
+                <div id="bubble" class="slider-value-bubble">UGX 525,000</div>
+                <input type="range" id="profitSlider" min="525000" max="1215000" step="5000" value="525000" oninput="calculateProfit()">
+                <div class="flex justify-between text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1 mt-3">
+                    <span>Min: 525,000</span>
+                    <span>Max: 1,215,000</span>
+                </div>
+            </div>
+            
+            <div class="flex flex-col items-center gap-3">
+                <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Total Estimated Profit (25 Days)</p>
+                <div class="bg-[#00CE9C]/5 border border-[#00CE9C]/20 text-[#00CE9C] px-10 py-5 rounded-[24px] font-black text-3xl font-['Outfit'] shadow-[0_10px_30px_rgba(0,206,156,0.1)]">
+                    UGX <span id="profitResult">1,575,000</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-4 space-y-8">
+            <div class="space-y-4">
+                <h4 class="text-lg font-bold text-white flex items-center gap-2 font-['Outfit']">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-[#00CE9C]"></i> Direct Deposit
+                </h4>
+                <div id="depositWrapper" class="glass-card p-1 rounded-2xl transition-all duration-300">
+                    <div class="flex items-center px-5">
+                        <span class="text-slate-500 font-black text-xs">UGX</span>
+                        <input type="number" id="depositAmount" placeholder="Enter amount" class="w-full bg-transparent p-4 outline-none font-bold text-white placeholder:text-slate-700" oninput="validateForm('deposit')">
+                    </div>
+                </div>
+                <p id="depositError" class="text-red-500 text-[10px] font-black uppercase hidden px-2">Range: 525,000 - 1,215,000 UGX</p>
+                <button onclick="processAction('deposit')" class="btn-primary w-full py-5 rounded-2xl shadow-lg">
+                    DEPOSIT NOW
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="text-lg font-bold text-white flex items-center gap-2 font-['Outfit']">
+                    <i data-lucide="refresh-cw" class="w-5 h-5 text-[#00CE9C]"></i> Reinvest Balance
+                </h4>
+                <div id="reinvestWrapper" class="glass-card p-1 rounded-2xl transition-all duration-300">
+                    <div class="flex items-center px-5">
+                        <span class="text-slate-500 font-black text-xs">UGX</span>
+                        <input type="number" id="reinvestAmount" placeholder="Enter amount" class="w-full bg-transparent p-4 outline-none font-bold text-white placeholder:text-slate-700" oninput="validateForm('reinvest')">
+                    </div>
+                </div>
+                <p id="reinvestError" class="text-red-500 text-[10px] font-black uppercase hidden px-2">Range: 525,000 - 1,215,000 UGX</p>
+                <button onclick="processAction('reinvest')" class="glass-card border-[#00CE9C]/30 text-white w-full py-5 rounded-2xl font-bold hover:bg-[#00CE9C]/10 transition-colors">
+                    CONFIRM REINVESTMENT
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+
+        const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('skeleton-view').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+                calculateProfit(); 
+            }, 800);
+        });
+
+        function calculateProfit() {
+            const slider = document.getElementById('profitSlider');
+            const bubble = document.getElementById('bubble');
+            const val = slider.value;
+            const total = val * 0.12 * 25;
+            document.getElementById('profitResult').innerText = Math.floor(total).toLocaleString();
+            bubble.innerText = "UGX " + Number(val).toLocaleString();
+            const percent = (val - slider.min) / (slider.max - slider.min);
+            const offset = percent * (slider.offsetWidth - 22) + 11;
+            bubble.style.left = offset + "px";
+        }
+
+        function validateForm(type) {
+            const input = document.getElementById(`${type}Amount`);
+            const wrapper = document.getElementById(`${type}Wrapper`);
+            const error = document.getElementById(`${type}Error`);
+            const val = parseFloat(input.value);
+
+            if (val >= 525000 && val <= 1215000) {
+                wrapper.classList.remove('error-glow');
+                error.classList.add('hidden');
+                return true;
+            } else {
+                if(input.value !== "") {
+                    wrapper.classList.add('error-glow');
+                    error.classList.remove('hidden');
+                }
+                return false;
+            }
+        }
+
+        async function processAction(type) {
+            const isValid = validateForm(type);
+            const amount = parseFloat(document.getElementById(`${type}Amount`).value);
+            const btn = event.currentTarget; 
+
+            if (!isValid) return;
+
+            if (type === 'reinvest') {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) return alert("Please log in to reinvest.");
+
+                const originalText = btn.innerText;
+                btn.innerText = "PROCESSING...";
+                btn.disabled = true;
+
+                try {
+                    const { error } = await supabaseClient.rpc('reinvest_gold_plan', {
+                        user_id: user.id,
+                        invest_amount: amount
+                    });
+
+                    if (error) throw error;
+
+                    alert("Successfully reinvested in Gold Plan!");
+                    window.location.href = "profile.html";
+
+                } catch (err) {
+                    alert("Reinvestment failed: " + err.message);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            } else {
+                alert(`Direct Deposit of UGX ${amount.toLocaleString()} initiated. Proceeding to payment...`);
+            }
+        }
+    </script>
+</body>
+                  </html>
+                  
