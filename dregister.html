@@ -43,21 +43,20 @@
             transition: all 0.3s ease; 
         }
 
-        /* The Animated Label */
         .floating-label {
             position: absolute;
             left: 3rem;
             top: 50%;
             transform: translateY(-50%);
-            background: #111827; /* Matches card background to "cut" the line */
-            padding: 0 5px;
+            /* Using a solid color that matches the dark card for the "cutout" effect */
+            background: #101624; 
+            padding: 0 6px;
             color: #5a6477;
             font-size: 0.875rem;
             pointer-events: none;
             transition: all 0.2s ease;
         }
 
-        /* Animation Trigger: When focused or when input has text */
         .field:focus + .floating-label,
         .field:not(:placeholder-shown) + .floating-label {
             top: 0;
@@ -248,9 +247,11 @@
             submitBtn.disabled = false;
         } 
         else { 
+            // 1. Clear local referral storage
             localStorage.removeItem('affiliate_user');
-            alert("Success! Check your email to verify your account."); 
-            form.reset(); 
+            
+            // 2. Redirect to verification waiting page
+            window.location.href = "verify.html"; 
         }
     });
 </script>
