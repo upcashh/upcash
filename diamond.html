@@ -3,32 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#0a0f1a">
     <title>Diamond Plan | UPCASH</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         body { 
-            font-family: 'Inter', sans-serif; 
-            background: radial-gradient(circle at top left, #1e293b, #0f172a); 
+            font-family: 'DM Sans', sans-serif; 
+            background-color: #0a0f1a;
             color: #e2e8f0; 
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
-        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .text-gradient { background: linear-gradient(90deg, #22d3ee, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .outfit { font-family: 'Outfit', sans-serif; }
+
+        .glass-card { 
+            background: linear-gradient(160deg, #111827 0%, #0d1321 100%); 
+            border: 1px solid rgba(0, 206, 156, 0.15);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .icon-box {
+            background: #00ce9c;
+            border-radius: 12px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 206, 156, 0.4);
+        }
         
-        input[type=range] { -webkit-appearance: none; width: 100%; background: rgba(255,255,255,0.1); height: 8px; border-radius: 10px; outline: none; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; background: #06b6d4; border-radius: 50%; cursor: pointer; border: 3px solid #fff; box-shadow: 0 0 15px rgba(6, 182, 212, 0.5); position: relative; z-index: 2; }
+        /* Custom emerald range slider */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: rgba(0, 206, 156, 0.1); height: 8px; border-radius: 10px; outline: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; background: #00ce9c; border-radius: 50%; cursor: pointer; border: 3px solid #fff; box-shadow: 0 0 15px rgba(0, 206, 156, 0.5); position: relative; z-index: 2; }
 
         .slider-value-bubble {
             position: absolute;
             top: -35px;
             transform: translateX(-50%);
-            background: #06b6d4;
-            color: white;
+            background: #00ce9c;
+            color: #0a0f1a;
             padding: 2px 8px;
             border-radius: 6px;
             font-size: 10px;
@@ -43,16 +61,16 @@
             transform: translateX(-50%);
             border-left: 4px solid transparent;
             border-right: 4px solid transparent;
-            border-top: 4px solid #06b6d4;
+            border-top: 4px solid #00ce9c;
         }
 
-        .skeleton { background: rgba(255, 255, 255, 0.05); overflow: hidden; position: relative; }
+        .skeleton { background: rgba(0, 206, 156, 0.05); overflow: hidden; position: relative; }
         .skeleton::after {
             content: "";
             position: absolute;
             top: 0; right: 0; bottom: 0; left: 0;
             transform: translateX(-100%);
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            background: linear-gradient(90deg, transparent, rgba(0, 206, 156, 0.05), transparent);
             animation: shimmer 1.5s infinite;
         }
         @keyframes shimmer { 100% { transform: translateX(100%); } }
@@ -60,21 +78,26 @@
         .error-glow { border-color: #ef4444 !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); animation: shake 0.2s ease-in-out 0s 2; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
-        .ripple-btn { position: relative; overflow: hidden; transition: all 0.2s; cursor: pointer; }
+        .ripple-btn { transition: all 0.2s; cursor: pointer; background: #00ce9c; color: #0a0f1a; box-shadow: 0 10px 20px rgba(0,206,156,0.2); }
         .ripple-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body class="pb-10">
 
-    <header class="flex items-center justify-between p-5 sticky top-0 bg-[#0f172a]/80 backdrop-blur-md z-50 border-b border-white/5">
+    <div style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:0;">
+        <div style="position:absolute;top:-20%;right:-15%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.08) 0%,transparent 70%);"></div>
+        <div style="position:absolute;bottom:-10%;left:-10%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.05) 0%,transparent 70%);"></div>
+    </div>
+
+    <header class="flex items-center justify-between p-5 sticky top-0 bg-[#0a0f1a]/80 backdrop-blur-md z-50 border-b border-white/5">
         <div class="flex items-center gap-3">
-            <div class="bg-blue-600 p-2 rounded-lg shadow-lg shadow-blue-500/20">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+            <div class="icon-box">
+                <i data-lucide="trending-up" class="w-5 h-5 text-[#0a0f1a]" style="stroke-width: 3px;"></i>
             </div>
-            <h1 class="text-xl font-extrabold tracking-tighter text-white">UP<span class="text-blue-500">CASH</span></h1>
+            <h1 class="outfit text-xl font-extrabold tracking-tighter text-white uppercase">UP<span style="color: #00ce9c;">CASH</span></h1>
         </div>
         <a href="dashboard.html" class="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-all border border-white/10">
-            <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            <i data-lucide="arrow-left" class="w-6 h-6 text-slate-300"></i>
         </a>
     </header>
 
@@ -87,42 +110,39 @@
             </div>
         </div>
         <div class="h-32 w-full skeleton rounded-3xl"></div>
-        <div class="h-10 w-full skeleton rounded-xl"></div>
         <div class="h-48 w-full skeleton rounded-3xl"></div>
     </div>
 
-    <main id="main-content" class="hidden p-5 max-w-lg mx-auto space-y-8">
+    <main id="main-content" class="relative z-10 hidden p-5 max-w-lg mx-auto space-y-8">
         
         <div class="flex items-center gap-4 mt-4">
-            <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.2)]">
-                <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
-                </svg>
+            <div class="icon-box" style="width: 64px; height: 64px;">
+                <i data-lucide="gem" class="w-8 h-8 text-[#0a0f1a]"></i>
             </div>
             <div>
-                <h2 class="text-3xl font-extrabold text-white tracking-tight">Diamond Plan</h2>
-                <span class="text-cyan-400 font-bold text-xs tracking-widest uppercase">Ultimate Tier</span>
+                <h2 class="outfit text-3xl font-extrabold text-white tracking-tight">Diamond Plan</h2>
+                <span class="text-[#00ce9c] font-bold text-xs tracking-widest uppercase">Ultimate Tier</span>
             </div>
         </div>
 
         <div class="glass-card p-6 rounded-3xl leading-relaxed text-slate-300 border-white/10 shadow-xl">
-            Join our <span class="text-cyan-400 font-bold">Diamond Plan</span>, and earn <span class="text-white font-bold">14%</span> of your investment daily for <span class="text-white font-bold">21 days</span>. 
+            Join our <span class="text-[#00ce9c] font-bold">Diamond Plan</span>, and earn <span class="text-white font-bold">14%</span> of your investment daily for <span class="text-white font-bold">21 days</span>. 
             <p class="mt-3 text-sm text-slate-400 font-medium">Use the profits calculator below to realize your total profits at the end of the period.</p>
         </div>
 
         <div class="space-y-12 pt-6">
             <div class="relative w-full px-2">
-                <div id="bubble" class="slider-value-bubble">UGX 1,215,000</div>
+                <div id="bubble" class="slider-value-bubble outfit">UGX 1,215,000</div>
                 <input type="range" id="profitSlider" min="1215000" max="5000000" step="10000" value="1215000" oninput="calculateProfit()">
-                <div class="flex justify-between text-[10px] font-extrabold text-slate-500 uppercase tracking-tighter px-1 mt-2">
-                    <span>Minimum: 1,215,000</span>
-                    <span>Ultimate: 5,000,000</span>
+                <div class="flex justify-between text-[10px] font-extrabold text-slate-500 uppercase tracking-tighter px-1 mt-2 outfit">
+                    <span>Min: 1,215,000</span>
+                    <span>Max: 5,000,000</span>
                 </div>
             </div>
             
             <div class="flex flex-col items-center gap-3">
-                <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Total Estimated Profit (21 Days)</p>
-                <div class="bg-cyan-600/10 border border-cyan-500/30 text-cyan-400 px-10 py-4 rounded-3xl font-black text-2xl shadow-[0_10px_30px_rgba(6,182,212,0.15)]">
+                <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest outfit">Total Estimated Profit (21 Days)</p>
+                <div class="bg-[#00ce9c]/10 border border-[#00ce9c]/30 text-[#00ce9c] px-10 py-4 rounded-3xl font-black text-2xl shadow-[0_10px_30px_rgba(0,206,156,0.15)] outfit">
                     UGX <span id="profitResult">3,572,100</span>
                 </div>
             </div>
@@ -130,44 +150,48 @@
 
         <div class="pt-4 space-y-8">
             <div class="space-y-4">
-                <h4 class="text-lg font-bold text-gradient flex items-center gap-2">
-                    <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <h4 class="outfit text-lg font-bold text-white flex items-center gap-2">
+                    <i data-lucide="arrow-down-to-line" class="w-5 h-5 text-[#00ce9c]"></i>
                     Direct Deposit
                 </h4>
                 <div id="depositWrapper" class="glass-card p-1 rounded-2xl border border-white/10 transition-all duration-300">
                     <div class="flex items-center px-5">
-                        <span class="text-slate-500 font-black text-xs uppercase">UGX</span>
-                        <input type="number" id="depositAmount" placeholder="Enter amount" class="w-full bg-transparent p-4 outline-none font-bold text-white placeholder:text-slate-700" oninput="validateForm('deposit')">
+                        <span class="text-[#00ce9c] font-black text-xs uppercase outfit">UGX</span>
+                        <input type="number" id="depositAmount" placeholder="Enter amount" class="w-full bg-transparent p-4 outline-none font-bold text-white placeholder:text-slate-700 outfit" oninput="validateForm('deposit')">
                     </div>
                 </div>
-                <p id="depositError" class="text-red-500 text-[10px] font-black uppercase hidden px-2 tracking-tighter">Amount must be at least UGX 1,215,000</p>
-                <button onclick="processAction('deposit')" class="ripple-btn w-full py-5 bg-cyan-600 hover:bg-cyan-500 rounded-2xl font-extrabold text-white shadow-lg shadow-cyan-900/40 transition-colors">
-                    DEPOSIT NOW
+                <p id="depositError" class="text-red-500 text-[10px] font-black uppercase hidden px-2 tracking-tighter">Min: UGX 1,215,000</p>
+                <button onclick="processAction('deposit')" class="ripple-btn w-full py-5 rounded-2xl font-extrabold outfit uppercase tracking-wider">
+                    Deposit Now
                 </button>
             </div>
 
             <div class="space-y-4">
-                <h4 class="text-lg font-bold text-gradient flex items-center gap-2">
-                    <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <h4 class="outfit text-lg font-bold text-white flex items-center gap-2">
+                    <i data-lucide="refresh-cw" class="w-5 h-5 text-[#00ce9c]"></i>
                     Reinvest Balance
                 </h4>
                 <div id="reinvestWrapper" class="glass-card p-1 rounded-2xl border border-white/10 transition-all duration-300">
                     <div class="flex items-center px-5">
-                        <span class="text-slate-500 font-black text-xs uppercase">UGX</span>
-                        <input type="number" id="reinvestAmount" placeholder="Enter amount" class="w-full bg-transparent p-4 outline-none font-bold text-white placeholder:text-slate-700" oninput="validateForm('reinvest')">
+                        <span class="text-[#00ce9c] font-black text-xs uppercase outfit">UGX</span>
+                        <input type="number" id="reinvestAmount" placeholder="Enter amount" class="w-full bg-transparent p-4 outline-none font-bold text-white placeholder:text-slate-700 outfit" oninput="validateForm('reinvest')">
                     </div>
                 </div>
-                <p id="reinvestError" class="text-red-500 text-[10px] font-black uppercase hidden px-2 tracking-tighter">Amount must be at least UGX 1,215,000</p>
-                <button onclick="processAction('reinvest')" class="ripple-btn w-full py-5 bg-slate-800 border border-cyan-500/20 rounded-2xl font-extrabold text-cyan-400 shadow-lg shadow-black/40 transition-colors">
-                    CONFIRM REINVESTMENT
+                <p id="reinvestError" class="text-red-500 text-[10px] font-black uppercase hidden px-2 tracking-tighter">Min: UGX 1,215,000</p>
+                <button onclick="processAction('reinvest')" class="ripple-btn w-full py-5 bg-transparent border border-[#00ce9c] text-[#00ce9c] hover:bg-[#00ce9c]/10 rounded-2xl font-extrabold outfit uppercase tracking-wider shadow-none">
+                    Confirm Reinvestment
                 </button>
             </div>
         </div>
 
+        <footer class="text-center pb-10">
+            <p class="outfit text-[10px] font-bold text-slate-600 tracking-widest uppercase">&copy; UPCASH BUSINESS PLATFORM 2026</p>
+        </footer>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        lucide.createIcons();
         const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
 
         window.addEventListener('load', () => {
@@ -211,7 +235,8 @@
 
         async function processAction(type) {
             const isValid = validateForm(type);
-            const amount = parseFloat(document.getElementById(`${type}Amount`).value);
+            const amountInput = document.getElementById(`${type}Amount`);
+            const amount = parseFloat(amountInput.value);
             const btn = event.currentTarget;
 
             if (!isValid) return;
@@ -226,7 +251,7 @@
 
                 try {
                     const { error } = await supabaseClient.rpc('reinvest_diamond_plan', {
-                        user_id: user.id,
+                        user_id_param: user.id, // Ensure this matches your Supabase function param name
                         invest_amount: amount
                     });
 
@@ -241,7 +266,7 @@
                     btn.disabled = false;
                 }
             } else {
-                alert(`Direct Deposit of UGX ${amount.toLocaleString()} initiated.`);
+                alert(`Deposit request for UGX ${amount.toLocaleString()} received.`);
             }
         }
     </script>
