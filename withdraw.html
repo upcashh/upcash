@@ -167,7 +167,7 @@
                 .from('user_history')
                 .select('created_at, amount, status, category')
                 .eq('userid', user.id)
-                .ilike('category', 'Withdraw') 
+                .eq('category', 'Withdraw') 
                 .order('created_at', { ascending: false });
 
             const tbody = document.getElementById('withdrawTableBody');
