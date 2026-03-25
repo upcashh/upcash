@@ -90,18 +90,6 @@
             transform: scale(1.01);
         }
 
-        .ripple {
-            position: absolute;
-            background: rgba(0, 206, 156, 0.3);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple-animation 0.6s linear;
-            pointer-events: none;
-        }
-        @keyframes ripple-animation {
-            to { transform: scale(4); opacity: 0; }
-        }
-
         .skeleton { background: rgba(0, 206, 156, 0.05); overflow: hidden; position: relative; }
     </style>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
@@ -121,7 +109,7 @@
             <i data-lucide="user" class="w-6 h-6"></i>
         </button>
     </a>
-    <button class="p-2 hover:bg-white/5 rounded-full transition-colors text-[#00CE9C]">
+    <button onclick="toggleMenu()" class="p-2 hover:bg-white/5 rounded-full transition-colors text-[#00CE9C]">
         <i data-lucide="menu" class="w-7 h-7"></i>
     </button>
    </div>
@@ -255,15 +243,82 @@
       </table>
      </div>
     </div>
-
    </main>
   </div>
 
+  <div id="side-menu-backdrop" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <div id="side-menu" class="fixed top-0 right-0 h-full w-[280px] glass-card z-[70] translate-x-full transition-transform duration-300 ease-out flex flex-col border-l border-white/10">
+      <div class="p-6 border-b border-white/5 flex justify-between items-center">
+          <h2 class="font-['Outfit'] font-extrabold text-lg text-white tracking-tight">MENU</h2>
+          <button onclick="toggleMenu()" class="p-2 hover:bg-white/5 rounded-full text-slate-400 transition-colors">
+              <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 space-y-6">
+          <div>
+              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Network</p>
+              <div class="space-y-1">
+                  <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="user-check" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform"></i>
+                      <span class="text-sm font-medium text-slate-200">My Affiliates</span>
+                  </a>
+                  <a href="affiliates.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="award" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform"></i>
+                      <span class="text-sm font-medium text-slate-200">Affiliate Bonuses</span>
+                  </a>
+              </div>
+          </div>
+
+          <div>
+              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Records</p>
+              <div class="space-y-1">
+                  <a href="transactions.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="arrow-down-to-line" class="w-5 h-5 text-emerald-400 group-hover:translate-y-0.5 transition-transform"></i>
+                      <span class="text-sm font-medium text-slate-200">Deposits</span>
+                  </a>
+                  <a href="withdraw.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="arrow-up-from-line" class="w-5 h-5 text-orange-400 group-hover:-translate-y-0.5 transition-transform"></i>
+                      <span class="text-sm font-medium text-slate-200">Withdrawals</span>
+                  </a>
+                  <a href="transactions.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="list" class="w-5 h-5 text-slate-400 group-hover:scale-110 transition-transform"></i>
+                      <span class="text-sm font-medium text-slate-200">All Transactions</span>
+                  </a>
+                  <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="pie-chart" class="w-5 h-5 text-cyan-400 group-hover:rotate-12 transition-transform"></i>
+                      <span class="text-sm font-medium text-slate-200">My Running Plans</span>
+                  </a>
+              </div>
+          </div>
+
+          <div>
+              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Investment Plans</p>
+              <a href="investment.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                  <i data-lucide="trending-up" class="w-5 h-5 text-[#00CE9C] group-hover:scale-125 transition-transform"></i>
+                  <span class="text-sm font-medium text-slate-200">Explore Plans</span>
+              </a>
+          </div>
+      </div>
+
+      <div class="p-6 border-t border-white/5 space-y-4 bg-black/20">
+          <button onclick="logout()" class="w-full flex items-center justify-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-sm font-bold hover:bg-red-500/20 transition-all">
+              <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
+          </button>
+          <div class="flex flex-col items-center gap-1 opacity-50">
+              <div class="flex items-center gap-1">
+                  <i data-lucide="trending-up" class="w-3 h-3 text-[#00CE9C]"></i>
+                  <h1 class="text-[10px] font-bold font-['Outfit'] tracking-tighter text-white uppercase">UP<span style="color: #00CE9C;">CASH</span></h1>
+              </div>
+              <p class="text-[7px] text-slate-500 font-bold uppercase tracking-widest">Business Platform 2026</p>
+          </div>
+      </div>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
         lucide.createIcons();
 
-        // Technical Logic (Supabase initiation unchanged)
         const supabaseClient = supabase.createClient(
             'https://wbodpfbmilhperccgzei.supabase.co', 
             'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN'
@@ -328,102 +383,30 @@
                 alert("Link Copied!");
             }
         }
+
+        function toggleMenu() {
+            const menu = document.getElementById('side-menu');
+            const backdrop = document.getElementById('side-menu-backdrop');
+            const isOpening = menu.classList.contains('translate-x-full');
+
+            if (isOpening) {
+                menu.classList.remove('translate-x-full');
+                backdrop.classList.remove('opacity-0', 'pointer-events-none');
+                lucide.createIcons();
+            } else {
+                menu.classList.add('translate-x-full');
+                backdrop.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        async function logout() {
+            if(confirm("Are you sure you want to log out?")) {
+                await supabaseClient.auth.signOut();
+                window.location.href = "signin.html";
+            }
+        }
         
         checkAuthAndLoad();
   </script>
- <div id="side-menu-backdrop" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300"></div>
-
-<div id="side-menu" class="fixed top-0 right-0 h-full w-[280px] glass-card z-[70] translate-x-full transition-transform duration-300 ease-out flex flex-col border-l border-white/10">
-    <div class="p-6 border-b border-white/5 flex justify-between items-center">
-        <h2 class="outfit font-800 text-lg text-white tracking-tight">MENU</h2>
-        <button onclick="toggleMenu()" class="p-2 hover:bg-white/5 rounded-full text-slate-400">
-            <i data-lucide="x" class="w-6 h-6"></i>
-        </button>
-    </div>
-
-    <div class="flex-1 overflow-y-auto p-4 space-y-6">
-        <div>
-            <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2">Network</p>
-            <div class="space-y-1">
-                <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                    <i data-lucide="user-check" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium text-slate-200">My Affiliates</span>
-                </a>
-                <a href="affiliates.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                    <i data-lucide="award" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium text-slate-200">Affiliate Bonuses</span>
-                </a>
-            </div>
-        </div>
-
-        <div>
-            <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2">Records</p>
-            <div class="space-y-1">
-                <a href="transactions.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                    <i data-lucide="arrow-down-to-line" class="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium text-slate-200">Deposits</span>
-                </a>
-                <a href="withdraw.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                    <i data-lucide="arrow-up-from-line" class="w-5 h-5 text-orange-400 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium text-slate-200">Withdrawals</span>
-                </a>
-                <a href="transactions.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                    <i data-lucide="list" class="w-5 h-5 text-slate-400 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium text-slate-200">All Transactions</span>
-                </a>
-                <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                    <i data-lucide="pie-chart" class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium text-slate-200">My Running Plans</span>
-                </a>
-            </div>
-        </div>
-
-        <div>
-            <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2">Investment Plans</p>
-            <a href="investment.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                <i data-lucide="trending-up" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform"></i>
-                <span class="text-sm font-medium text-slate-200">Explore Plans</span>
-            </a>
-        </div>
-    </div>
-
-    <div class="p-6 border-t border-white/5 space-y-4">
-        <button onclick="logout()" class="w-full flex items-center justify-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-sm font-bold hover:bg-red-500/20 transition-all">
-            <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
-        </button>
-        <div class="flex flex-col items-center gap-1 opacity-40">
-            <h1 class="text-xs font-bold outfit tracking-tighter text-white uppercase">UP<span style="color: #00CE9C;">CASH</span></h1>
-            <p class="text-[8px] text-slate-500 font-bold uppercase tracking-widest">Digital Platform 2026</p>
-        </div>
-    </div>
-</div>
-
-<script>
-    // 1. Function to open/close menu
-    function toggleMenu() {
-        const menu = document.getElementById('side-menu');
-        const backdrop = document.getElementById('side-menu-backdrop');
-        const isOpening = menu.classList.contains('translate-x-full');
-
-        if (isOpening) {
-            menu.classList.remove('translate-x-full');
-            backdrop.classList.remove('opacity-0', 'pointer-events-none');
-        } else {
-            menu.classList.add('translate-x-full');
-            backdrop.classList.add('opacity-0', 'pointer-events-none');
-        }
-    }
-
-    // 2. Logout Function
-    async function logout() {
-        await supabaseClient.auth.signOut();
-        window.location.href = "signin.html";
-    }
-
-    // 3. Bind the menu button in the header
-    // Update your header button to: <button onclick="toggleMenu()" class="...">
-    document.querySelector('header button:last-child').setAttribute('onclick', 'toggleMenu()');
-</script>
-
  </body>
 </html>
