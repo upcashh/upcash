@@ -315,6 +315,28 @@
           </div>
       </div>
   </div>
+
+  <div id="logout-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+      <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+      <div class="glass-card relative w-full max-w-sm rounded-[32px] p-8 text-center border border-white/10 scale-90 transition-transform duration-300" id="logout-modal-content">
+          <div class="mb-6 flex justify-center">
+              <div class="bg-red-500/10 p-4 rounded-full border border-red-500/20">
+                  <i data-lucide="log-out" class="w-10 h-10 text-red-500 animate-pulse"></i>
+              </div>
+          </div>
+          <h3 class="text-2xl font-bold font-['Outfit'] text-white mb-2">Sign Out?</h3>
+          <p class="text-slate-400 text-sm mb-8">Are you sure you want to end your current session?</p>
+          <div class="flex flex-col gap-3">
+              <button onclick="confirmLogout()" class="w-full h-14 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-500/20">
+                  <i data-lucide="check-circle" class="w-5 h-5"></i> Log Me Out
+              </button>
+              <button onclick="closeLogoutModal()" class="w-full h-14 bg-white/5 hover:bg-white/10 text-slate-300 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all">
+                  Stay Logged In
+              </button>
+          </div>
+      </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
         lucide.createIcons();
@@ -378,35 +400,4 @@
             if (!session) return;
             const { data } = await supabaseClient.from('userinfo').select('username').eq('userid', session.user.id).single();
             if (data) {
-                const link = `https://upcashh.github.io/upcash/index.html?ref=${data.username}`;
-                navigator.clipboard.writeText(link);
-                alert("Link Copied!");
-            }
-        }
-
-        function toggleMenu() {
-            const menu = document.getElementById('side-menu');
-            const backdrop = document.getElementById('side-menu-backdrop');
-            const isOpening = menu.classList.contains('translate-x-full');
-
-            if (isOpening) {
-                menu.classList.remove('translate-x-full');
-                backdrop.classList.remove('opacity-0', 'pointer-events-none');
-                lucide.createIcons();
-            } else {
-                menu.classList.add('translate-x-full');
-                backdrop.classList.add('opacity-0', 'pointer-events-none');
-            }
-        }
-
-        async function logout() {
-            if(confirm("Are you sure you want to log out?")) {
-                await supabaseClient.auth.signOut();
-                window.location.href = "signin.html";
-            }
-        }
-        
-        checkAuthAndLoad();
-  </script>
- </body>
-</html>
+                const link = `https://upcashh.github.io/upcash/index.ht
