@@ -139,8 +139,7 @@
     <footer class="mt-8 text-center pb-10">
         <p class="outfit text-[10px] font-bold text-slate-600 tracking-widest uppercase">© UPCASH BUSINESS PLATFORM 2026</p>
     </footer>
-    
-<script>
+    <script>
     lucide.createIcons();
     const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
 
@@ -163,27 +162,25 @@
                 document.getElementById('recipientNum').textContent = profile.telephone;
             }
 
-            // UPDATED FILTER: We fetch the history and apply a strict match
+            // Fetch history specifically for the Withdraw category
             const { data: history } = await supabaseClient
                 .from('user_history')
                 .select('created_at, amount, status, category')
                 .eq('userid', user.id)
-                .eq('category', 'Withdraw') // Database level filter
+                .eq('category', 'Withdraw') 
                 .order('created_at', { ascending: false });
 
             const tbody = document.getElementById('withdrawTableBody');
             
             if (history && history.length > 0) {
-                // STRENGHTENED FILTER: Ensures no 'Reinvest' or 'Bonus' rows slip through
-                const withdrawalOnly = history.filter(row => 
-                    row.category === 'Withdraw' && Number(row.amount) < 0
-                );
+                // Final guard to ensure NO Reinvest rows appear
+                const withdrawalOnly = history.filter(row => row.category === 'Withdraw');
 
                 if (withdrawalOnly.length > 0) {
                     tbody.innerHTML = withdrawalOnly.map(row => {
                         const statusStr = row.status ? row.status.toLowerCase() : 'pending';
                         const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                        // Convert negative DB value to positive for display
+                        // Withdrawals are negative in DB, convert to positive for UI
                         const amt = Math.abs(Number(row.amount));
 
                         return `
@@ -228,17 +225,26 @@
         btn.disabled = true;
         btn.innerHTML = `PROCESSING...`;
 
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
-            user_id: user.id, 
-            amount_to_withdraw: amount 
-        });
+        try {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            
+            // FIXED: Using user_id_param to match your Supabase RPC function arguments
+            const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
+                user_id_param: user.id, 
+                amount_to_withdraw: amount 
+            });
 
-        if (data?.success) { 
-            alert("Withdrawal request successful!"); 
-            location.reload(); 
-        } else { 
-            alert("Request Failed: " + (data?.message || "Check your balance.")); 
+            if (error) {
+                alert("System Error: " + error.message);
+            } else if (data?.success) { 
+                alert("Withdrawal request successful!"); 
+                location.reload(); 
+            } else { 
+                alert("Request Failed: " + (data?.message || "Check your balance.")); 
+            }
+        } catch (err) {
+            alert("An unexpected error occurred.");
+        } finally {
             btn.disabled = false;
             btn.innerText = "INITIATE CASH-OUT";
         }
@@ -246,6 +252,8 @@
 
     window.onload = loadUserData;
 </script>
+
+
 
 </body>
     </html>
