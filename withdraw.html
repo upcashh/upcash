@@ -139,7 +139,8 @@
     <footer class="mt-8 text-center pb-10">
         <p class="outfit text-[10px] font-bold text-slate-600 tracking-widest uppercase">© UPCASH BUSINESS PLATFORM 2026</p>
     </footer>
-    <script>
+    
+<script>
     lucide.createIcons();
     const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
 
@@ -162,161 +163,20 @@
                 document.getElementById('recipientNum').textContent = profile.telephone;
             }
 
-            // Fetch history specifically for the Withdraw category
             const { data: history } = await supabaseClient
                 .from('user_history')
                 .select('created_at, amount, status, category')
                 .eq('userid', user.id)
-                .eq('category', 'Withdraw') 
+                .ilike('category', 'Withdraw') 
                 .order('created_at', { ascending: false });
 
             const tbody = document.getElementById('withdrawTableBody');
             
             if (history && history.length > 0) {
-                // Final guard to ensure NO Reinvest rows appear
-                const withdrawalOnly = history.filter(row => row.category === 'Withdraw');
-
-                if (withdrawalOnly.length > 0) {
-                    tbody.innerHTML = withdrawalOnly.map(row => {
-                        const statusStr = row.status ? row.status.toLowerCase() : 'pending';
-                        const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                        // Withdrawals are negative in DB, convert to positive for UI
-                        const amt = Math.abs(Number(row.amount));
-
-                        return `
-                        <tr class="hover:bg-white/[0.02]">
-                            <td class="p-4">
-                                <span class="text-white font-semibold text-xs block outfit">${new Date(row.created_at).toLocaleDateString()}</span>
-                                <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                            </td>
-                            <td class="p-4 text-center">
-                                <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
-                                    ${row.status || 'Processing'}
-                                </span>
-                            </td>
-                            <td class="p-4 text-right">
-                                <span class="font-bold text-red-400 block outfit">UGX ${amt.toLocaleString()}</span>
-                                <span class="text-[9px] text-slate-600">Mobile Money</span>
-                            </td>
-                        </tr>`;
-                    }).join('');
-                } else {
-                    tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No withdrawal records found.</td></tr>`;
-                }
-            } else {
-                tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No records found.</td></tr>`;
-            }
-
-        } catch (err) {
-            console.error("Load Error:", err);
-        } finally {
-            document.getElementById('skeleton-ui').classList.add('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
-        }
-    }
-
-    async function handleWithdraw() {
-        const input = document.getElementById('withdrawAmount');
-        const btn = document.getElementById('withdrawBtn');
-        const amount = parseFloat(input.value);
-        
-        if (!amount || amount < 10000) return alert("Minimum withdrawal is UGX 10,000");
-
-        btn.disabled = true;
-        btn.innerHTML = `PROCESSING...`;
-
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            
-            // FIXED: Using user_id_param to match your Supabase RPC function arguments
-            const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
-                user_id_param: user.id, 
-                amount_to_withdraw: amount 
-            });
-
-            if (error) {
-                alert("System Error: " + error.message);
-            } else if (data?.success) { 
-                alert("Withdrawal request successful!"); 
-                location.reload(); 
-            } else { 
-                alert("Request Failed: " + (data?.message || "Check your balance.")); 
-            }
-        } catch (err) {
-            alert("An unexpected error occurred.");
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "INITIATE CASH-OUT";
-        }
-    }
-<script>
-    lucide.createIcons();
-    const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
-
-    async function loadUserData() {
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) {
-                window.location.href = "signin.html";
-                return;
-            }
-
-            // Fetch User Balance
-            const { data: profile } = await supabaseClient
-                .from('userinfo')
-<script>
-    // Initialize Icons
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-
-    const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
-
-    async function loadUserData() {
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) {
-                window.location.href = "signin.html";
-                return;
-            }
-
-            // Fetch User Balance
-            const { data: profile } = await supabaseClient
-                .from('userinfo')
-                .select('available_balance, telephone')
-                .eq('userid', user.id)
-                .single();
-
-            if (profile) {
-                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance).toLocaleString();
-                document.getElementById('recipientNum').textContent = profile.telephone;
-            }
-
-            // Fetch ALL history for this user
-            const { data: history, error: historyError } = await supabaseClient
-                .from('user_history')
-                .select('created_at, amount, status, category')
-                .eq('userid', user.id)
-                .order('created_at', { ascending: false });
-
-            if (historyError) throw historyError;
-
-            const tbody = document.getElementById('withdrawTableBody');
-            
-            // THE FIX: Strict, case-insensitive filter for "Withdraw"
-            // This ensures Reinvest/Bonus/Earning are excluded
-            const withdrawalOnly = (history || []).filter(row => {
-                const cat = (row.category || "").trim().toLowerCase();
-                return cat === 'withdraw';
-            });
-
-            if (withdrawalOnly.length > 0) {
-                tbody.innerHTML = withdrawalOnly.map(row => {
-                    const statusStr = (row.status || 'pending').toLowerCase();
+                tbody.innerHTML = history.map(row => {
+                    const statusStr = row.status ? row.status.toLowerCase() : 'pending';
                     const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                    
-                    // Show amount as positive red text for withdrawals
-                    const amt = Math.abs(Number(row.amount || 0));
+                    const amt = row.amount ? Math.abs(row.amount) : 0;
 
                     return `
                     <tr class="hover:bg-white/[0.02]">
@@ -335,181 +195,6 @@
                         </td>
                     </tr>`;
                 }).join('');
-            } else {
-                tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No withdrawal records found.</td></tr>`;
-            }
-
-        } catch (err) {
-            console.error("Load Error:", err);
-            // If there's an error, don't leave the skeleton spinning forever
-        } finally {
-<script>
-    // Initialize Supabase
-    const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
-
-    // SVG Icon for Mobile Money
-    const mobileMoneyIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-1 opacity-50"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>`;
-
-    async function loadUserData() {
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) {
-                window.location.href = "signin.html";
-                return;
-            }
-
-            // Get Balance & Phone
-            const { data: profile } = await supabaseClient
-                .from('userinfo')
-                .select('available_balance, telephone')
-                .eq('userid', user.id)
-                .single();
-
-            if (profile) {
-                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance || 0).toLocaleString();
-                document.getElementById('recipientNum').textContent = profile.telephone || 'Not Set';
-            }
-
-            // Fetch History
-            const { data: history, error: historyError } = await supabaseClient
-                .from('user_history')
-                .select('created_at, amount, status, category')
-                .eq('userid', user.id)
-                .order('created_at', { ascending: false });
-
-            if (historyError) throw historyError;
-
-            const tbody = document.getElementById('withdrawTableBody');
-            
-            // STRICT FILTER: Only 'withdraw' (case-insensitive)
-            const withdrawalOnly = (history || []).filter(row => {
-                const cat = (row.category || "").trim().toLowerCase();
-                return cat === 'withdraw';
-            });
-
-            if (withdrawalOnly.length > 0) {
-                tbody.innerHTML = withdrawalOnly.map(row => {
-                    const statusStr = (row.status || 'pending').toLowerCase();
-                    const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                    const amt = Math.abs(Number(row.amount || 0));
-
-                    return `
-                    <tr class="hover:bg-white/[0.02]">
-                        <td class="p-4">
-                            <span class="text-white font-semibold text-xs block outfit">${new Date(row.created_at).toLocaleDateString()}</span>
-                            <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                        </td>
-                        <td class="p-4 text-center">
-                            <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
-                                ${row.status || 'Processing'}
-                            </span>
-                        </td>
-                        <td class="p-4 text-right">
-                            <span class="font-bold text-red-400 block outfit">UGX ${amt.toLocaleString()}</span>
-                            <span class="text-[9px] text-slate-600 flex items-center justify-end">${mobileMoneyIcon} Mobile Money</span>
-                        </td>
-                    </tr>`;
-                }).join('');
-            } else {
-                tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No withdrawal records found.</td></tr>`;
-            }
-
-        } catch (err) {
-            console.error("Load Error:", err);
-        } finally {
-            const skeleton = document.getElementById('skeleton-ui');
-            const content = document.getElementById('main-content');
-<script>
-    lucide.createIcons();
-    const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
-
-    async function loadUserData() {
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) {
-                window.location.href = "signin.html";
-                return;
-            }
-
-            const { data: profile } = await supabaseClient
-                .from('userinfo')
-                .select('available_balance, telephone')
-                .eq('userid', user.id)
-                .single();
-
-            if (profile) {
-                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance).toLocaleString();
-                document.getElementById('recipientNum').textContent = profile.telephone;
-            }
-
-            // Fetch history specifically for the Withdraw category
-            const { data: history } = await supabaseClient
-<script>
-    lucide.createIcons();
-    const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
-
-    async function loadUserData() {
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) {
-                window.location.href = "signin.html";
-                return;
-            }
-
-            const { data: profile } = await supabaseClient
-                .from('userinfo')
-                .select('available_balance, telephone')
-                .eq('userid', user.id)
-                .single();
-
-            if (profile) {
-                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance).toLocaleString();
-                document.getElementById('recipientNum').textContent = profile.telephone;
-            }
-
-            // UPDATED FILTER: We fetch the history and apply a strict match
-            const { data: history } = await supabaseClient
-                .from('user_history')
-                .select('created_at, amount, status, category')
-                .eq('userid', user.id)
-                .eq('category', 'Withdraw') // Database level filter
-                .order('created_at', { ascending: false });
-
-            const tbody = document.getElementById('withdrawTableBody');
-            
-            if (history && history.length > 0) {
-                // STRENGHTENED FILTER: Ensures no 'Reinvest' or 'Bonus' rows slip through
-                const withdrawalOnly = history.filter(row => 
-                    row.category === 'Withdraw' && Number(row.amount) < 0
-                );
-
-                if (withdrawalOnly.length > 0) {
-                    tbody.innerHTML = withdrawalOnly.map(row => {
-                        const statusStr = row.status ? row.status.toLowerCase() : 'pending';
-                        const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                        // Convert negative DB value to positive for display
-                        const amt = Math.abs(Number(row.amount));
-
-                        return `
-                        <tr class="hover:bg-white/[0.02]">
-                            <td class="p-4">
-                                <span class="text-white font-semibold text-xs block outfit">${new Date(row.created_at).toLocaleDateString()}</span>
-                                <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                            </td>
-                            <td class="p-4 text-center">
-                                <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
-                                    ${row.status || 'Processing'}
-                                </span>
-                            </td>
-                            <td class="p-4 text-right">
-                                <span class="font-bold text-red-400 block outfit">UGX ${amt.toLocaleString()}</span>
-                                <span class="text-[9px] text-slate-600">Mobile Money</span>
-                            </td>
-                        </tr>`;
-                    }).join('');
-                } else {
-                    tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No withdrawal records found.</td></tr>`;
-                }
             } else {
                 tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No records found.</td></tr>`;
             }
@@ -534,7 +219,7 @@
 
         const { data: { user } } = await supabaseClient.auth.getUser();
         const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
-            user_id: user.id, 
+            user_id_param: user.id, 
             amount_to_withdraw: amount 
         });
 
@@ -550,10 +235,6 @@
 
     window.onload = loadUserData;
 </script>
-
-
-
-
 </body>
     </html>
     
