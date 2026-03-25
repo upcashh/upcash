@@ -249,11 +249,125 @@
             btn.innerText = "INITIATE CASH-OUT";
         }
     }
+<script>
+    lucide.createIcons();
+    const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
+
+    async function loadUserData() {
+        try {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) {
+                window.location.href = "signin.html";
+                return;
+            }
+
+            // Fetch User Balance
+            const { data: profile } = await supabaseClient
+                .from('userinfo')
+                .select('available_balance, telephone')
+                .eq('userid', user.id)
+                .single();
+
+            if (profile) {
+                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance).toLocaleString();
+                document.getElementById('recipientNum').textContent = profile.telephone;
+            }
+
+            // Fetch history - we remove the .eq('category') here and do it strictly in JS 
+            // to avoid errors with hidden spaces or case-sensitivity in the DB.
+            const { data: history } = await supabaseClient
+                .from('user_history')
+                .select('created_at, amount, status, category')
+                .eq('userid', user.id)
+                .order('created_at', { ascending: false });
+
+            const tbody = document.getElementById('withdrawTableBody');
+            
+            if (history && history.length > 0) {
+                // THE FIX: Strict, case-insensitive filter.
+                // This will ignore 'Reinvest', 'Bonus', 'Earning', etc.
+                const withdrawalOnly = history.filter(row => {
+                    const cat = (row.category || "").trim().toLowerCase();
+                    return cat === 'withdraw';
+                });
+
+                if (withdrawalOnly.length > 0) {
+                    tbody.innerHTML = withdrawalOnly.map(row => {
+                        const statusStr = row.status ? row.status.toLowerCase() : 'pending';
+                        const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
+                        
+                        // Withdrawals are negative in DB, convert to positive for display
+                        const amt = Math.abs(Number(row.amount));
+
+                        return `
+                        <tr class="hover:bg-white/[0.02]">
+                            <td class="p-4">
+                                <span class="text-white font-semibold text-xs block outfit">${new Date(row.created_at).toLocaleDateString()}</span>
+                                <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                            </td>
+                            <td class="p-4 text-center">
+                                <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
+                                    ${row.status || 'Processing'}
+                                </span>
+                            </td>
+                            <td class="p-4 text-right">
+                                <span class="font-bold text-red-400 block outfit">UGX ${amt.toLocaleString()}</span>
+                                <span class="text-[9px] text-slate-600">Mobile Money</span>
+                            </td>
+                        </tr>`;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No withdrawal records found.</td></tr>`;
+                }
+            } else {
+                tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No records found.</td></tr>`;
+            }
+
+        } catch (err) {
+            console.error("Load Error:", err);
+        } finally {
+            document.getElementById('skeleton-ui').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+        }
+    }
+
+    async function handleWithdraw() {
+        const input = document.getElementById('withdrawAmount');
+        const btn = document.getElementById('withdrawBtn');
+        const amount = parseFloat(input.value);
+        
+        if (!amount || amount < 10000) return alert("Minimum withdrawal is UGX 10,000");
+
+        btn.disabled = true;
+        btn.innerHTML = `PROCESSING...`;
+
+        try {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            
+            // FIXED: Using user_id_param to match your Supabase function arguments
+            const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
+                user_id_param: user.id, 
+                amount_to_withdraw: amount 
+            });
+
+            if (error) {
+                alert("System Error: " + error.message);
+            } else if (data?.success) { 
+                alert("Withdrawal request successful!"); 
+                location.reload(); 
+            } else { 
+                alert("Request Failed: " + (data?.message || "Check your balance.")); 
+            }
+        } catch (err) {
+            alert("An unexpected error occurred.");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "INITIATE CASH-OUT";
+        }
+    }
 
     window.onload = loadUserData;
 </script>
-
-
 
 </body>
     </html>
