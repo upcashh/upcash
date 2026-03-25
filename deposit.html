@@ -92,8 +92,8 @@
 
         .skeleton { background: rgba(0, 206, 156, 0.05); overflow: hidden; position: relative; }
 
-        /* --- PERIODIC SHAKE ANIMATION --- */
-        @keyframes shake-periodic {
+        /* --- SHAKE ANIMATION --- */
+        @keyframes periodic-shake {
             0%, 90%, 100% { transform: rotate(0deg); }
             92% { transform: rotate(10deg); }
             94% { transform: rotate(-10deg); }
@@ -102,41 +102,18 @@
         }
 
         .shake-icon {
-            animation: shake-periodic 5s infinite;
+            animation: periodic-shake 4s infinite ease-in-out;
+            display: inline-block;
         }
 
-        svg.lucide {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .tap-animate { transform: scale(0.6) rotate(-20deg); opacity: 0.5; }
-        .success-animate { transform: scale(1.3) rotate(360deg); color: #00CE9C !important; }
-
-        /* --- CUSTOM TOAST --- */
-        #copy-toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            z-index: 200;
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            opacity: 0;
-        }
-        #copy-toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
+        /* Transition for copy button text */
+        #referral-btn span {
+            transition: all 0.3s ease;
         }
     </style>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
  </head>
  <body class="pb-20">
-
-  <div id="copy-toast" class="glass-card flex items-center gap-3 px-6 py-4 rounded-2xl border border-[#00CE9C]/30 shadow-[0_0_30px_rgba(0,206,156,0.2)]">
-      <div class="bg-[#00CE9C] p-1.5 rounded-full">
-          <i data-lucide="check" class="w-4 h-4 text-[#0a0f1a]"></i>
-      </div>
-      <span class="text-white font-bold text-sm font-['Outfit']">Referral link copied!</span>
-  </div>
 
   <header class="header-bg flex items-center justify-between p-5 sticky top-0 z-50">
    <div class="flex items-center gap-2">
@@ -147,11 +124,11 @@
    </div>
    <div class="flex items-center gap-4">
     <a href="profile.html" class="block">
-        <button onclick="animateIcon(this)" class="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-400">
-            <i data-lucide="user" class="w-6 h-6 shake-icon"></i>
+        <button class="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-400">
+            <i data-lucide="user" class="w-6 h-6"></i>
         </button>
     </a>
-    <button onclick="toggleMenu(); animateIcon(this)" class="p-2 hover:bg-white/5 rounded-full transition-colors text-[#00CE9C]">
+    <button onclick="toggleMenu()" class="p-2 hover:bg-white/5 rounded-full transition-colors text-[#00CE9C]">
         <i data-lucide="menu" class="w-7 h-7 shake-icon"></i>
     </button>
    </div>
@@ -173,8 +150,8 @@
      <div class="relative z-10">
         <div class="flex justify-between items-start mb-1">
           <p class="text-emerald-100/60 text-xs font-bold tracking-widest uppercase">Available Balance</p>
-          <button onclick="toggleBalance(); animateIcon(this)" class="text-white/40 hover:text-white transition-colors">
-            <i id="eyeIcon" data-lucide="eye-off" class="w-5 h-5"></i>
+          <button onclick="toggleBalance()" class="text-white/40 hover:text-white transition-colors">
+            <i id="eyeIcon" data-lucide="eye-off" class="w-5 h-5 shake-icon"></i>
           </button>
         </div>
         <h3 class="text-4xl font-black mb-6 text-white font-['Outfit']">UGX <span id="balance">*****</span></h3>
@@ -193,20 +170,20 @@
 
     <div class="flex gap-4">
      <a href="transactions.html" class="flex-1"> 
-        <button onclick="animateIcon(this)" class="btn-gradient w-full h-14 rounded-2xl flex items-center justify-center gap-2 text-sm shadow-lg">
+        <button class="btn-gradient w-full h-14 rounded-2xl flex items-center justify-center gap-2 text-sm shadow-lg">
             <i data-lucide="file-text" class="w-5 h-5 shake-icon"></i>Transactions 
         </button> 
      </a> 
      <a href="withdraw.html" class="flex-1"> 
-        <button onclick="animateIcon(this)" class="glass-card w-full h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-white">
+        <button class="glass-card w-full h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-white">
             <i data-lucide="arrow-up-circle" class="w-5 h-5 text-[#00CE9C] shake-icon"></i>Withdraw 
         </button> 
      </a>
     </div>
 
     <div class="grid grid-cols-2 gap-4">
-     <button onclick="copyLink(this)" id="referral-btn" class="glass-card h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-white">
-        <i data-lucide="share-2" class="w-4 h-4 text-[#00CE9C] shake-icon"></i>Referral Link 
+     <button onclick="copyLink()" id="referral-btn" class="glass-card h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-white transition-all active:scale-95">
+        <i id="ref-icon" data-lucide="share-2" class="w-4 h-4 text-[#00CE9C] shake-icon"></i><span id="ref-text">Referral Link</span>
      </button> 
      <a href="https://chat.whatsapp.com/HEusxMonb275LAHnJbooY2" target="_blank" class="bg-[#00CE9C]/10 border border-[#00CE9C]/20 h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-[#00CE9C]">
         <i data-lucide="users" class="w-4 h-4 shake-icon"></i> Community
@@ -215,7 +192,7 @@
 
     <div class="space-y-3">
      <h4 class="text-lg font-bold flex items-center gap-2 font-['Outfit']">
-      <i data-lucide="briefcase" class="text-[#00CE9C] w-5 h-5"></i> Investment Plans
+      <i data-lucide="briefcase" class="text-[#00CE9C] w-5 h-5 shake-icon"></i> Investment Plans
      </h4>
      <div class="glass-card rounded-2xl overflow-hidden">
       <table class="w-full text-left text-sm table-fixed">
@@ -259,7 +236,7 @@
 
     <div class="space-y-3 pb-8">
      <h4 class="text-lg font-bold flex items-center gap-2 font-['Outfit']">
-      <i data-lucide="users-2" class="text-[#00CE9C] w-5 h-5"></i> Affiliate Bonuses
+      <i data-lucide="users-2" class="text-[#00CE9C] w-5 h-5 shake-icon"></i> Affiliate Bonuses
      </h4>
      <div class="glass-card rounded-2xl overflow-hidden">
       <table class="w-full text-left text-sm table-fixed">
@@ -303,11 +280,11 @@
               <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Network</p>
               <div class="space-y-1">
                   <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="user-check" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform"></i>
+                      <i data-lucide="user-check" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform shake-icon"></i>
                       <span class="text-sm font-medium text-slate-200">My Affiliates</span>
                   </a>
                   <a href="affiliates.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="award" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform"></i>
+                      <i data-lucide="award" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform shake-icon"></i>
                       <span class="text-sm font-medium text-slate-200">Affiliate Bonuses</span>
                   </a>
               </div>
@@ -317,21 +294,44 @@
               <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Records</p>
               <div class="space-y-1">
                   <a href="transactions.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="arrow-down-to-line" class="w-5 h-5 text-emerald-400"></i>
+                      <i data-lucide="arrow-down-to-line" class="w-5 h-5 text-emerald-400 group-hover:translate-y-0.5 transition-transform shake-icon"></i>
                       <span class="text-sm font-medium text-slate-200">Deposits</span>
                   </a>
                   <a href="withdraw.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="arrow-up-from-line" class="w-5 h-5 text-orange-400"></i>
+                      <i data-lucide="arrow-up-from-line" class="w-5 h-5 text-orange-400 group-hover:-translate-y-0.5 transition-transform shake-icon"></i>
                       <span class="text-sm font-medium text-slate-200">Withdrawals</span>
                   </a>
+                  <a href="transactions.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="list" class="w-5 h-5 text-slate-400 group-hover:scale-110 transition-transform shake-icon"></i>
+                      <span class="text-sm font-medium text-slate-200">All Transactions</span>
+                  </a>
+                  <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="pie-chart" class="w-5 h-5 text-cyan-400 group-hover:rotate-12 transition-transform shake-icon"></i>
+                      <span class="text-sm font-medium text-slate-200">My Running Plans</span>
+                  </a>
               </div>
+          </div>
+
+          <div>
+              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Investment Plans</p>
+              <a href="investment.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                  <i data-lucide="trending-up" class="w-5 h-5 text-[#00CE9C] group-hover:scale-125 transition-transform shake-icon"></i>
+                  <span class="text-sm font-medium text-slate-200">Explore Plans</span>
+              </a>
           </div>
       </div>
 
       <div class="p-6 border-t border-white/5 space-y-4 bg-black/20">
-          <button onclick="logout(); animateIcon(this)" class="w-full flex items-center justify-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-sm font-bold hover:bg-red-500/20 transition-all">
-              <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
+          <button onclick="logout()" class="w-full flex items-center justify-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-sm font-bold hover:bg-red-500/20 transition-all">
+              <i data-lucide="log-out" class="w-4 h-4 shake-icon"></i> Sign Out
           </button>
+          <div class="flex flex-col items-center gap-1 opacity-50">
+              <div class="flex items-center gap-1">
+                  <i data-lucide="trending-up" class="w-3 h-3 text-[#00CE9C]"></i>
+                  <h1 class="text-[10px] font-bold font-['Outfit'] tracking-tighter text-white uppercase">UP<span style="color: #00CE9C;">CASH</span></h1>
+              </div>
+              <p class="text-[7px] text-slate-500 font-bold uppercase tracking-widest">Business Platform 2026</p>
+          </div>
       </div>
   </div>
 
@@ -346,8 +346,8 @@
           <h3 class="text-2xl font-bold font-['Outfit'] text-white mb-2">Sign Out?</h3>
           <p class="text-slate-400 text-sm mb-8">Are you sure you want to end your current session?</p>
           <div class="flex flex-col gap-3">
-              <button onclick="confirmLogout()" class="w-full h-14 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-all">
-                  Log Me Out
+              <button onclick="confirmLogout()" class="w-full h-14 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-500/20">
+                  <i data-lucide="check-circle" class="w-5 h-5"></i> Log Me Out
               </button>
               <button onclick="closeLogoutModal()" class="w-full h-14 bg-white/5 hover:bg-white/10 text-slate-300 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all">
                   Stay Logged In
@@ -371,11 +371,21 @@
         async function checkAuthAndLoad() {
             document.getElementById('skeleton-container').classList.add('hidden');
             document.getElementById('dashboard-content').classList.remove('hidden');
+
             try {
                 const { data: { session } } = await supabaseClient.auth.getSession();
-                if (!session) { window.location.href = "signin.html"; return; }
+                if (!session) {
+                    window.location.href = "signin.html";
+                    return;
+                }
+
                 const userId = session.user.id;
-                const { data } = await supabaseClient.from('userinfo').select('username, available_balance, total_investment, total_withdrawn').eq('userid', userId).single();
+                const { data, error: fetchError } = await supabaseClient
+                    .from('userinfo')
+                    .select('username, available_balance, total_investment, total_withdrawn')
+                    .eq('userid', userId)
+                    .single();
+
                 if (data) {
                     realBalance = data.available_balance || 0;
                     document.getElementById('username').innerText = data.username || "User";
@@ -404,51 +414,41 @@
             lucide.createIcons();
         }
 
-        async function copyLink(btn) {
-            const icon = btn.querySelector('i');
-            icon.classList.add('tap-animate');
+        async function copyLink() {
+            const btnText = document.getElementById('ref-text');
+            const btnIcon = document.getElementById('ref-icon');
             
             try {
                 const { data: { session } } = await supabaseClient.auth.getSession();
                 if (!session) return;
                 
                 const { data } = await supabaseClient.from('userinfo').select('username').eq('userid', session.user.id).single();
-                const username = data ? data.username : 'User';
-                const link = `https://upcashh.github.io/upcash/index.html?ref=${username}`;
                 
-                await navigator.clipboard.writeText(link);
-                
-                setTimeout(() => {
-                    icon.classList.remove('tap-animate', 'shake-icon');
-                    icon.classList.add('success-animate');
-                    icon.setAttribute('data-lucide', 'check-check');
+                if (data) {
+                    const link = `https://upcashh.github.io/upcash/index.html?ref=${data.username}`;
+                    await navigator.clipboard.writeText(link);
+                    
+                    // UI assurance feedback
+                    btnText.innerText = "Link Copied!";
+                    btnText.style.color = "#00CE9C";
+                    btnIcon.setAttribute('data-lucide', 'check');
                     lucide.createIcons();
                     
-                    const toast = document.getElementById('copy-toast');
-                    toast.classList.add('show');
-                    
                     setTimeout(() => {
-                        toast.classList.remove('show');
-                        icon.classList.remove('success-animate');
-                        icon.classList.add('shake-icon');
-                        icon.setAttribute('data-lucide', 'share-2');
+                        btnText.innerText = "Referral Link";
+                        btnText.style.color = "";
+                        btnIcon.setAttribute('data-lucide', 'share-2');
                         lucide.createIcons();
                     }, 2500);
-                }, 400);
+                }
             } catch (err) { console.error(err); }
-        }
-
-        function animateIcon(btn) {
-            const icon = btn.querySelector('i');
-            if(!icon) return;
-            icon.classList.add('tap-animate');
-            setTimeout(() => icon.classList.remove('tap-animate'), 500);
         }
 
         function toggleMenu() {
             const menu = document.getElementById('side-menu');
             const backdrop = document.getElementById('side-menu-backdrop');
             const isOpening = menu.classList.contains('translate-x-full');
+
             if (isOpening) {
                 menu.classList.remove('translate-x-full');
                 backdrop.classList.remove('opacity-0', 'pointer-events-none');
@@ -461,20 +461,29 @@
 
         function logout() {
             const modal = document.getElementById('logout-modal');
+            const content = document.getElementById('logout-modal-content');
             modal.classList.remove('opacity-0', 'pointer-events-none');
-            document.getElementById('logout-modal-content').classList.remove('scale-90');
-            document.getElementById('logout-modal-content').classList.add('scale-100');
+            content.classList.remove('scale-90');
+            content.classList.add('scale-100');
+            lucide.createIcons();
         }
 
         function closeLogoutModal() {
             const modal = document.getElementById('logout-modal');
+            const content = document.getElementById('logout-modal-content');
             modal.classList.add('opacity-0', 'pointer-events-none');
-            document.getElementById('logout-modal-content').classList.add('scale-90');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
         }
 
         async function confirmLogout() {
-            await supabaseClient.auth.signOut();
-            window.location.href = "signin.html";
+            try {
+                await supabaseClient.auth.signOut();
+                window.location.href = "signin.html";
+            } catch (err) {
+                console.error(err);
+                closeLogoutModal();
+            }
         }
         
         checkAuthAndLoad();
