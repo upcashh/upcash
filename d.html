@@ -90,19 +90,22 @@
             transform: scale(1.01);
         }
 
-        .ripple {
-            position: absolute;
-            background: rgba(0, 206, 156, 0.3);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple-animation 0.6s linear;
-            pointer-events: none;
-        }
-        @keyframes ripple-animation {
-            to { transform: scale(4); opacity: 0; }
-        }
-
         .skeleton { background: rgba(0, 206, 156, 0.05); overflow: hidden; position: relative; }
+
+        /* --- ICON ANIMATIONS --- */
+        svg.lucide {
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        button:hover svg.lucide, a:hover svg.lucide {
+            transform: scale(1.2) rotate(5deg);
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 3s infinite ease-in-out;
+        }
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
     </style>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
  </head>
@@ -121,7 +124,7 @@
             <i data-lucide="user" class="w-6 h-6"></i>
         </button>
     </a>
-    <button class="p-2 hover:bg-white/5 rounded-full transition-colors text-[#00CE9C]">
+    <button onclick="toggleMenu()" class="p-2 hover:bg-white/5 rounded-full transition-colors text-[#00CE9C]">
         <i data-lucide="menu" class="w-7 h-7"></i>
     </button>
    </div>
@@ -144,7 +147,7 @@
         <div class="flex justify-between items-start mb-1">
           <p class="text-emerald-100/60 text-xs font-bold tracking-widest uppercase">Available Balance</p>
           <button onclick="toggleBalance()" class="text-white/40 hover:text-white transition-colors">
-            <i id="eyeIcon" data-lucide="eye-off" class="w-5 h-5"></i>
+            <i id="eyeIcon" data-lucide="eye-off" class="w-5 h-5 animate-pulse-slow"></i>
           </button>
         </div>
         <h3 class="text-4xl font-black mb-6 text-white font-['Outfit']">UGX <span id="balance">*****</span></h3>
@@ -255,15 +258,104 @@
       </table>
      </div>
     </div>
-
    </main>
+  </div>
+
+  <div id="side-menu-backdrop" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <div id="side-menu" class="fixed top-0 right-0 h-full w-[280px] glass-card z-[70] translate-x-full transition-transform duration-300 ease-out flex flex-col border-l border-white/10">
+      <div class="p-6 border-b border-white/5 flex justify-between items-center">
+          <h2 class="font-['Outfit'] font-extrabold text-lg text-white tracking-tight">MENU</h2>
+          <button onclick="toggleMenu()" class="p-2 hover:bg-white/5 rounded-full text-slate-400 transition-colors">
+              <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 space-y-6">
+          <div>
+              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Network</p>
+              <div class="space-y-1">
+                  <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="user-check" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform"></i>
+                      <span class="text-sm font-medium text-slate-200">My Affiliates</span>
+                  </a>
+                  <a href="affiliates.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="award" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform"></i>
+                      <span class="text-sm font-medium text-slate-200">Affiliate Bonuses</span>
+                  </a>
+              </div>
+          </div>
+
+          <div>
+              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Records</p>
+              <div class="space-y-1">
+                  <a href="transactions.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="arrow-down-to-line" class="w-5 h-5 text-emerald-400 group-hover:translate-y-0.5 transition-transform"></i>
+                      <span class="text-sm font-medium text-slate-200">Deposits</span>
+                  </a>
+                  <a href="withdraw.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="arrow-up-from-line" class="w-5 h-5 text-orange-400 group-hover:-translate-y-0.5 transition-transform"></i>
+                      <span class="text-sm font-medium text-slate-200">Withdrawals</span>
+                  </a>
+                  <a href="transactions.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="list" class="w-5 h-5 text-slate-400 group-hover:scale-110 transition-transform"></i>
+                      <span class="text-sm font-medium text-slate-200">All Transactions</span>
+                  </a>
+                  <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="pie-chart" class="w-5 h-5 text-cyan-400 group-hover:rotate-12 transition-transform"></i>
+                      <span class="text-sm font-medium text-slate-200">My Running Plans</span>
+                  </a>
+              </div>
+          </div>
+
+          <div>
+              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Investment Plans</p>
+              <a href="investment.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                  <i data-lucide="trending-up" class="w-5 h-5 text-[#00CE9C] group-hover:scale-125 transition-transform"></i>
+                  <span class="text-sm font-medium text-slate-200">Explore Plans</span>
+              </a>
+          </div>
+      </div>
+
+      <div class="p-6 border-t border-white/5 space-y-4 bg-black/20">
+          <button onclick="logout()" class="w-full flex items-center justify-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-sm font-bold hover:bg-red-500/20 transition-all">
+              <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
+          </button>
+          <div class="flex flex-col items-center gap-1 opacity-50">
+              <div class="flex items-center gap-1">
+                  <i data-lucide="trending-up" class="w-3 h-3 text-[#00CE9C]"></i>
+                  <h1 class="text-[10px] font-bold font-['Outfit'] tracking-tighter text-white uppercase">UP<span style="color: #00CE9C;">CASH</span></h1>
+              </div>
+              <p class="text-[7px] text-slate-500 font-bold uppercase tracking-widest">Business Platform 2026</p>
+          </div>
+      </div>
+  </div>
+
+  <div id="logout-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+      <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+      <div class="glass-card relative w-full max-w-sm rounded-[32px] p-8 text-center border border-white/10 scale-90 transition-transform duration-300" id="logout-modal-content">
+          <div class="mb-6 flex justify-center">
+              <div class="bg-red-500/10 p-4 rounded-full border border-red-500/20">
+                  <i data-lucide="log-out" class="w-10 h-10 text-red-500 animate-pulse"></i>
+              </div>
+          </div>
+          <h3 class="text-2xl font-bold font-['Outfit'] text-white mb-2">Sign Out?</h3>
+          <p class="text-slate-400 text-sm mb-8">Are you sure you want to end your current session?</p>
+          <div class="flex flex-col gap-3">
+              <button onclick="confirmLogout()" class="w-full h-14 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-500/20">
+                  <i data-lucide="check-circle" class="w-5 h-5"></i> Log Me Out
+              </button>
+              <button onclick="closeLogoutModal()" class="w-full h-14 bg-white/5 hover:bg-white/10 text-slate-300 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all">
+                  Stay Logged In
+              </button>
+          </div>
+      </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
         lucide.createIcons();
 
-        // Technical Logic (Supabase initiation unchanged)
         const supabaseClient = supabase.createClient(
             'https://wbodpfbmilhperccgzei.supabase.co', 
             'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN'
@@ -300,11 +392,6 @@
             } catch (err) { console.error(err); }
         }
 
-        function toggleBalance() {
-            isHidden = !isHidden;
-            updateBalanceDisplay();
-        }
-
         function updateBalanceDisplay() {
             const balanceSpan = document.getElementById('balance');
             const eyeIcon = document.getElementById('eyeIcon');
@@ -323,9 +410,51 @@
             if (!session) return;
             const { data } = await supabaseClient.from('userinfo').select('username').eq('userid', session.user.id).single();
             if (data) {
-                const link = `https://upcashh.github.io/upcash/register.html?ref=${data.username}`;
+                const link = `https://upcashh.github.io/upcash/index.html?ref=${data.username}`;
                 navigator.clipboard.writeText(link);
                 alert("Link Copied!");
+            }
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('side-menu');
+            const backdrop = document.getElementById('side-menu-backdrop');
+            const isOpening = menu.classList.contains('translate-x-full');
+
+            if (isOpening) {
+                menu.classList.remove('translate-x-full');
+                backdrop.classList.remove('opacity-0', 'pointer-events-none');
+                lucide.createIcons();
+            } else {
+                menu.classList.add('translate-x-full');
+                backdrop.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function logout() {
+            const modal = document.getElementById('logout-modal');
+            const content = document.getElementById('logout-modal-content');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-90');
+            content.classList.add('scale-100');
+            lucide.createIcons();
+        }
+
+        function closeLogoutModal() {
+            const modal = document.getElementById('logout-modal');
+            const content = document.getElementById('logout-modal-content');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+        }
+
+        async function confirmLogout() {
+            try {
+                await supabaseClient.auth.signOut();
+                window.location.href = "signin.html";
+            } catch (err) {
+                console.error(err);
+                closeLogoutModal();
             }
         }
         
