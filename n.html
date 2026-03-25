@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'DM Sans', sans-serif; background-color: #0a0f1a; color: #e2e8f0; }
+        body { font-family: 'DM Sans', sans-serif; background-color: #0a0f1a; color: #e2e8f0; margin: 0; }
         .outfit { font-family: 'Outfit', sans-serif; }
         .glass-card { background: linear-gradient(160deg, #111827 0%, #0d1321 100%); border: 1px solid rgba(0, 206, 156, 0.15); }
         .btn-primary { background: #00ce9c; color: #0a0f1a; font-weight: 800; transition: all 0.3s ease; }
@@ -80,11 +80,11 @@
 
     async function handleWithdraw() {
         const btnText = document.getElementById('btnText');
+        const btn = document.getElementById('withdrawBtn');
         const amount = parseFloat(document.getElementById('withdrawAmount').value);
         
-        // 1. Connection Check
         if (!navigator.onLine) {
-            btnText.innerText = "NO INTERNET";
+            btnText.innerText = "NO INTERNET CONNECTION";
             return;
         }
 
@@ -93,14 +93,14 @@
             return setTimeout(() => btnText.innerText = "INITIATE CASH-OUT", 2000);
         }
 
-        document.getElementById('withdrawBtn').disabled = true;
+        btn.disabled = true;
         btnText.innerText = "PROCESSING...";
 
         try {
             const { data: { user } } = await supabaseClient.auth.getUser();
             
-            // 2. Database Call
-            const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
+            // Calling the NEW unique function name
+            const { data, error } = await supabaseClient.rpc('secure_cashout_v3', { 
                 user_id_param: user.id, 
                 amount_to_withdraw: amount 
             });
@@ -111,15 +111,14 @@
                 btnText.innerText = "SUCCESSFUL!";
                 setTimeout(() => location.reload(), 1500);
             } else { 
-                btnText.innerText = (data?.message || "LOW BALANCE").toUpperCase();
-                document.getElementById('withdrawBtn').disabled = false;
+                btnText.innerText = (data?.message || "TRANSACTION DENIED").toUpperCase();
+                btn.disabled = false;
                 setTimeout(() => btnText.innerText = "INITIATE CASH-OUT", 3000);
             }
         } catch (err) {
-            // 3. Detailed Error Handling
             console.error(err);
             btnText.innerText = "DATABASE ERROR";
-            document.getElementById('withdrawBtn').disabled = false;
+            btn.disabled = false;
         }
     }
     window.onload = loadUserData;
