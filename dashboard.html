@@ -400,4 +400,55 @@
             if (!session) return;
             const { data } = await supabaseClient.from('userinfo').select('username').eq('userid', session.user.id).single();
             if (data) {
-                const link = `https://upcashh.github.io/upcash/index.ht
+                const link = `https://upcashh.github.io/upcash/index.html?ref=${data.username}`;
+                navigator.clipboard.writeText(link);
+                alert("Link Copied!");
+            }
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('side-menu');
+            const backdrop = document.getElementById('side-menu-backdrop');
+            const isOpening = menu.classList.contains('translate-x-full');
+
+            if (isOpening) {
+                menu.classList.remove('translate-x-full');
+                backdrop.classList.remove('opacity-0', 'pointer-events-none');
+                lucide.createIcons();
+            } else {
+                menu.classList.add('translate-x-full');
+                backdrop.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function logout() {
+            const modal = document.getElementById('logout-modal');
+            const content = document.getElementById('logout-modal-content');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-90');
+            content.classList.add('scale-100');
+            lucide.createIcons();
+        }
+
+        function closeLogoutModal() {
+            const modal = document.getElementById('logout-modal');
+            const content = document.getElementById('logout-modal-content');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+        }
+
+        async function confirmLogout() {
+            try {
+                await supabaseClient.auth.signOut();
+                window.location.href = "signin.html";
+            } catch (err) {
+                console.error(err);
+                closeLogoutModal();
+            }
+        }
+        
+        checkAuthAndLoad();
+  </script>
+ </body>
+</html>
