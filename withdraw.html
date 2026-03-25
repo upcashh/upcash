@@ -163,41 +163,49 @@
                 document.getElementById('recipientNum').textContent = profile.telephone;
             }
 
-            // PRIMARY FILTER: Fetch only rows where category is exactly 'Withdraw'
+            // UPDATED FILTER: We fetch the history and apply a strict match
             const { data: history } = await supabaseClient
                 .from('user_history')
                 .select('created_at, amount, status, category')
                 .eq('userid', user.id)
-                .eq('category', 'Withdraw') 
+                .eq('category', 'Withdraw') // Database level filter
                 .order('created_at', { ascending: false });
 
             const tbody = document.getElementById('withdrawTableBody');
             
             if (history && history.length > 0) {
-                tbody.innerHTML = history
-                .filter(row => row.category === 'Withdraw') // SECONDARY GUARD: Ensures only withdrawals render
-                .map(row => {
-                    const statusStr = row.status ? row.status.toLowerCase() : 'pending';
-                    const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                    const amt = row.amount ? Math.abs(row.amount) : 0;
+                // STRENGHTENED FILTER: Ensures no 'Reinvest' or 'Bonus' rows slip through
+                const withdrawalOnly = history.filter(row => 
+                    row.category === 'Withdraw' && Number(row.amount) < 0
+                );
 
-                    return `
-                    <tr class="hover:bg-white/[0.02]">
-                        <td class="p-4">
-                            <span class="text-white font-semibold text-xs block outfit">${new Date(row.created_at).toLocaleDateString()}</span>
-                            <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                        </td>
-                        <td class="p-4 text-center">
-                            <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
-                                ${row.status || 'Processing'}
-                            </span>
-                        </td>
-                        <td class="p-4 text-right">
-                            <span class="font-bold text-red-400 block outfit">UGX ${amt.toLocaleString()}</span>
-                            <span class="text-[9px] text-slate-600">Mobile Money</span>
-                        </td>
-                    </tr>`;
-                }).join('');
+                if (withdrawalOnly.length > 0) {
+                    tbody.innerHTML = withdrawalOnly.map(row => {
+                        const statusStr = row.status ? row.status.toLowerCase() : 'pending';
+                        const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
+                        // Convert negative DB value to positive for display
+                        const amt = Math.abs(Number(row.amount));
+
+                        return `
+                        <tr class="hover:bg-white/[0.02]">
+                            <td class="p-4">
+                                <span class="text-white font-semibold text-xs block outfit">${new Date(row.created_at).toLocaleDateString()}</span>
+                                <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                            </td>
+                            <td class="p-4 text-center">
+                                <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
+                                    ${row.status || 'Processing'}
+                                </span>
+                            </td>
+                            <td class="p-4 text-right">
+                                <span class="font-bold text-red-400 block outfit">UGX ${amt.toLocaleString()}</span>
+                                <span class="text-[9px] text-slate-600">Mobile Money</span>
+                            </td>
+                        </tr>`;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No withdrawal records found.</td></tr>`;
+                }
             } else {
                 tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No records found.</td></tr>`;
             }
@@ -238,6 +246,7 @@
 
     window.onload = loadUserData;
 </script>
+
 </body>
     </html>
     
