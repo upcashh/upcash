@@ -2,31 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UPCASH | Secure Withdrawal</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a0f1a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
+    <title>My Transactions | UPCASH</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
     
     <style>
         body { 
             font-family: 'DM Sans', sans-serif; 
             background-color: #0a0f1a;
-            min-height: 100vh; 
             color: #e2e8f0; 
-            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            margin: 0;
+            -webkit-font-smoothing: antialiased; 
         }
-        .outfit { font-family: 'Outfit', sans-serif; }
 
+        .outfit { font-family: 'Outfit', sans-serif; }
+        
         .glass-card { 
             background: linear-gradient(160deg, #111827 0%, #0d1321 100%); 
             border: 1px solid rgba(0, 206, 156, 0.15);
@@ -43,231 +39,132 @@
             box-shadow: 0 0 20px rgba(0, 206, 156, 0.4);
         }
 
-        .btn-primary { 
-            background: #00ce9c; 
-            color: #0a0f1a; 
-            transition: all 0.3s ease; 
-            box-shadow: 0 10px 20px rgba(0,206,156,0.2);
+        .table-container { overflow-x: auto; }
+
+        /* Skeleton Animation */
+        .skeleton { 
+            background: linear-gradient(90deg, rgba(0, 206, 156, 0.03) 25%, rgba(0, 206, 156, 0.08) 50%, rgba(0, 206, 156, 0.03) 75%); 
+            background-size: 200% 100%; 
+            animation: loading 1.5s infinite; 
+            border-radius: 8px;
         }
-        
-        .badge-pending { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
-        .badge-completed { background: rgba(0, 206, 156, 0.1); color: #00ce9c; border: 1px solid rgba(0, 206, 156, 0.2); }
-
-        .skeleton { background: rgba(0, 206, 156, 0.05); animation: pulse 1.5s infinite; border-radius: 12px; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-        /* ENTRANCE ANIMATION */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-reveal { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
+        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-10">
 
     <div style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:0;">
         <div style="position:absolute;top:-20%;right:-15%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.08) 0%,transparent 70%);"></div>
         <div style="position:absolute;bottom:-10%;left:-10%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.05) 0%,transparent 70%);"></div>
     </div>
 
-    <header class="w-full bg-[#0a0f1a]/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-[999]">
-        <div class="max-w-lg mx-auto flex items-center justify-between px-5 py-4">
-            <div class="flex items-center gap-3">
-                <div class="icon-box">
-                    <i data-lucide="trending-up" class="w-5 h-5 text-[#0a0f1a]" style="stroke-width: 3px;"></i>
-                </div>
-                <h1 class="outfit text-xl font-bold tracking-tight uppercase text-white">UP<span style="color: #00ce9c;">CASH</span></h1>
+    <header class="flex items-center justify-between p-5 sticky top-0 bg-[#0a0f1a]/80 backdrop-blur-md z-50 border-b border-white/5">
+        <div class="flex items-center gap-3">
+            <div class="icon-box">
+                <i data-lucide="trending-up" class="w-5 h-5 text-[#0a0f1a]" style="stroke-width: 3px;"></i>
             </div>
-            <a href="dashboard.html" class="p-2 bg-white/5 rounded-full text-slate-400 border border-white/10">
-                <i data-lucide="arrow-left" class="w-6 h-6"></i>
-            </a>
+            <h1 class="outfit text-xl font-extrabold tracking-tighter text-white uppercase">UP<span style="color: #00ce9c;">CASH</span></h1>
         </div>
+        <a href="dashboard.html" class="p-2 bg-white/5 rounded-full border border-white/10 transition-all hover:bg-white/10">
+            <i data-lucide="arrow-left" class="w-6 h-6 text-slate-300"></i>
+        </a>
     </header>
 
-    <div id="skeleton-ui" class="p-4 max-w-lg mx-auto space-y-6">
-        <div class="h-32 skeleton"></div>
-        <div class="h-20 skeleton"></div>
-        <div class="h-56 skeleton"></div>
-    </div>
+    <main class="relative z-10 p-5 max-w-4xl mx-auto space-y-6">
+        <h2 class="outfit text-2xl font-extrabold text-white tracking-tight mt-4">My Transactions</h2>
 
-    <main id="main-content" class="relative z-10 p-4 max-w-lg mx-auto space-y-6 hidden">
-        <div class="rounded-3xl p-6 shadow-2xl border border-[#00ce9c]/20 animate-reveal" style="background: linear-gradient(135deg, #0c2a23, #0d1321);">
-            <p class="text-[#00ce9c]/70 text-sm font-medium mb-1 outfit tracking-wider uppercase">Available for Cash-out</p>
-            <h3 class="outfit text-4xl font-black text-white" id="availBalance">UGX 0</h3>
-        </div>
-
-        <div class="glass-card rounded-2xl p-4 flex items-center gap-4 border-white/10 animate-reveal delay-1">
-            <div class="bg-[#00ce9c]/10 p-3 rounded-xl">
-                <i data-lucide="smartphone" class="w-6 h-6 text-[#00ce9c]"></i>
-            </div>
-            <div>
-                <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Recipient Number</p>
-                <p class="outfit font-bold text-lg text-white" id="recipientNum">---</p>
-            </div>
-        </div>
-
-        <div class="glass-card rounded-3xl p-6 border-white/10 animate-reveal delay-2">
-            <label class="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-4 outfit">Amount to Withdraw</label>
-            <div class="relative mb-6">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#00ce9c] font-bold outfit">UGX</span>
-                <input type="number" id="withdrawAmount" placeholder="Min 10,000" class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-4 pl-14 pr-4 text-xl font-bold text-white focus:outline-none focus:border-[#00ce9c] transition outfit">
-            </div>
-            <button id="withdrawBtn" onclick="handleWithdraw()" class="w-full py-4 rounded-xl btn-primary font-black text-lg shadow-xl active:scale-95 transition flex items-center justify-center gap-2 outfit uppercase">
-                <i data-lucide="wallet" class="w-5 h-5"></i>
-                <span id="btnText">Initiate Cash-Out</span>
-            </button>
-        </div>
-
-        <div class="space-y-4">
-            <h4 class="outfit text-lg font-bold flex items-center gap-2 text-white">
-                <i data-lucide="history" class="w-5 h-5 text-[#00ce9c]"></i>
-                Withdrawal History
-            </h4>
-            <div class="glass-card rounded-2xl overflow-hidden border-white/10">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-white/5 text-slate-500 text-[10px] uppercase tracking-widest font-bold outfit">
+        <div class="glass-card rounded-3xl overflow-hidden shadow-2xl">
+            <div class="table-container">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-white/5 text-[10px] uppercase tracking-widest text-slate-500 font-black outfit">
                         <tr>
-                            <th class="p-4">Details</th>
-                            <th class="p-4 text-center">Status</th>
-                            <th class="p-4 text-right">Amount</th>
+                            <th class="px-6 py-4">Status & Date</th>
+                            <th class="px-6 py-4">Action</th>
+                            <th class="px-6 py-4 text-right">Amount</th>
+                            <th class="px-6 py-4 text-right">Balance</th>
                         </tr>
                     </thead>
-                    <tbody id="withdrawTableBody" class="divide-y divide-white/5">
+                    <tbody id="history-body" class="divide-y divide-white/5 text-sm">
+                        <tr class="skeleton-row"><td class="px-6 py-5"><div class="h-10 w-10 skeleton"></div></td><td class="px-6 py-5"><div class="h-4 w-24 skeleton mb-2"></div><div class="h-3 w-32 skeleton"></div></td><td class="px-6 py-5"><div class="h-4 w-20 skeleton ml-auto"></div></td><td class="px-6 py-5"><div class="h-4 w-16 skeleton ml-auto"></div></td></tr>
+                        <tr class="skeleton-row"><td class="px-6 py-5"><div class="h-10 w-10 skeleton"></div></td><td class="px-6 py-5"><div class="h-4 w-24 skeleton mb-2"></div><div class="h-3 w-32 skeleton"></div></td><td class="px-6 py-5"><div class="h-4 w-20 skeleton ml-auto"></div></td><td class="px-6 py-5"><div class="h-4 w-16 skeleton ml-auto"></div></td></tr>
                     </tbody>
                 </table>
             </div>
+            <div id="loading-text" class="p-10 text-center text-[#00ce9c] animate-pulse text-xs font-bold uppercase tracking-widest outfit">Syncing ledger...</div>
         </div>
+        
+        <footer class="text-center pt-4">
+            <p class="outfit text-[10px] font-bold text-slate-600 tracking-widest uppercase">&copy; UPCASH BUSINESS PLATFORM 2026</p>
+        </footer>
     </main>
 
-    <footer class="mt-8 text-center pb-10">
-        <p class="outfit text-[10px] font-bold text-slate-600 tracking-widest uppercase">© UPCASH BUSINESS PLATFORM 2026</p>
-    </footer>
-    
-<script>
-    lucide.createIcons();
-    const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        lucide.createIcons();
+        const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
 
-    async function loadUserData() {
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) {
-                window.location.href = "signin.html";
-                return;
-            }
-
-            const { data: profile } = await supabaseClient
-                .from('userinfo')
-                .select('available_balance, telephone')
-                .eq('userid', user.id)
-                .single();
-
-            if (profile) {
-                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance).toLocaleString();
-                document.getElementById('recipientNum').textContent = profile.telephone || "Not Set";
-            }
-
-            const { data: history } = await supabaseClient
-                .from('user_history')
-                .select('created_at, amount, status, category, description')
-                .eq('userid', user.id)
-                .ilike('category', '%Withdraw%') 
-                .order('created_at', { ascending: false });
-
-            const tbody = document.getElementById('withdrawTableBody');
+        function getCategoryIcon(category) {
+            const cat = category.toLowerCase();
+            if (cat.includes('deposit')) return `<i data-lucide="plus-circle" class="w-5 h-5 text-[#00ce9c]"></i>`;
+            if (cat.includes('earning')) return `<i data-lucide="trending-up" class="w-5 h-5 text-yellow-400"></i>`;
+            if (cat.includes('bonus') || cat.includes('commission')) return `<i data-lucide="gift" class="w-5 h-5 text-purple-400"></i>`;
+            if (cat.includes('plan purchase')) return `<i data-lucide="shopping-bag" class="w-5 h-5 text-[#00ce9c]"></i>`;
+            if (cat.includes('reinvest')) return `<i data-lucide="refresh-ccw" class="w-5 h-5 text-blue-400"></i>`;
+            if (cat.includes('withdraw')) return `<i data-lucide="minus-circle" class="w-5 h-5 text-red-400"></i>`;
             
-            if (history && history.length > 0) {
-                tbody.innerHTML = history.map(row => {
-                    const statusStr = row.status ? row.status.toLowerCase() : 'pending';
-                    const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                    const amt = row.amount ? Math.abs(row.amount) : 0;
-
-                    // NEW LOGIC: Check for reinvestment keywords in category or description
-                    const isReinvest = (row.category && row.category.toLowerCase().includes('reinvest')) || 
-                                       (row.description && row.description.toLowerCase().includes('reinvest'));
-                    
-                    const methodLabel = isReinvest ? 'Reinvested' : 'Mobile Money';
-                    const methodClass = isReinvest ? 'text-[#00ce9c]' : 'text-slate-600';
-
-                    return `
-                    <tr class="hover:bg-white/[0.02]">
-                        <td class="p-4">
-                            <span class="text-white font-semibold text-xs block outfit">${new Date(row.created_at).toLocaleDateString()}</span>
-                            <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                        </td>
-                        <td class="p-4 text-center">
-                            <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
-                                ${row.status || 'Processing'}
-                            </span>
-                        </td>
-                        <td class="p-4 text-right">
-                            <span class="font-bold text-red-400 block outfit">UGX ${amt.toLocaleString()}</span>
-                            <span class="text-[9px] font-bold uppercase ${methodClass}">${methodLabel}</span>
-                        </td>
-                    </tr>`;
-                }).join('');
-            } else {
-                tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No withdrawal records.</td></tr>`;
-            }
-
-        } catch (err) {
-            console.error("Load Error:", err);
-        } finally {
-            document.getElementById('skeleton-ui').classList.add('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
-            lucide.createIcons();
-        }
-    }
-
-    async function handleWithdraw() {
-        const input = document.getElementById('withdrawAmount');
-        const btn = document.getElementById('withdrawBtn');
-        const btnText = document.getElementById('btnText');
-        const amount = parseFloat(input.value);
-        
-        if (!amount || amount < 10000) {
-            btnText.innerText = "MIN UGX 10,000 REQUIRED";
-            btn.classList.replace('btn-primary', 'bg-red-500/20');
-            btn.style.color = "#ef4444";
-            setTimeout(() => {
-                btnText.innerText = "INITIATE CASH-OUT";
-                btn.classList.replace('bg-red-500/20', 'btn-primary');
-                btn.style.color = "";
-            }, 2000);
-            return;
+            return `<i data-lucide="info" class="w-5 h-5 text-slate-400"></i>`;
         }
 
-        btn.disabled = true;
-        btnText.innerText = "PROCESSING...";
-
-        try {
+        async function loadHistory() {
             const { data: { user } } = await supabaseClient.auth.getUser();
-            const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
-                user_id_param: user.id, 
-                amount_to_withdraw: amount 
-            });
+            if(!user) return;
 
-            if (data?.success) { 
-                btnText.innerText = "REQUEST SENT!";
-                setTimeout(() => location.reload(), 1500);
-            } else { 
-                btnText.innerText = "INSUFFICIENT FUNDS";
-                btn.disabled = false;
-                setTimeout(() => btnText.innerText = "INITIATE CASH-OUT", 2500);
+            const { data, error } = await supabaseClient
+                .from('user_history')
+                .select('*')
+                .eq('userid', user.id)
+                .order('created_at', { ascending: false });
+            
+            const tbody = document.getElementById('history-body');
+            tbody.innerHTML = ''; 
+            document.getElementById('loading-text').classList.add('hidden');
+
+            if (data && data.length > 0) {
+                data.forEach(row => {
+                    const isPos = row.amount > 0;
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-white/[0.02] transition-colors";
+                    
+                    // Display current new_balance from the DB row, fallback to 0 if null
+                    const displayBalance = row.new_balance !== null ? Number(row.new_balance).toLocaleString() : '---';
+
+                    tr.innerHTML = `
+                        <td class="px-6 py-5 flex items-center gap-3">
+                            <div class="p-2 bg-white/5 rounded-xl">${getCategoryIcon(row.category || 'other')}</div>
+                            <div>
+                                <span class="text-[9px] font-black text-slate-500 uppercase block outfit">${row.status || 'Completed'}</span>
+                                <span class="text-xs text-slate-400 font-medium">${new Date(row.created_at).toLocaleDateString()}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-5">
+                            <span class="font-bold text-white block outfit">${row.category || 'Transaction'}</span>
+                            <span class="text-[10px] text-slate-500 italic block opacity-60">${row.description || ''}</span>
+                        </td>
+                        <td class="px-6 py-5 text-right font-black outfit ${isPos ? 'text-[#00ce9c]' : 'text-red-500'}">
+                            ${isPos ? '+' : '-'}UGX ${Math.abs(row.amount).toLocaleString()}
+                        </td>
+                        <td class="px-6 py-5 text-right font-mono text-slate-400 text-xs">
+                            UGX ${displayBalance}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                lucide.createIcons(); 
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-500 outfit">No transactions found</td></tr>';
             }
-        } catch (err) {
-            btnText.innerText = "NETWORK ERROR";
-            btn.disabled = false;
         }
-    }
-
-    window.onload = loadUserData;
-</script>
+        loadHistory();
+    </script>
 </body>
-    </html>
-    
+</html>
