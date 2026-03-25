@@ -52,20 +52,24 @@
         
         .badge-pending { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
         .badge-completed { background: rgba(0, 206, 156, 0.1); color: #00ce9c; border: 1px solid rgba(0, 206, 156, 0.2); }
+        .badge-failed { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
 
         .skeleton { background: rgba(0, 206, 156, 0.05); animation: pulse 1.5s infinite; border-radius: 12px; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-reveal { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
     </style>
 </head>
 <body class="pb-20">
-
-    <div style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:0;">
-        <div style="position:absolute;top:-20%;right:-15%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.08) 0%,transparent 70%);"></div>
-        <div style="position:absolute;bottom:-10%;left:-10%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.05) 0%,transparent 70%);"></div>
-    </div>
 
     <header class="w-full bg-[#0a0f1a]/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-[999]">
         <div class="max-w-lg mx-auto flex items-center justify-between px-5 py-4">
@@ -84,16 +88,15 @@
     <div id="skeleton-ui" class="p-4 max-w-lg mx-auto space-y-6">
         <div class="h-32 skeleton"></div>
         <div class="h-20 skeleton"></div>
-        <div class="h-56 skeleton"></div>
     </div>
 
     <main id="main-content" class="relative z-10 p-4 max-w-lg mx-auto space-y-6 hidden">
-        <div class="rounded-3xl p-6 shadow-2xl border border-[#00ce9c]/20" style="background: linear-gradient(135deg, #0c2a23, #0d1321);">
+        <div class="rounded-3xl p-6 shadow-2xl border border-[#00ce9c]/20 animate-reveal" style="background: linear-gradient(135deg, #0c2a23, #0d1321);">
             <p class="text-[#00ce9c]/70 text-sm font-medium mb-1 outfit tracking-wider uppercase">Available for Cash-out</p>
             <h3 class="outfit text-4xl font-black text-white" id="availBalance">UGX 0</h3>
         </div>
 
-        <div class="glass-card rounded-2xl p-4 flex items-center gap-4 border-white/10">
+        <div class="glass-card rounded-2xl p-4 flex items-center gap-4 border-white/10 animate-reveal delay-1">
             <div class="bg-[#00ce9c]/10 p-3 rounded-xl">
                 <i data-lucide="smartphone" class="w-6 h-6 text-[#00ce9c]"></i>
             </div>
@@ -103,7 +106,7 @@
             </div>
         </div>
 
-        <div class="glass-card rounded-3xl p-6 border-white/10">
+        <div class="glass-card rounded-3xl p-6 border-white/10 animate-reveal delay-2">
             <label class="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-4 outfit">Amount to Withdraw</label>
             <div class="relative mb-6">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#00ce9c] font-bold outfit">UGX</span>
@@ -111,7 +114,7 @@
             </div>
             <button id="withdrawBtn" onclick="handleWithdraw()" class="w-full py-4 rounded-xl btn-primary font-black text-lg shadow-xl active:scale-95 transition flex items-center justify-center gap-2 outfit uppercase">
                 <i data-lucide="wallet" class="w-5 h-5"></i>
-                Initiate Cash-Out
+                <span id="btnText">Initiate Cash-Out</span>
             </button>
         </div>
 
@@ -136,10 +139,6 @@
         </div>
     </main>
 
-    <footer class="mt-8 text-center pb-10">
-        <p class="outfit text-[10px] font-bold text-slate-600 tracking-widest uppercase">© UPCASH BUSINESS PLATFORM 2026</p>
-    </footer>
-    
 <script>
     lucide.createIcons();
     const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
@@ -147,36 +146,22 @@
     async function loadUserData() {
         try {
             const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) {
-                window.location.href = "signin.html";
-                return;
-            }
+            if (!user) return window.location.href = "signin.html";
 
-            const { data: profile } = await supabaseClient
-                .from('userinfo')
-                .select('available_balance, telephone')
-                .eq('userid', user.id)
-                .single();
-
+            const { data: profile } = await supabaseClient.from('userinfo').select('available_balance, telephone').eq('userid', user.id).single();
             if (profile) {
-                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance).toLocaleString();
-                document.getElementById('recipientNum').textContent = profile.telephone;
+                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance || 0).toLocaleString();
+                document.getElementById('recipientNum').textContent = profile.telephone || "Not Set";
             }
 
-            const { data: history } = await supabaseClient
-                .from('user_history')
-                .select('created_at, amount, status, category')
-                .eq('userid', user.id)
-                .ilike('category', 'Withdraw') 
-                .order('created_at', { ascending: false });
-
-            const tbody = document.getElementById('withdrawTableBody');
+            const { data: history } = await supabaseClient.from('user_history').select('*').eq('userid', user.id).ilike('category', '%Withdraw%').order('created_at', { ascending: false });
             
+            const tbody = document.getElementById('withdrawTableBody');
             if (history && history.length > 0) {
                 tbody.innerHTML = history.map(row => {
-                    const statusStr = row.status ? row.status.toLowerCase() : 'pending';
-                    const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                    const amt = row.amount ? Math.abs(row.amount) : 0;
+                    const status = (row.status || 'Pending').toLowerCase();
+                    const statusClass = status === 'completed' ? 'badge-completed' : (status === 'failed' ? 'badge-failed' : 'badge-pending');
+                    const isReinvest = row.description?.toLowerCase().includes('reinvest');
 
                     return `
                     <tr class="hover:bg-white/[0.02]">
@@ -185,56 +170,66 @@
                             <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                         </td>
                         <td class="p-4 text-center">
-                            <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
-                                ${row.status || 'Processing'}
-                            </span>
+                            <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">${status}</span>
                         </td>
                         <td class="p-4 text-right">
-                            <span class="font-bold text-red-400 block outfit">UGX ${amt.toLocaleString()}</span>
-                            <span class="text-[9px] text-slate-600">Mobile Money</span>
+                            <span class="font-bold text-red-400 block outfit">UGX ${Math.abs(row.amount).toLocaleString()}</span>
+                            <span class="text-[9px] font-bold uppercase text-slate-600">${isReinvest ? 'Reinvested' : 'Mobile Money'}</span>
                         </td>
                     </tr>`;
                 }).join('');
             } else {
                 tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No records found.</td></tr>`;
             }
-
-        } catch (err) {
-            console.error("Load Error:", err);
-        } finally {
+        } catch (err) { console.error(err); } 
+        finally {
             document.getElementById('skeleton-ui').classList.add('hidden');
             document.getElementById('main-content').classList.remove('hidden');
+            lucide.createIcons();
         }
     }
 
     async function handleWithdraw() {
-        const input = document.getElementById('withdrawAmount');
         const btn = document.getElementById('withdrawBtn');
-        const amount = parseFloat(input.value);
+        const btnText = document.getElementById('btnText');
+        const amount = parseFloat(document.getElementById('withdrawAmount').value);
         
-        if (!amount || amount < 10000) return alert("Minimum withdrawal is UGX 10,000");
+        if (!navigator.onLine) { btnText.innerText = "NO INTERNET"; return; }
+        if (!amount || amount < 10000) {
+            btnText.innerText = "MIN UGX 10,000";
+            setTimeout(() => btnText.innerText = "INITIATE CASH-OUT", 2000);
+            return;
+        }
 
         btn.disabled = true;
-        btn.innerHTML = `PROCESSING...`;
+        btnText.innerText = "PROCESSING...";
 
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
-            user_id_param: user.id, 
-            amount_to_withdraw: amount 
-        });
+        try {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            
+            // Calls the NEW unique function: process_user_withdrawal
+            const { data, error } = await supabaseClient.rpc('process_user_withdrawal', { 
+                user_id_param: user.id, 
+                amount_to_withdraw: amount 
+            });
 
-        if (data?.success) { 
-            alert("Withdrawal request successful!"); 
-            location.reload(); 
-        } else { 
-            alert("Request Failed: " + (data?.message || "Check your balance.")); 
+            if (error) throw error;
+
+            if (data?.success) { 
+                btnText.innerText = "SUCCESSFUL!";
+                setTimeout(() => location.reload(), 1500);
+            } else { 
+                btnText.innerText = (data?.message || "ERROR").toUpperCase();
+                btn.disabled = false;
+                setTimeout(() => btnText.innerText = "INITIATE CASH-OUT", 2500);
+            }
+        } catch (err) {
+            btnText.innerText = "DATABASE ERROR";
             btn.disabled = false;
-            btn.innerText = "INITIATE CASH-OUT";
+            setTimeout(() => btnText.innerText = "INITIATE CASH-OUT", 2500);
         }
     }
-
     window.onload = loadUserData;
 </script>
 </body>
-    </html>
-    
+</html>
