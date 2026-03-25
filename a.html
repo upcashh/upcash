@@ -58,6 +58,15 @@
 
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        /* ENTRANCE ANIMATION */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-reveal { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
     </style>
 </head>
 <body class="pb-20">
@@ -88,12 +97,12 @@
     </div>
 
     <main id="main-content" class="relative z-10 p-4 max-w-lg mx-auto space-y-6 hidden">
-        <div class="rounded-3xl p-6 shadow-2xl border border-[#00ce9c]/20" style="background: linear-gradient(135deg, #0c2a23, #0d1321);">
+        <div class="rounded-3xl p-6 shadow-2xl border border-[#00ce9c]/20 animate-reveal" style="background: linear-gradient(135deg, #0c2a23, #0d1321);">
             <p class="text-[#00ce9c]/70 text-sm font-medium mb-1 outfit tracking-wider uppercase">Available for Cash-out</p>
             <h3 class="outfit text-4xl font-black text-white" id="availBalance">UGX 0</h3>
         </div>
 
-        <div class="glass-card rounded-2xl p-4 flex items-center gap-4 border-white/10">
+        <div class="glass-card rounded-2xl p-4 flex items-center gap-4 border-white/10 animate-reveal delay-1">
             <div class="bg-[#00ce9c]/10 p-3 rounded-xl">
                 <i data-lucide="smartphone" class="w-6 h-6 text-[#00ce9c]"></i>
             </div>
@@ -103,7 +112,7 @@
             </div>
         </div>
 
-        <div class="glass-card rounded-3xl p-6 border-white/10">
+        <div class="glass-card rounded-3xl p-6 border-white/10 animate-reveal delay-2">
             <label class="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-4 outfit">Amount to Withdraw</label>
             <div class="relative mb-6">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#00ce9c] font-bold outfit">UGX</span>
@@ -111,7 +120,7 @@
             </div>
             <button id="withdrawBtn" onclick="handleWithdraw()" class="w-full py-4 rounded-xl btn-primary font-black text-lg shadow-xl active:scale-95 transition flex items-center justify-center gap-2 outfit uppercase">
                 <i data-lucide="wallet" class="w-5 h-5"></i>
-                Initiate Cash-Out
+                <span id="btnText">Initiate Cash-Out</span>
             </button>
         </div>
 
@@ -139,7 +148,8 @@
     <footer class="mt-8 text-center pb-10">
         <p class="outfit text-[10px] font-bold text-slate-600 tracking-widest uppercase">© UPCASH BUSINESS PLATFORM 2026</p>
     </footer>
- <script>
+    
+<script>
     lucide.createIcons();
     const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
 
@@ -158,63 +168,51 @@
                 .single();
 
             if (profile) {
-                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance || 0).toLocaleString();
-                document.getElementById('recipientNum').textContent = profile.telephone || '---';
+                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance).toLocaleString();
+                document.getElementById('recipientNum').textContent = profile.telephone || "Not Set";
             }
 
-            // Fetch history for the user
-            const { data: history, error: historyError } = await supabaseClient
+            const { data: history } = await supabaseClient
                 .from('user_history')
-                .select('created_at, amount, status, category')
+                .select('created_at, amount, status, category, description')
                 .eq('userid', user.id)
+                .ilike('category', '%Withdraw%') 
                 .order('created_at', { ascending: false });
-
-            if (historyError) throw historyError;
 
             const tbody = document.getElementById('withdrawTableBody');
             
             if (history && history.length > 0) {
-                // UPDATED FILTER: Now allows both 'Withdraw' and 'Reinvest'
-                const filteredHistory = history.filter(row => {
-                    const cat = (row.category || "").trim().toLowerCase();
-                    return cat === 'withdraw' || cat === 'reinvest';
-                });
+                tbody.innerHTML = history.map(row => {
+                    const statusStr = row.status ? row.status.toLowerCase() : 'pending';
+                    const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
+                    const amt = row.amount ? Math.abs(row.amount) : 0;
 
-                if (filteredHistory.length > 0) {
-                    tbody.innerHTML = filteredHistory.map(row => {
-                        const statusStr = row.status ? row.status.toLowerCase() : 'pending';
-                        const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                        
-                        const amt = Math.abs(Number(row.amount || 0));
+                    // NEW LOGIC: Check for reinvestment keywords in category or description
+                    const isReinvest = (row.category && row.category.toLowerCase().includes('reinvest')) || 
+                                       (row.description && row.description.toLowerCase().includes('reinvest'));
+                    
+                    const methodLabel = isReinvest ? 'Reinvested' : 'Mobile Money';
+                    const methodClass = isReinvest ? 'text-[#00ce9c]' : 'text-slate-600';
 
-                        // NEW LOGIC: Determine label and color based on category
-                        const cat = (row.category || "").trim().toLowerCase();
-                        const isReinvest = cat === 'reinvest';
-                        const typeLabel = isReinvest ? 'Reinvestment' : 'Mobile Money';
-                        const amountColor = isReinvest ? 'text-blue-400' : 'text-red-400';
-
-                        return `
-                        <tr class="hover:bg-white/[0.02]">
-                            <td class="p-4">
-                                <span class="text-white font-semibold text-xs block outfit">${new Date(row.created_at).toLocaleDateString()}</span>
-                                <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                            </td>
-                            <td class="p-4 text-center">
-                                <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
-                                    ${row.status || 'Processing'}
-                                </span>
-                            </td>
-                            <td class="p-4 text-right">
-                                <span class="font-bold ${amountColor} block outfit">UGX ${amt.toLocaleString()}</span>
-                                <span class="text-[9px] text-slate-600">${typeLabel}</span>
-                            </td>
-                        </tr>`;
-                    }).join('');
-                } else {
-                    tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No withdrawal records found.</td></tr>`;
-                }
+                    return `
+                    <tr class="hover:bg-white/[0.02]">
+                        <td class="p-4">
+                            <span class="text-white font-semibold text-xs block outfit">${new Date(row.created_at).toLocaleDateString()}</span>
+                            <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </td>
+                        <td class="p-4 text-center">
+                            <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
+                                ${row.status || 'Processing'}
+                            </span>
+                        </td>
+                        <td class="p-4 text-right">
+                            <span class="font-bold text-red-400 block outfit">UGX ${amt.toLocaleString()}</span>
+                            <span class="text-[9px] font-bold uppercase ${methodClass}">${methodLabel}</span>
+                        </td>
+                    </tr>`;
+                }).join('');
             } else {
-                tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No records found.</td></tr>`;
+                tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No withdrawal records.</td></tr>`;
             }
 
         } catch (err) {
@@ -222,307 +220,54 @@
         } finally {
             document.getElementById('skeleton-ui').classList.add('hidden');
             document.getElementById('main-content').classList.remove('hidden');
+            lucide.createIcons();
         }
     }
 
     async function handleWithdraw() {
         const input = document.getElementById('withdrawAmount');
         const btn = document.getElementById('withdrawBtn');
+        const btnText = document.getElementById('btnText');
         const amount = parseFloat(input.value);
         
-        if (!amount || amount < 10000) return alert("Minimum withdrawal is UGX 10,000");
+        if (!amount || amount < 10000) {
+            btnText.innerText = "MIN UGX 10,000 REQUIRED";
+            btn.classList.replace('btn-primary', 'bg-red-500/20');
+            btn.style.color = "#ef4444";
+            setTimeout(() => {
+                btnText.innerText = "INITIATE CASH-OUT";
+                btn.classList.replace('bg-red-500/20', 'btn-primary');
+                btn.style.color = "";
+            }, 2000);
+            return;
+        }
 
         btn.disabled = true;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = `PROCESSING...`;
+        btnText.innerText = "PROCESSING...";
 
         try {
             const { data: { user } } = await supabaseClient.auth.getUser();
-            
             const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
                 user_id_param: user.id, 
                 amount_to_withdraw: amount 
             });
 
-            if (error) {
-<script>
-    lucide.createIcons();
-    const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
-
-    async function loadUserData() {
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) {
-                window.location.href = "signin.html";
-                return;
-            }
-
-            const { data: profile } = await supabaseClient
-                .from('userinfo')
-                .select('available_balance, telephone')
-                .eq('userid', user.id)
-                .single();
-
-            if (profile) {
-                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance || 0).toLocaleString();
-                document.getElementById('recipientNum').textContent = profile.telephone || '---';
-            }
-
-            // Fetch history
-            const { data: history, error: historyError } = await supabaseClient
-                .from('user_history')
-                .select('created_at, amount, status, category')
-                .eq('userid', user.id)
-                .order('created_at', { ascending: false });
-
-            if (historyError) throw historyError;
-
-            const tbody = document.getElementById('withdrawTableBody');
-            
-            if (history && history.length > 0) {
-                // Filter for only relevant types
-                const filteredHistory = history.filter(row => {
-                    const cat = (row.category || "").trim().toLowerCase();
-                    return cat === 'withdraw' || cat === 'reinvest';
-                });
-
-                if (filteredHistory.length > 0) {
-                    tbody.innerHTML = filteredHistory.map(row => {
-                        const cat = (row.category || "").trim().toLowerCase();
-                        const isReinvest = cat === 'reinvest';
-                        
-                        // Status logic: Use DB status, but fallback to pending if empty
-                        const statusStr = (row.status || 'pending').toLowerCase();
-                        const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                        
-                        const amt = Math.abs(Number(row.amount || 0));
-                        const typeLabel = isReinvest ? 'Reinvestment' : 'Mobile Money';
-                        const amountColor = isReinvest ? 'text-blue-400' : 'text-red-400';
-
-                        return `
-                        <tr class="hover:bg-white/[0.02]">
-                            <td class="p-4">
-                                <span class="text-white font-semibold text-xs block outfit">${new Date(row.created_at).toLocaleDateString()}</span>
-                                <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                            </td>
-                            <td class="p-4 text-center">
-                                <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
-                                    ${statusStr}
-                                </span>
-                            </td>
-                            <td class="p-4 text-right">
-<script>
-    lucide.createIcons();
-    const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
-
-    async function loadUserData() {
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) {
-                window.location.href = "signin.html";
-                return;
-            }
-
-            const { data: profile } = await supabaseClient
-                .from('userinfo')
-                .select('available_balance, telephone')
-                .eq('userid', user.id)
-                .single();
-
-            if (profile) {
-                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance || 0).toLocaleString();
-                document.getElementById('recipientNum').textContent = profile.telephone || '---';
-            }
-
-            // Fetch history for the user
-            const { data: history, error: historyError } = await supabaseClient
-                .from('user_history')
-                .select('created_at, amount, status, category')
-                .eq('userid', user.id)
-                .order('created_at', { ascending: false });
-
-            if (historyError) throw historyError;
-
-            const tbody = document.getElementById('withdrawTableBody');
-            
-            if (history && history.length > 0) {
-                // UPDATED FILTER: Now allows both 'Withdraw' and 'Reinvest'
-                const filteredHistory = history.filter(row => {
-                    const cat = (row.category || "").trim().toLowerCase();
-                    return cat === 'withdraw' || cat === 'reinvest';
-                });
-
-                if (filteredHistory.length > 0) {
-                    tbody.innerHTML = filteredHistory.map(row => {
-                        const statusStr = row.status ? row.status.toLowerCase() : 'pending';
-                        const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                        
-                        const amt = Math.abs(Number(row.amount || 0));
-
-                        // NEW LOGIC: Determine label and color based on category
-                        const cat = (row.category || "").trim().toLowerCase();
-                        const isReinvest = cat === 'reinvest';
-                        const typeLabel = isReinvest ? 'Reinvestment' : 'Mobile Money';
-                        const amountColor = isReinvest ? 'text-blue-400' : 'text-red-400';
-
-                        return `
-                        <tr class="hover:bg-white/[0.02]">
-                            <td class="p-4">
-                                <span class="text-white font-semibold text-xs block outfit">${new Date(row.created_at).toLocaleDateString()}</span>
-                                <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                            </td>
-                            <td class="p-4 text-center">
-                                <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
-                                    ${row.status || 'Processing'}
-                                </span>
-                            </td>
-                            <td class="p-4 text-right">
-                                <span class="font-bold ${amountColor} block outfit">UGX ${amt.toLocaleString()}</span>
-                                <span class="text-[9px] text-slate-600">${typeLabel}</span>
-                            </td>
-                        </tr>`;
-                    }).join('');
-                } else {
-                    tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No withdrawal records found.</td></tr>`;
-                }
-            } else {
-                tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No records found.</td></tr>`;
-            }
-
-        } catch (err) {
-            console.error("Load Error:", err);
-        } finally {
-            document.getElementById('skeleton-ui').classList.add('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
-        }
-<script>
-    lucide.createIcons();
-    const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
-
-    async function loadUserData() {
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) {
-                window.location.href = "signin.html";
-                return;
-            }
-
-            const { data: profile } = await supabaseClient
-                .from('userinfo')
-                .select('available_balance, telephone')
-                .eq('userid', user.id)
-                .single();
-
-            if (profile) {
-                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance || 0).toLocaleString();
-                document.getElementById('recipientNum').textContent = profile.telephone || '---';
-            }
-
-            // Fetch history for the user
-            const { data: history, error: historyError } = await supabaseClient
-                .from('user_history')
-                .select('created_at, amount, status, category')
-                .eq('userid', user.id)
-                .order('created_at', { ascending: false });
-
-            if (historyError) throw historyError;
-
-            const tbody = document.getElementById('withdrawTableBody');
-            
-            if (history && history.length > 0) {
-                // UPDATED FILTER: Now allows both 'Withdraw' and 'Reinvest'
-                const filteredHistory = history.filter(row => {
-                    const cat = (row.category || "").trim().toLowerCase();
-                    return cat === 'withdraw' || cat === 'reinvest';
-                });
-
-                if (filteredHistory.length > 0) {
-                    tbody.innerHTML = filteredHistory.map(row => {
-                        const statusStr = row.status ? row.status.toLowerCase() : 'pending';
-                        const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                        
-                        const amt = Math.abs(Number(row.amount || 0));
-
-                        // NEW LOGIC: Determine label and color based on category
-                        const cat = (row.category || "").trim().toLowerCase();
-                        const isReinvest = cat === 'reinvest';
-                        const typeLabel = isReinvest ? 'Reinvestment' : 'Mobile Money';
-                        const amountColor = isReinvest ? 'text-blue-400' : 'text-red-400';
-
-                        return `
-                        <tr class="hover:bg-white/[0.02]">
-                            <td class="p-4">
-                                <span class="text-white font-semibold text-xs block outfit">${new Date(row.created_at).toLocaleDateString()}</span>
-                                <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                            </td>
-                            <td class="p-4 text-center">
-                                <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
-                                    ${row.status || 'Processing'}
-                                </span>
-                            </td>
-                            <td class="p-4 text-right">
-                                <span class="font-bold ${amountColor} block outfit">UGX ${amt.toLocaleString()}</span>
-                                <span class="text-[9px] text-slate-600">${typeLabel}</span>
-                            </td>
-                        </tr>`;
-                    }).join('');
-                } else {
-                    tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No withdrawal records found.</td></tr>`;
-                }
-            } else {
-                tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No records found.</td></tr>`;
-            }
-
-        } catch (err) {
-            console.error("Load Error:", err);
-        } finally {
-            document.getElementById('skeleton-ui').classList.add('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
-        }
-    }
-
-    async function handleWithdraw() {
-        const input = document.getElementById('withdrawAmount');
-        const btn = document.getElementById('withdrawBtn');
-        const amount = parseFloat(input.value);
-        
-        if (!amount || amount < 10000) return alert("Minimum withdrawal is UGX 10,000");
-
-        btn.disabled = true;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = `PROCESSING...`;
-
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            
-            const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
-                user_id_param: user.id, 
-                amount_to_withdraw: amount 
-            });
-
-            if (error) {
-                console.error("RPC Error:", error);
-                alert("System Error: " + error.message);
-            } else if (data && data.success) { 
-                alert("Withdrawal request successful!"); 
-                location.reload(); 
+            if (data?.success) { 
+                btnText.innerText = "REQUEST SENT!";
+                setTimeout(() => location.reload(), 1500);
             } else { 
-                alert("Request Failed: " + (data?.message || "Check your balance.")); 
+                btnText.innerText = "INSUFFICIENT FUNDS";
+                btn.disabled = false;
+                setTimeout(() => btnText.innerText = "INITIATE CASH-OUT", 2500);
             }
         } catch (err) {
-            console.error("Critical Error:", err);
-            alert("An unexpected error occurred.");
-        } finally {
+            btnText.innerText = "NETWORK ERROR";
             btn.disabled = false;
-            btn.innerHTML = originalText;
         }
     }
 
     window.onload = loadUserData;
-                            </script>
-
-    
-
+</script>
 </body>
-  </html>
-  
+    </html>
+    
