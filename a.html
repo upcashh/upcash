@@ -139,8 +139,7 @@
     <footer class="mt-8 text-center pb-10">
         <p class="outfit text-[10px] font-bold text-slate-600 tracking-widest uppercase">© UPCASH BUSINESS PLATFORM 2026</p>
     </footer>
-    
-<script>
+ <script>
     lucide.createIcons();
     const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
 
@@ -163,7 +162,7 @@
                 document.getElementById('recipientNum').textContent = profile.telephone || '---';
             }
 
-            // Fetch ALL history for this user to ensure we can filter precisely in JS
+            // Fetch history for the user
             const { data: history, error: historyError } = await supabaseClient
                 .from('user_history')
                 .select('created_at, amount, status, category')
@@ -175,20 +174,24 @@
             const tbody = document.getElementById('withdrawTableBody');
             
             if (history && history.length > 0) {
-                // STRICT FILTER: Only allow rows where category is exactly 'Withdraw'
-                // This manually skips 'Reinvest', 'Bonus', etc. regardless of DB quirks
-                const withdrawalOnly = history.filter(row => {
+                // UPDATED FILTER: Now allows both 'Withdraw' and 'Reinvest'
+                const filteredHistory = history.filter(row => {
                     const cat = (row.category || "").trim().toLowerCase();
-                    return cat === 'withdraw';
+                    return cat === 'withdraw' || cat === 'reinvest';
                 });
 
-                if (withdrawalOnly.length > 0) {
-                    tbody.innerHTML = withdrawalOnly.map(row => {
+                if (filteredHistory.length > 0) {
+                    tbody.innerHTML = filteredHistory.map(row => {
                         const statusStr = row.status ? row.status.toLowerCase() : 'pending';
                         const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
                         
-                        // Withdrawals are negative in DB, Math.abs converts to positive for UI
                         const amt = Math.abs(Number(row.amount || 0));
+
+                        // NEW LOGIC: Determine label and color based on category
+                        const cat = (row.category || "").trim().toLowerCase();
+                        const isReinvest = cat === 'reinvest';
+                        const typeLabel = isReinvest ? 'Reinvestment' : 'Mobile Money';
+                        const amountColor = isReinvest ? 'text-blue-400' : 'text-red-400';
 
                         return `
                         <tr class="hover:bg-white/[0.02]">
@@ -202,8 +205,8 @@
                                 </span>
                             </td>
                             <td class="p-4 text-right">
-                                <span class="font-bold text-red-400 block outfit">UGX ${amt.toLocaleString()}</span>
-                                <span class="text-[9px] text-slate-600">Mobile Money</span>
+                                <span class="font-bold ${amountColor} block outfit">UGX ${amt.toLocaleString()}</span>
+                                <span class="text-[9px] text-slate-600">${typeLabel}</span>
                             </td>
                         </tr>`;
                     }).join('');
@@ -236,7 +239,6 @@
         try {
             const { data: { user } } = await supabaseClient.auth.getUser();
             
-            // Fixed argument key to match your Supabase RPC: user_id_param
             const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
                 user_id_param: user.id, 
                 amount_to_withdraw: amount 
@@ -261,7 +263,9 @@
     }
 
     window.onload = loadUserData;
-</script>
+                            </script>
+    
+
 </body>
   </html>
   
