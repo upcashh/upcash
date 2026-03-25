@@ -41,7 +41,6 @@
 
         .table-container { overflow-x: auto; }
 
-        /* Skeleton Animation */
         .skeleton { 
             background: linear-gradient(90deg, rgba(0, 206, 156, 0.03) 25%, rgba(0, 206, 156, 0.08) 50%, rgba(0, 206, 156, 0.03) 75%); 
             background-size: 200% 100%; 
@@ -86,7 +85,6 @@
                     </thead>
                     <tbody id="history-body" class="divide-y divide-white/5 text-sm">
                         <tr class="skeleton-row"><td class="px-6 py-5"><div class="h-10 w-10 skeleton"></div></td><td class="px-6 py-5"><div class="h-4 w-24 skeleton mb-2"></div><div class="h-3 w-32 skeleton"></div></td><td class="px-6 py-5"><div class="h-4 w-20 skeleton ml-auto"></div></td><td class="px-6 py-5"><div class="h-4 w-16 skeleton ml-auto"></div></td></tr>
-                        <tr class="skeleton-row"><td class="px-6 py-5"><div class="h-10 w-10 skeleton"></div></td><td class="px-6 py-5"><div class="h-4 w-24 skeleton mb-2"></div><div class="h-3 w-32 skeleton"></div></td><td class="px-6 py-5"><div class="h-4 w-20 skeleton ml-auto"></div></td><td class="px-6 py-5"><div class="h-4 w-16 skeleton ml-auto"></div></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -104,15 +102,13 @@
         const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
 
         function getCategoryIcon(category) {
-            const cat = category.toLowerCase();
+            const cat = String(category || '').toLowerCase();
             if (cat.includes('deposit')) return `<i data-lucide="plus-circle" class="w-5 h-5 text-[#00ce9c]"></i>`;
             if (cat.includes('earning')) return `<i data-lucide="trending-up" class="w-5 h-5 text-yellow-400"></i>`;
-            if (cat.includes('bonus') || cat.includes('commission')) return `<i data-lucide="gift" class="w-5 h-5 text-purple-400"></i>`;
+            if (cat.includes('bonus')) return `<i data-lucide="gift" class="w-5 h-5 text-purple-400"></i>`;
             if (cat.includes('plan purchase')) return `<i data-lucide="shopping-bag" class="w-5 h-5 text-[#00ce9c]"></i>`;
             if (cat.includes('reinvest')) return `<i data-lucide="refresh-ccw" class="w-5 h-5 text-blue-400"></i>`;
-            if (cat.includes('withdraw')) return `<i data-lucide="minus-circle" class="w-5 h-5 text-red-400"></i>`;
-            
-            return `<i data-lucide="info" class="w-5 h-5 text-slate-400"></i>`;
+            return `<i data-lucide="minus-circle" class="w-5 h-5 text-red-400"></i>`;
         }
 
         async function loadHistory() {
@@ -135,12 +131,14 @@
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-white/[0.02] transition-colors";
                     
-                    // Display current new_balance from the DB row, fallback to 0 if null
-                    const displayBalance = row.new_balance !== null ? Number(row.new_balance).toLocaleString() : '---';
+                    // Fixed: If new_balance is null, we display 'UGX ---' as per your screenshots
+                    const displayBal = row.new_balance !== null 
+                        ? 'UGX ' + Number(row.new_balance).toLocaleString() 
+                        : 'UGX ---';
 
                     tr.innerHTML = `
                         <td class="px-6 py-5 flex items-center gap-3">
-                            <div class="p-2 bg-white/5 rounded-xl">${getCategoryIcon(row.category || 'other')}</div>
+                            <div class="p-2 bg-white/5 rounded-xl">${getCategoryIcon(row.category)}</div>
                             <div>
                                 <span class="text-[9px] font-black text-slate-500 uppercase block outfit">${row.status || 'Completed'}</span>
                                 <span class="text-xs text-slate-400 font-medium">${new Date(row.created_at).toLocaleDateString()}</span>
@@ -154,14 +152,14 @@
                             ${isPos ? '+' : '-'}UGX ${Math.abs(row.amount).toLocaleString()}
                         </td>
                         <td class="px-6 py-5 text-right font-mono text-slate-400 text-xs">
-                            UGX ${displayBalance}
+                            ${displayBal}
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
-                lucide.createIcons(); 
+                lucide.createIcons();
             } else {
-                tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-500 outfit">No transactions found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-500 outfit">No records found</td></tr>';
             }
         }
         loadHistory();
