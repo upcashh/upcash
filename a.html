@@ -107,7 +107,6 @@
             if (cat.includes('earning')) return `<i data-lucide="trending-up" class="w-5 h-5 text-yellow-400"></i>`;
             if (cat.includes('bonus')) return `<i data-lucide="gift" class="w-5 h-5 text-purple-400"></i>`;
             if (cat.includes('plan purchase')) return `<i data-lucide="shopping-bag" class="w-5 h-5 text-[#00ce9c]"></i>`;
-            if (cat.includes('reinvest')) return `<i data-lucide="refresh-ccw" class="w-5 h-5 text-blue-400"></i>`;
             return `<i data-lucide="minus-circle" class="w-5 h-5 text-red-400"></i>`;
         }
 
@@ -131,8 +130,8 @@
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-white/[0.02] transition-colors";
                     
-                    // Fixed: If new_balance is null, we display 'UGX ---' as per your screenshots
-                    const displayBal = row.new_balance !== null 
+                    // Display balance logic
+                    const displayBal = (row.new_balance !== null && row.new_balance !== undefined)
                         ? 'UGX ' + Number(row.new_balance).toLocaleString() 
                         : 'UGX ---';
 
@@ -140,7 +139,7 @@
                         <td class="px-6 py-5 flex items-center gap-3">
                             <div class="p-2 bg-white/5 rounded-xl">${getCategoryIcon(row.category)}</div>
                             <div>
-                                <span class="text-[9px] font-black text-slate-500 uppercase block outfit">${row.status || 'Completed'}</span>
+                                <span class="text-[9px] font-black text-slate-500 uppercase block outfit">${row.status || 'Verified'}</span>
                                 <span class="text-xs text-slate-400 font-medium">${new Date(row.created_at).toLocaleDateString()}</span>
                             </div>
                         </td>
@@ -157,7 +156,7 @@
                     `;
                     tbody.appendChild(tr);
                 });
-                lucide.createIcons();
+                lucide.createIcons(); 
             } else {
                 tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-500 outfit">No records found</td></tr>';
             }
