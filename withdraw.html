@@ -444,23 +444,50 @@
 
             // Fetch history specifically for the Withdraw category
             const { data: history } = await supabaseClient
+<script>
+    lucide.createIcons();
+    const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
+
+    async function loadUserData() {
+        try {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) {
+                window.location.href = "signin.html";
+                return;
+            }
+
+            const { data: profile } = await supabaseClient
+                .from('userinfo')
+                .select('available_balance, telephone')
+                .eq('userid', user.id)
+                .single();
+
+            if (profile) {
+                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance).toLocaleString();
+                document.getElementById('recipientNum').textContent = profile.telephone;
+            }
+
+            // UPDATED FILTER: We fetch the history and apply a strict match
+            const { data: history } = await supabaseClient
                 .from('user_history')
                 .select('created_at, amount, status, category')
                 .eq('userid', user.id)
-                .eq('category', 'Withdraw') 
+                .eq('category', 'Withdraw') // Database level filter
                 .order('created_at', { ascending: false });
 
             const tbody = document.getElementById('withdrawTableBody');
             
             if (history && history.length > 0) {
-                // Final guard to ensure NO Reinvest rows appear
-                const withdrawalOnly = history.filter(row => row.category === 'Withdraw');
+                // STRENGHTENED FILTER: Ensures no 'Reinvest' or 'Bonus' rows slip through
+                const withdrawalOnly = history.filter(row => 
+                    row.category === 'Withdraw' && Number(row.amount) < 0
+                );
 
                 if (withdrawalOnly.length > 0) {
                     tbody.innerHTML = withdrawalOnly.map(row => {
                         const statusStr = row.status ? row.status.toLowerCase() : 'pending';
                         const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                        // Withdrawals are negative in DB, convert to positive for UI
+                        // Convert negative DB value to positive for display
                         const amt = Math.abs(Number(row.amount));
 
                         return `
@@ -505,26 +532,17 @@
         btn.disabled = true;
         btn.innerHTML = `PROCESSING...`;
 
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            
-            // FIXED: Using user_id_param to match your Supabase RPC function arguments
-            const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
-                user_id_param: user.id, 
-                amount_to_withdraw: amount 
-            });
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
+            user_id: user.id, 
+            amount_to_withdraw: amount 
+        });
 
-            if (error) {
-                alert("System Error: " + error.message);
-            } else if (data?.success) { 
-                alert("Withdrawal request successful!"); 
-                location.reload(); 
-            } else { 
-                alert("Request Failed: " + (data?.message || "Check your balance.")); 
-            }
-        } catch (err) {
-            alert("An unexpected error occurred.");
-        } finally {
+        if (data?.success) { 
+            alert("Withdrawal request successful!"); 
+            location.reload(); 
+        } else { 
+            alert("Request Failed: " + (data?.message || "Check your balance.")); 
             btn.disabled = false;
             btn.innerText = "INITIATE CASH-OUT";
         }
@@ -532,6 +550,7 @@
 
     window.onload = loadUserData;
 </script>
+
 
 
 
