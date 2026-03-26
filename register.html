@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0f1a">
     <title>UPCASH | Create Account</title>
     
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -33,7 +34,7 @@
 
         .field { 
             width: 100%; 
-            padding: 1rem 1rem 1rem 3rem; 
+            padding: 1rem 3rem 1rem 3rem; 
             border-radius: 0.75rem; 
             background: rgba(10, 15, 26, 0.5); 
             border: 1px solid rgba(255,255,255,0.08); 
@@ -66,6 +67,9 @@
         .field:focus { border-color: #00CE9C; box-shadow: 0 0 10px rgba(0, 206, 156, 0.1); }
         .input-icon { position: absolute; left: 1rem; top: 1.1rem; color: #00CE9C; opacity: 0.7; z-index: 10; }
         
+        .toggle-btn { position: absolute; right: 1rem; top: 1.1rem; color: #5a6477; cursor: pointer; z-index: 10; transition: color 0.3s; }
+        .toggle-btn:hover { color: #00CE9C; }
+
         .btn-primary {
             background: #00CE9C;
             color: #0a0f1a;
@@ -80,6 +84,10 @@
 
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .fade-up { animation: fadeUp 0.6s ease forwards; }
+
+        /* Animated Icons */
+        .lucide { animation: iconFloat 3s ease-in-out infinite; }
+        @keyframes iconFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-8">
@@ -97,7 +105,8 @@
                </div>
                <h1 class="outfit font-900 text-5xl sm:text-6xl tracking-tighter text-white uppercase">UP<span style="color:#00ce9c;">CASH</span></h1>
             </div>
-            <p class="outfit font-300 text-lg text-[#00CE9C] tracking-[3px] uppercase">Invest Smart. Earn Big.</p>
+            <p class="outfit font-bold text-xs text-white/80 tracking-[2px] uppercase">Secure Wealth Infrastructure</p>
+            <p class="text-[10px] text-slate-500 mt-1 px-10">Join a transparent ecosystem built on algorithmic precision and capital insulation.</p>
         </header>
 
         <div class="glass-card rounded-3xl p-6 sm:p-10">
@@ -117,21 +126,28 @@
 
                 <div class="input-container">
                     <i data-lucide="phone" class="input-icon w-5 h-5"></i>
-                    <input type="tel" id="phone" required placeholder=" " class="field">
+                    <input type="tel" id="phone" required placeholder=" " maxlength="10" class="field">
                     <label class="floating-label">Phone Number</label>
+                    <div id="phone-feedback" class="text-[10px] absolute -bottom-5 left-2 text-slate-500">Exactly 10 digits required.</div>
                 </div>
 
                 <div class="input-container">
                     <i data-lucide="lock" class="input-icon w-5 h-5"></i>
                     <input type="password" id="password" required placeholder=" " class="field">
                     <label class="floating-label">Password</label>
+                    <div class="toggle-btn" onclick="togglePass('password', this)">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                    </div>
                 </div>
 
                 <div class="input-container">
                     <i data-lucide="shield-check" class="input-icon w-5 h-5"></i>
                     <input type="password" id="confirmPassword" required placeholder=" " class="field">
                     <label class="floating-label">Confirm Password</label>
-                    <div id="pass-feedback" class="text-[10px] absolute -bottom-5 left-2 text-red-400"></div>
+                    <div class="toggle-btn" onclick="togglePass('confirmPassword', this)">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                    </div>
+                    <div id="pass-feedback" class="text-[10px] absolute -bottom-5 left-2 text-slate-500 italic">Min. 8 characters required.</div>
                 </div>
 
                 <input type="hidden" id="referrerInput" name="referred_by" value="">
@@ -158,15 +174,73 @@
     const form = document.getElementById('signupForm'), 
           usernameInput = document.getElementById('username'), 
           feedback = document.getElementById('username-feedback'), 
+          phoneInput = document.getElementById('phone'),
+          phoneFeedback = document.getElementById('phone-feedback'),
           pass1 = document.getElementById('password'), 
           pass2 = document.getElementById('confirmPassword'), 
           passFeed = document.getElementById('pass-feedback'), 
           submitBtn = document.getElementById('submitBtn');
     
+    function togglePass(id, btn) {
+        const input = document.getElementById(id);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.setAttribute('data-lucide', 'eye-off');
+        } else {
+            input.type = 'password';
+            icon.setAttribute('data-lucide', 'eye');
+        }
+        lucide.createIcons();
+    }
+
     function validateForm() {
         const isUserValid = usernameInput.classList.contains('input-success');
-        const isPassMatch = pass1.value !== "" && pass1.value === pass2.value;
-        submitBtn.disabled = !(isUserValid && isPassMatch);
+        
+        // Phone validation: must be exactly 10 digits
+        const phoneValue = phoneInput.value;
+        const isPhoneValid = /^\d{10}$/.test(phoneValue);
+        
+        if (phoneValue.length > 0 && !isPhoneValid) {
+            phoneInput.classList.add('input-error');
+            phoneFeedback.style.color = "#ef4444";
+        } else if (isPhoneValid) {
+            phoneInput.classList.remove('input-error');
+            phoneInput.classList.add('input-success');
+            phoneFeedback.style.color = "#00CE9C";
+        } else {
+            phoneInput.classList.remove('input-error', 'input-success');
+            phoneFeedback.style.color = "#5a6477";
+        }
+
+        const passValue = pass1.value;
+        const confirmValue = pass2.value;
+        const isLongEnough = passValue.length >= 8;
+        const isMatch = passValue !== "" && passValue === confirmValue;
+
+        // Visual feedback for password rule
+        if (passValue.length > 0 && !isLongEnough) {
+            pass1.classList.add('input-error');
+            passFeed.innerText = "Password too short (Minimum 8 characters)";
+            passFeed.style.color = "#ef4444";
+        } else if (confirmValue.length > 0 && !isMatch) {
+            pass1.classList.remove('input-error');
+            pass2.classList.add('input-error');
+            passFeed.innerText = "Passwords do not match";
+            passFeed.style.color = "#ef4444";
+        } else if (isLongEnough && isMatch) {
+            pass1.classList.remove('input-error');
+            pass2.classList.remove('input-error');
+            pass1.classList.add('input-success');
+            pass2.classList.add('input-success');
+            passFeed.innerText = "Security criteria met";
+            passFeed.style.color = "#00CE9C";
+        } else {
+            pass1.classList.remove('input-error', 'input-success');
+            pass2.classList.remove('input-error', 'input-success');
+        }
+
+        submitBtn.disabled = !(isUserValid && isPhoneValid && isLongEnough && isMatch);
     }
 
     usernameInput.addEventListener('input', (e) => {
@@ -174,6 +248,7 @@
         if (e.target.value !== sanitized) usernameInput.value = sanitized;
         if (sanitized.length < 4) {
             feedback.innerText = "Minimum 4 lowercase letters.";
+            feedback.style.color = "#5a6477";
             usernameInput.classList.remove('input-success', 'input-error');
             validateForm(); return;
         }
@@ -196,10 +271,13 @@
         }, 500);
     });
 
-    [pass1, pass2].forEach(el => el.addEventListener('input', () => {
-        passFeed.innerText = (pass2.value && pass1.value !== pass2.value) ? "Passwords do not match" : "";
+    phoneInput.addEventListener('input', (e) => {
+        // Only allow numbers
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
         validateForm();
-    }));
+    });
+
+    [pass1, pass2].forEach(el => el.addEventListener('input', validateForm));
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -209,13 +287,12 @@
         let referrerUUID = null;
         const referrerUsername = document.getElementById('referrerInput').value;
 
-        // NEW LOGIC: Look up the Referrer's actual ID (UUID)
         if (referrerUsername) {
             const { data: refData } = await supabaseClient
                 .from('userinfo')
                 .select('userid')
                 .eq('username', referrerUsername)
-                .single();
+                .maybeSingle();
             if (refData) referrerUUID = refData.userid;
         }
 
@@ -226,8 +303,8 @@
             options: { 
                 data: { 
                     username: usernameInput.value, 
-                    telephone: document.getElementById('phone').value,
-                    referred_by: referrerUUID // Passing the UUID instead of the username
+                    telephone: phoneInput.value,
+                    referred_by: referrerUUID 
                 } 
             } 
         });
