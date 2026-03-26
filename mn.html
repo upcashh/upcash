@@ -126,8 +126,9 @@
 
                 <div class="input-container">
                     <i data-lucide="phone" class="input-icon w-5 h-5"></i>
-                    <input type="tel" id="phone" required placeholder=" " class="field">
+                    <input type="tel" id="phone" required placeholder=" " maxlength="10" class="field">
                     <label class="floating-label">Phone Number</label>
+                    <div id="phone-feedback" class="text-[10px] absolute -bottom-5 left-2 text-slate-500">Exactly 10 digits required.</div>
                 </div>
 
                 <div class="input-container">
@@ -173,6 +174,8 @@
     const form = document.getElementById('signupForm'), 
           usernameInput = document.getElementById('username'), 
           feedback = document.getElementById('username-feedback'), 
+          phoneInput = document.getElementById('phone'),
+          phoneFeedback = document.getElementById('phone-feedback'),
           pass1 = document.getElementById('password'), 
           pass2 = document.getElementById('confirmPassword'), 
           passFeed = document.getElementById('pass-feedback'), 
@@ -193,9 +196,25 @@
 
     function validateForm() {
         const isUserValid = usernameInput.classList.contains('input-success');
+        
+        // Phone validation: must be exactly 10 digits
+        const phoneValue = phoneInput.value;
+        const isPhoneValid = /^\d{10}$/.test(phoneValue);
+        
+        if (phoneValue.length > 0 && !isPhoneValid) {
+            phoneInput.classList.add('input-error');
+            phoneFeedback.style.color = "#ef4444";
+        } else if (isPhoneValid) {
+            phoneInput.classList.remove('input-error');
+            phoneInput.classList.add('input-success');
+            phoneFeedback.style.color = "#00CE9C";
+        } else {
+            phoneInput.classList.remove('input-error', 'input-success');
+            phoneFeedback.style.color = "#5a6477";
+        }
+
         const passValue = pass1.value;
         const confirmValue = pass2.value;
-        
         const isLongEnough = passValue.length >= 8;
         const isMatch = passValue !== "" && passValue === confirmValue;
 
@@ -221,7 +240,7 @@
             pass2.classList.remove('input-error', 'input-success');
         }
 
-        submitBtn.disabled = !(isUserValid && isLongEnough && isMatch);
+        submitBtn.disabled = !(isUserValid && isPhoneValid && isLongEnough && isMatch);
     }
 
     usernameInput.addEventListener('input', (e) => {
@@ -229,6 +248,7 @@
         if (e.target.value !== sanitized) usernameInput.value = sanitized;
         if (sanitized.length < 4) {
             feedback.innerText = "Minimum 4 lowercase letters.";
+            feedback.style.color = "#5a6477";
             usernameInput.classList.remove('input-success', 'input-error');
             validateForm(); return;
         }
@@ -251,6 +271,12 @@
         }, 500);
     });
 
+    phoneInput.addEventListener('input', (e) => {
+        // Only allow numbers
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        validateForm();
+    });
+
     [pass1, pass2].forEach(el => el.addEventListener('input', validateForm));
 
     form.addEventListener('submit', async (e) => {
@@ -266,7 +292,7 @@
                 .from('userinfo')
                 .select('userid')
                 .eq('username', referrerUsername)
-                .single();
+                .maybeSingle();
             if (refData) referrerUUID = refData.userid;
         }
 
@@ -277,7 +303,7 @@
             options: { 
                 data: { 
                     username: usernameInput.value, 
-                    telephone: document.getElementById('phone').value,
+                    telephone: phoneInput.value,
                     referred_by: referrerUUID 
                 } 
             } 
