@@ -28,6 +28,17 @@
             box-shadow: 0 10px 30px rgba(0, 206, 156, 0.15);
         }
 
+        /* --- Scroll Animation Styles --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* Animated SVG Icons */
         .svg-icon { width: 50px; height: 50px; margin-right: 15px; filter: drop-shadow(0 0 8px rgba(0,206,156,0.3)); }
         
@@ -38,9 +49,9 @@
         .popular-card {
             border: 1px solid rgba(0, 206, 156, 0.5) !important;
             box-shadow: 0 0 25px rgba(0, 206, 156, 0.25);
-            background: rgba(0, 206, 156, 0.08); /* Slightly greener background */
+            background: rgba(0, 206, 156, 0.08); 
             position: relative;
-            overflow: hidden; /* For shimmer effect */
+            overflow: hidden; 
         }
         .popular-tag {
             background: #00ce9c;
@@ -61,8 +72,8 @@
             position: absolute;
             inset: 0;
             pointer-events: none;
-            z-index: 1; /* Ensure shimmer is above card background but below content */
-            border-radius: 20px; /* Match card radius */
+            z-index: 1; 
+            border-radius: 20px; 
         }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
@@ -92,14 +103,14 @@
             width: 14px;
             height: 14px;
             margin-right: 8px;
-            color: #00ce9c; /* Checkmark color */
+            color: #00ce9c; 
         }
     </style>
 </head>
 <body class="h-full">
 
     <div class="max-w-md mx-auto px-5 py-6">
-        <header class="flex items-center justify-between mb-10">
+        <header class="flex items-center justify-between mb-10 reveal">
             <a href="dashboard.html" class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all ml-auto">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
             </a>
@@ -113,11 +124,11 @@
             </div>
         </header>
 
-        <p class="text-center text-[#00ce9c] font-['Outfit'] tracking-[2px] text-sm mb-8 uppercase font-light">Select Your Investment Plan</p>
+        <p class="text-center text-[#00ce9c] font-['Outfit'] tracking-[2px] text-sm mb-8 uppercase font-light reveal">Select Your Investment Plan</p>
 
         <div class="grid grid-cols-1 gap-6"> 
             
-            <div class="glass-card flex flex-col justify-between relative">
+            <div class="glass-card flex flex-col justify-between relative reveal">
                 <div class="flex items-center mb-4 relative z-20">
                     <svg class="svg-icon animate-svg" viewBox="0 0 24 24" fill="none" stroke="#00ce9c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                     <div>
@@ -146,7 +157,7 @@
                 <a href="basic.html" class="btn-choose-plan mx-auto relative z-20">Choose Plan</a>
             </div>
 
-            <div class="glass-card popular-card flex flex-col justify-between relative">
+            <div class="glass-card popular-card flex flex-col justify-between relative reveal">
                 <div class="shimmer"></div>
                 <span class="popular-tag relative z-20">Popular</span>
                 <div class="flex items-center mb-4 relative z-20">
@@ -177,7 +188,7 @@
                 <a href="silver.html" class="btn-choose-plan mx-auto relative z-20">Choose Plan</a>
             </div>
 
-            <div class="glass-card flex flex-col justify-between relative">
+            <div class="glass-card flex flex-col justify-between relative reveal">
                 <div class="flex items-center mb-4 relative z-20">
                     <svg class="svg-icon animate-svg" viewBox="0 0 24 24" fill="none" stroke="#FFC300" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
                     <div>
@@ -206,7 +217,7 @@
                 <a href="gold.html" class="btn-choose-plan mx-auto relative z-20" style="background:#FFC300;">Choose Plan</a>
             </div>
 
-            <div class="glass-card flex flex-col justify-between relative">
+            <div class="glass-card flex flex-col justify-between relative reveal">
                 <div class="flex items-center mb-4 relative z-20">
                     <svg class="svg-icon animate-svg" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M11 3L8 9l3 12 3-12-3-6z"/><path d="M2 9h20"/></svg>
                     <div>
@@ -237,7 +248,7 @@
 
         </div>
 
-        <footer class="mt-16 text-center border-t border-white/5 pt-8">
+        <footer class="mt-16 text-center border-t border-white/5 pt-8 reveal">
             <div class="flex justify-center gap-6 mb-4 text-[#8a95a8]">
                 <i data-lucide="shield-check" class="w-5 h-5"></i>
                 <i data-lucide="lock" class="w-5 h-5"></i>
@@ -249,7 +260,23 @@
 
     <script>
         lucide.createIcons();
+
+        // Scroll Reveal Script
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100; // Trigger when element is 100px into view
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+
+        window.addEventListener("scroll", reveal);
+        // Run once on load to show elements already in view
+        window.addEventListener("load", reveal);
     </script>
 </body>
-                </html>
-                            
+</html>
