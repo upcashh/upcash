@@ -1,242 +1,536 @@
 <!doctype html>
-<html lang="en" class="h-full">
+<html lang="en">
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UPCASH Business Flyer</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
+  <meta name="theme-color" content="#0a0f1a">
+  <title>UPCASH | Professional Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .plan-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .plan-card:hover { transform: translateY(-6px); }
-    .shimmer { background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%); background-size: 200% 100%; animation: shimmer 3s infinite; }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-up { animation: fadeUp 0.7s ease forwards; opacity: 0; }
-    .fade-up-1 { animation-delay: 0.1s; }
-    .fade-up-2 { animation-delay: 0.25s; }
-    .fade-up-3 { animation-delay: 0.4s; }
-    .fade-up-4 { animation-delay: 0.55s; }
-    .fade-up-5 { animation-delay: 0.7s; }
-    .glow-ring { box-shadow: 0 0 0 1px rgba(0,206,156,0.15), 0 8px 32px rgba(0,0,0,0.3); }
-    .glow-ring:hover { box-shadow: 0 0 0 1px rgba(0,206,156,0.35), 0 12px 40px rgba(0,0,0,0.4); }
-    .diamond-glow:hover { box-shadow: 0 0 24px rgba(0,206,156,0.25), 0 12px 40px rgba(0,0,0,0.4); }
-  </style>
-  <style>body { box-sizing: border-box; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+        * { box-sizing: border-box; }
+        
+        html, body { 
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body { 
+            font-family: 'DM Sans', sans-serif; 
+            background-color: #0a0f1a;
+            min-height: 100vh; 
+            color: #e2e8f0; 
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 206, 156, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(0, 206, 156, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .glass-card { 
+            background: linear-gradient(160deg, #111827 0%, #0d1321 100%); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(0, 206, 156, 0.15); 
+            box-shadow: 0 0 0 1px rgba(0, 206, 156, 0.1), 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .diamond-glow {
+            background: linear-gradient(160deg, #0c2a23 0%, #0d1321 100%);
+            border: 1px solid rgba(0, 206, 156, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer { 
+            background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.08) 50%, transparent 70%); 
+            background-size: 200% 100%; 
+            animation: shimmer 3s infinite; 
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        .btn-gradient { 
+            background: #00CE9C; 
+            border: none; 
+            color: #0a0f1a; 
+            transition: all 0.3s ease; 
+            font-family: 'Outfit', sans-serif; 
+            font-weight: 700; 
+        }
+        
+        .btn-gradient:hover { 
+            box-shadow: 0 0 24px rgba(0, 206, 156, 0.4); 
+            transform: translateY(-2px); 
+        }
+        
+        .header-bg {
+            background: rgba(10, 15, 26, 0.8);
+            border-bottom: 1px solid rgba(0, 206, 156, 0.1);
+            backdrop-filter: blur(15px);
+        }
+
+        .plan-row:hover {
+            background: rgba(0, 206, 156, 0.05) !important;
+            transform: scale(1.01);
+        }
+
+        /* Skeleton Loading Styles */
+        .skeleton { 
+            background: linear-gradient(90deg, #111827 25%, #1f2937 50%, #111827 75%);
+            background-size: 200% 100%;
+            animation: skeleton-pulse 1.5s infinite linear;
+            border-radius: 1rem;
+        }
+        @keyframes skeleton-pulse {
+            from { background-position: 200% 0; }
+            to { background-position: -200% 0; }
+        }
+
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes periodic-shake {
+            0%, 90%, 100% { transform: rotate(0deg); }
+            92% { transform: rotate(10deg); }
+            94% { transform: rotate(-10deg); }
+            96% { transform: rotate(10deg); }
+            98% { transform: rotate(-10deg); }
+        }
+
+        .shake-icon {
+            animation: periodic-shake 4s infinite ease-in-out;
+            display: inline-block;
+        }
+    </style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
  </head>
- <body class="h-full">
-  <div id="flyer-wrapper" class="h-full w-full overflow-auto" style="background-color: #0a0f1a;"><!-- Decorative BG -->
-   <div style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:0;">
-    <div style="position:absolute;top:-20%;right:-15%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.08) 0%,transparent 70%);"></div>
-    <div style="position:absolute;bottom:-10%;left:-10%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.05) 0%,transparent 70%);"></div>
+ <body class="pb-20">
+
+  <header class="header-bg flex items-center justify-between p-5 sticky top-0 z-50">
+   <div class="flex items-center gap-2">
+    <div class="bg-[#00CE9C] p-2 rounded-lg">
+     <svg class="w-5 h-5 text-[#0a0f1a]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+    </div>
+    <h1 class="text-xl font-bold tracking-tight font-['Outfit'] text-white">UP<span style="color: #00CE9C;">CASH</span></h1>
    </div>
-   <div class="relative z-10 max-w-4xl mx-auto px-5 py-10 sm:py-14"><!-- Header -->
-    <header class="text-center mb-10 fade-up fade-up-1">
-     <div class="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full" style="background:rgba(0,206,156,0.1);border:1px solid rgba(0,206,156,0.2);">
-      <svg width="20" height="20" viewbox="0 0 24 24" fill="none">
-       <circle cx="12" cy="12" r="10" stroke="#00CE9C" stroke-width="2" /><path d="M8 12l3 3 5-6" stroke="#00CE9C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      </svg><span id="el-badge" style="color:#00CE9C;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.5px;">TRUSTED INVESTMENT PLATFORM</span>
-     </div>
-     <h1 id="el-brand" style="font-family:'Outfit',sans-serif;font-weight:900;font-size:clamp(2.2rem,5vw,3.6rem);letter-spacing:-1px;line-height:1.05;color:#ffffff;">UPCASH BUSINESS<br>
-      PLATFORM</h1>
-     <p id="el-tagline" class="mt-3" style="font-family:'Outfit',sans-serif;font-weight:300;font-size:clamp(1.1rem,2.5vw,1.5rem);color:#00CE9C;letter-spacing:1px;">Invest Smart. Earn Big.</p>
-     <p id="el-hero-desc" class="mt-4 max-w-lg mx-auto" style="font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.7;color:#8a95a8;">Join thousands of investors earning consistent returns. Choose a plan that fits your goals and watch your money grow.</p>
-    </header><!-- Plans -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10"><!-- BASIC -->
-     <div class="plan-card glow-ring rounded-2xl p-6 fade-up fade-up-2" style="background:linear-gradient(160deg,#111827 0%,#0d1321 100%);">
-      <div class="flex items-center gap-3 mb-4">
-       <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(0,206,156,0.1);">
-        <i data-lucide="zap" style="width:20px;height:20px;color:#00CE9C;"></i>
-       </div>
-       <div><span class="block text-xs font-semibold tracking-widest" style="color:#00CE9C;font-family:'DM Sans',sans-serif;">BASIC</span> <span class="block text-xs" style="color:#5a6477;font-family:'DM Sans',sans-serif;">Starter Plan</span>
-       </div>
-      </div>
-      <div class="mb-3">
-       <span id="el-basic-price" style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#ffffff;">$50</span><span style="color:#5a6477;font-family:'DM Sans',sans-serif;font-size:13px;"> min invest</span>
-      </div>
-      <ul style="font-family:'DM Sans',sans-serif;font-size:13px;color:#8a95a8;line-height:2;">
-       <li>✦ 8% daily for 40 days</li>
-       <li>✦ Referral bonuses</li>
-       <li>✦ Instant withdrawals</li>
-      </ul>
-     </div><!-- SILVER -->
-     <div class="plan-card glow-ring rounded-2xl p-6 fade-up fade-up-3" style="background:linear-gradient(160deg,#111827 0%,#0d1321 100%);">
-      <div class="flex items-center gap-3 mb-4">
-       <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(192,192,210,0.1);">
-        <i data-lucide="shield" style="width:20px;height:20px;color:#C0C0D2;"></i>
-       </div>
-       <div><span class="block text-xs font-semibold tracking-widest" style="color:#C0C0D2;font-family:'DM Sans',sans-serif;">SILVER</span> <span class="block text-xs" style="color:#5a6477;font-family:'DM Sans',sans-serif;">Growth Plan</span>
-       </div>
-      </div>
-      <div class="mb-3">
-       <span id="el-silver-price" style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#ffffff;">$200</span><span style="color:#5a6477;font-family:'DM Sans',sans-serif;font-size:13px;"> min invest</span>
-      </div>
-      <ul style="font-family:'DM Sans',sans-serif;font-size:13px;color:#8a95a8;line-height:2;">
-       <li>✦ 10% daily returns for 30 days</li>
-       <li>✦ Priority support</li>
-       <li>✦ Referral bonuses</li>
-      </ul>
-     </div><!-- GOLD -->
-     <div class="plan-card glow-ring rounded-2xl p-6 fade-up fade-up-4" style="background:linear-gradient(160deg,#111827 0%,#0d1321 100%);">
-      <div class="flex items-center gap-3 mb-4">
-       <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(255,195,0,0.1);">
-        <i data-lucide="award" style="width:20px;height:20px;color:#FFC300;"></i>
-       </div>
-       <div><span class="block text-xs font-semibold tracking-widest" style="color:#FFC300;font-family:'DM Sans',sans-serif;">GOLD</span> <span class="block text-xs" style="color:#5a6477;font-family:'DM Sans',sans-serif;">Premium Plan</span>
-       </div>
-      </div>
-      <div class="mb-3">
-       <span id="el-gold-price" style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#ffffff;">$500</span><span style="color:#5a6477;font-family:'DM Sans',sans-serif;font-size:13px;"> min invest</span>
-      </div>
-      <ul style="font-family:'DM Sans',sans-serif;font-size:13px;color:#8a95a8;line-height:2;">
-       <li>✦ 12% daily returns for 25 days</li>
-       <li>✦ Referral bonuses</li>
-       <li>✦ Early access features</li>
-      </ul>
-     </div><!-- DIAMOND -->
-     <div class="plan-card diamond-glow rounded-2xl p-6 fade-up fade-up-5 relative overflow-hidden" style="background:linear-gradient(160deg,#0c2a23 0%,#0d1321 100%);border:1px solid rgba(0,206,156,0.25);">
-      <div class="shimmer absolute inset-0 rounded-2xl"></div>
-      <div class="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-xs font-bold" style="background:#00CE9C;color:#0a0f1a;font-family:'DM Sans',sans-serif;">
-       POPULAR
-      </div>
-      <div class="relative z-10">
-       <div class="flex items-center gap-3 mb-4">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(0,206,156,0.15);">
-         <i data-lucide="gem" style="width:20px;height:20px;color:#00CE9C;"></i>
-        </div>
-        <div><span class="block text-xs font-semibold tracking-widest" style="color:#00CE9C;font-family:'DM Sans',sans-serif;">DIAMOND</span> <span class="block text-xs" style="color:#5a6477;font-family:'DM Sans',sans-serif;">Elite Plan</span>
-        </div>
-       </div>
-       <div class="mb-3">
-        <span id="el-diamond-price" style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#ffffff;">$1,000</span><span style="color:#5a6477;font-family:'DM Sans',sans-serif;font-size:13px;"> min invest</span>
-       </div>
-       <ul style="font-family:'DM Sans',sans-serif;font-size:13px;color:#8a95a8;line-height:2;">
-        <li>✦ 14% daily returns for 21 days</li>
-        <li>✦ VIP exclusive perks</li>
-        <li>✦ Compounding bonuses</li>
-       </ul>
-      </div>
-     </div>
-    </section><!-- CTA -->
-    <div class="text-center fade-up fade-up-5"><a id="el-cta-btn" href="#" onclick="event.preventDefault()" class="inline-block px-10 py-4 rounded-full font-bold text-base tracking-wide transition-all duration-300 hover:scale-105" style="background:#00CE9C;color:#0a0f1a;font-family:'Outfit',sans-serif;"> Start Investing Today </a>
-     <p id="el-website" class="mt-4" style="font-family:'DM Sans',sans-serif;font-size:14px;color:#5a6477;">🌐 www.upcash.com</p>
-    </div><!-- Footer trust -->
-    <footer class="mt-10 pt-6 text-center" style="border-top:1px solid rgba(255,255,255,0.05);">
-     <div class="flex flex-wrap justify-center gap-6" style="font-family:'DM Sans',sans-serif;font-size:12px;color:#3e4a5c;"><span class="flex items-center gap-1.5"><i data-lucide="lock" style="width:14px;height:14px;"></i> Secure Platform</span> <span class="flex items-center gap-1.5"><i data-lucide="users" style="width:14px;height:14px;"></i> 10,000+ Investors</span> <span class="flex items-center gap-1.5"><i data-lucide="globe" style="width:14px;height:14px;"></i> Available Worldwide</span>
-     </div>
-    </footer>
+   <div class="flex items-center gap-4">
+    <a href="profile.html" class="block">
+        <button class="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-400">
+            <i data-lucide="user" class="w-6 h-6"></i>
+        </button>
+    </a>
+    <button onclick="toggleMenu()" class="p-2 hover:bg-white/5 rounded-full transition-colors text-[#00CE9C]">
+        <i data-lucide="menu" class="w-7 h-7 shake-icon"></i>
+    </button>
    </div>
+  </header>
+
+  <div id="skeleton-container" class="p-4 max-w-lg mx-auto space-y-6">
+    <div class="h-6 w-32 skeleton"></div>
+    <div class="h-56 skeleton"></div>
+    <div class="flex gap-4">
+        <div class="h-14 flex-1 skeleton"></div>
+        <div class="h-14 flex-1 skeleton"></div>
+    </div>
+    <div class="h-40 skeleton"></div>
+    <div class="h-40 skeleton"></div>
   </div>
+
+  <div id="dashboard-content" class="hidden opacity-0 transition-opacity duration-700">
+   <div class="flex items-center justify-between w-full px-5 py-4 reveal">
+    <p class="text-slate-400 text-sm font-medium">Welcome back, <span class="font-bold text-[#00CE9C]" id="username">User</span></p>
+    <span id="verified-badge" class="bg-[#00CE9C]/10 border border-[#00CE9C]/20 text-[#00CE9C] text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest"> Verified Account </span>
+   </div>
+
+   <main class="p-4 max-w-lg mx-auto space-y-6">
+    <div class="diamond-glow rounded-[32px] p-6 shadow-2xl reveal">
+     <div class="shimmer"></div>
+     <div class="relative z-10">
+        <div class="flex justify-between items-start mb-1">
+          <p class="text-emerald-100/60 text-xs font-bold tracking-widest uppercase">Available Balance</p>
+          <button onclick="toggleBalance()" class="text-white/40 hover:text-white transition-colors">
+            <i id="eyeIcon" data-lucide="eye-off" class="w-5 h-5 shake-icon"></i>
+          </button>
+        </div>
+        <h3 class="text-4xl font-black mb-6 text-white font-['Outfit']">UGX <span id="balance">*****</span></h3>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-white/5 backdrop-blur-md rounded-2xl p-3 border border-white/5">
+           <p class="text-[10px] text-white/40 uppercase font-bold tracking-tighter">Total Investment</p>
+           <p class="font-bold text-lg text-white" id="totalInv">UGX 0</p>
+          </div>
+          <div class="bg-white/5 backdrop-blur-md rounded-2xl p-3 border border-white/5">
+           <p class="text-[10px] text-white/40 uppercase font-bold tracking-tighter">Total Withdrawn</p>
+           <p class="font-bold text-lg text-white" id="totalWith">UGX 0</p>
+          </div>
+        </div>
+     </div>
+    </div>
+
+    <div class="flex gap-4 reveal">
+     <a href="transactions.html" class="flex-1"> 
+        <button class="btn-gradient w-full h-14 rounded-2xl flex items-center justify-center gap-2 text-sm shadow-lg">
+            <i data-lucide="file-text" class="w-5 h-5 shake-icon"></i>Transactions 
+        </button> 
+     </a> 
+     <a href="withdraw.html" class="flex-1"> 
+        <button class="glass-card w-full h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-white">
+            <i data-lucide="arrow-up-circle" class="w-5 h-5 text-[#00CE9C] shake-icon"></i>Withdraw 
+        </button> 
+     </a>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 reveal">
+     <button onclick="copyLink()" id="referral-btn" class="glass-card h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-white transition-all active:scale-95">
+        <i id="ref-icon" data-lucide="share-2" class="w-4 h-4 text-[#00CE9C] shake-icon"></i><span id="ref-text">Referral Link</span>
+     </button> 
+     <a href="https://chat.whatsapp.com/HEusxMonb275LAHnJbooY2" target="_blank" class="bg-[#00CE9C]/10 border border-[#00CE9C]/20 h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-[#00CE9C]">
+        <i data-lucide="message-circle" class="w-4 h-4 shake-icon"></i> Community
+     </a>
+    </div>
+
+    <div class="space-y-3 reveal">
+     <h4 class="text-lg font-bold flex items-center gap-2 font-['Outfit']">
+      <i data-lucide="layers" class="text-[#00CE9C] w-5 h-5 shake-icon"></i> Investment Plans
+     </h4>
+     <div class="glass-card rounded-2xl overflow-hidden">
+      <table class="w-full text-left text-sm table-fixed">
+       <thead class="bg-white/5 text-slate-500 text-[10px] uppercase font-bold">
+        <tr>
+         <th class="p-4 w-1/4">Plan</th>
+         <th class="p-4 w-1/4 text-center">ROI</th>
+         <th class="p-4 w-1/4 text-center">Days</th>
+         <th class="p-4 w-1/4 text-right">Min</th>
+        </tr>
+       </thead>
+       <tbody class="divide-y divide-white/5 text-white">
+        <tr onclick="location.href='basic.html'" class="plan-row cursor-pointer transition-all">
+         <td class="p-4 font-bold text-emerald-400">Basic</td>
+         <td class="p-4 text-center">8%</td>
+         <td class="p-4 text-center">40</td>
+         <td class="p-4 text-right font-medium">10,000</td>
+        </tr>
+        <tr onclick="location.href='silver.html'" class="plan-row cursor-pointer transition-all">
+         <td class="p-4 font-bold text-cyan-400">Silver</td>
+         <td class="p-4 text-center">10%</td>
+         <td class="p-4 text-center">30</td>
+         <td class="p-4 text-right font-medium">108,000</td>
+        </tr>
+        <tr onclick="location.href='gold.html'" class="plan-row cursor-pointer transition-all">
+         <td class="p-4 font-bold text-amber-400">Gold</td>
+         <td class="p-4 text-center">12%</td>
+         <td class="p-4 text-center">25</td>
+         <td class="p-4 text-right font-medium">525,000</td>
+        </tr>
+        <tr onclick="location.href='diamond.html'" class="plan-row cursor-pointer transition-all">
+         <td class="p-4 font-bold text-orange-400">Diamond</td>
+         <td class="p-4 text-center">14%</td>
+         <td class="p-4 text-center">21</td>
+         <td class="p-4 text-right font-medium">1,215,000</td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </div>
+
+    <div class="space-y-3 pb-8 reveal">
+     <h4 class="text-lg font-bold flex items-center gap-2 font-['Outfit']">
+      <i data-lucide="gift" class="text-[#00CE9C] w-5 h-5 shake-icon"></i> Affiliate Bonuses
+     </h4>
+     <div class="glass-card rounded-2xl overflow-hidden">
+      <table class="w-full text-left text-sm table-fixed">
+       <thead class="bg-white/5 text-slate-500 text-[10px] uppercase font-bold">
+        <tr>
+         <th class="p-3 w-1/2">Type</th>
+         <th class="p-3 w-1/4 text-center">Bonus</th>
+         <th class="p-3 w-1/4 text-right">Example</th>
+        </tr>
+       </thead>
+       <tbody class="divide-y divide-white/5 text-white">
+        <tr class="plan-row">
+         <td class="p-3 font-bold text-emerald-400">Direct Referral</td>
+         <td class="p-3 text-center">10%</td>
+         <td class="p-3 text-right font-medium">10,000</td>
+        </tr>
+        <tr class="plan-row">
+         <td class="p-3 font-bold text-cyan-400">First Indirect</td>
+         <td class="p-3 text-center">2%</td>
+         <td class="p-3 text-right font-medium">2,000</td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </main>
+  </div>
+
+  <div id="side-menu-backdrop" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <div id="side-menu" class="fixed top-0 right-0 h-full w-[280px] glass-card z-[70] translate-x-full transition-transform duration-300 ease-out flex flex-col border-l border-white/10">
+      <div class="p-6 border-b border-white/5 flex justify-between items-center">
+          <h2 class="font-['Outfit'] font-extrabold text-lg text-white tracking-tight">MENU</h2>
+          <button onclick="toggleMenu()" class="p-2 hover:bg-white/5 rounded-full text-slate-400 transition-colors">
+              <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 space-y-6">
+          <div>
+              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Network</p>
+              <div class="space-y-1">
+                  <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="users" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform shake-icon"></i>
+                      <span class="text-sm font-medium text-slate-200">My Affiliates</span>
+                  </a>
+                  <a href="affiliates.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="sparkles" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform shake-icon"></i>
+                      <span class="text-sm font-medium text-slate-200">Affiliate Bonuses</span>
+                  </a>
+              </div>
+          </div>
+
+          <div>
+              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Data and analytics</p>
+              <div class="space-y-1">
+                  <a href="analytics.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="line-chart" class="w-5 h-5 text-emerald-400 group-hover:translate-y-0.5 transition-transform shake-icon"></i>
+                      <span class="text-sm font-medium text-slate-200">User Profits Statement</span>
+                  </a>
+                  <a href="withdraw.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="bar-chart-3" class="w-5 h-5 text-orange-400 group-hover:-translate-y-0.5 transition-transform shake-icon"></i>
+                      <span class="text-sm font-medium text-slate-200">Live Market Statistics</span>
+                  </a>
+                  <a href="transactions.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="history" class="w-5 h-5 text-slate-400 group-hover:scale-110 transition-transform shake-icon"></i>
+                      <span class="text-sm font-medium text-slate-200">Transactions</span>
+                  </a>
+                  <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                      <i data-lucide="pie-chart" class="w-5 h-5 text-cyan-400 group-hover:rotate-12 transition-transform shake-icon"></i>
+                      <span class="text-sm font-medium text-slate-200">My Running Plans</span>
+                  </a>
+              </div>
+          </div>
+
+          <div>
+              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Investment Plans</p>
+              <a href="investment.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
+                  <i data-lucide="trending-up" class="w-5 h-5 text-[#00CE9C] group-hover:scale-125 transition-transform shake-icon"></i>
+                  <span class="text-sm font-medium text-slate-200">Explore Plans</span>
+              </a>
+          </div>
+      </div>
+
+      <div class="p-6 border-t border-white/5 space-y-4 bg-black/20">
+          <button onclick="logout()" class="w-full flex items-center justify-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-sm font-bold hover:bg-red-500/20 transition-all">
+              <i data-lucide="log-out" class="w-4 h-4 shake-icon"></i> Sign Out
+          </button>
+          <div class="flex flex-col items-center gap-1 opacity-50">
+              <div class="flex items-center gap-1">
+                  <i data-lucide="trending-up" class="w-3 h-3 text-[#00CE9C]"></i>
+                  <h1 class="text-[10px] font-bold font-['Outfit'] tracking-tighter text-white uppercase">UP<span style="color: #00CE9C;">CASH</span></h1>
+              </div>
+              <p class="text-[7px] text-slate-500 font-bold uppercase tracking-widest">Business Platform 2026</p>
+          </div>
+      </div>
+  </div>
+
+  <div id="logout-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+      <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+      <div class="glass-card relative w-full max-w-sm rounded-[32px] p-8 text-center border border-white/10 scale-90 transition-transform duration-300" id="logout-modal-content">
+          <div class="mb-6 flex justify-center">
+              <div class="bg-red-500/10 p-4 rounded-full border border-red-500/20">
+                  <i data-lucide="log-out" class="w-10 h-10 text-red-500 animate-pulse"></i>
+              </div>
+          </div>
+          <h3 class="text-2xl font-bold font-['Outfit'] text-white mb-2">Sign Out?</h3>
+          <p class="text-slate-400 text-sm mb-8">Are you sure you want to end your current session?</p>
+          <div class="flex flex-col gap-3">
+              <button onclick="confirmLogout()" class="w-full h-14 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-500/20">
+                  <i data-lucide="check-circle" class="w-5 h-5"></i> Log Me Out
+              </button>
+              <button onclick="closeLogoutModal()" class="w-full h-14 bg-white/5 hover:bg-white/10 text-slate-300 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all">
+                  Stay Logged In
+              </button>
+          </div>
+      </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-  lucide.createIcons();
+        lucide.createIcons();
 
-  const defaultConfig = {
-    background_color: "#0a0f1a",
-    surface_color: "#111827",
-    text_color: "#ffffff",
-    primary_action_color: "#00CE9C",
-    secondary_action_color: "#8a95a8",
-    font_family: "Outfit",
-    font_size: 16,
-    brand_name: "UPCASH BUSINESS\nPLATFORM",
-    tagline: "Invest Smart. Earn Big.",
-    hero_description: "Join thousands of investors earning consistent returns. Choose a plan that fits your goals and watch your money grow.",
-    basic_price: "UGX 10,000",
-    silver_price: "UGX 108,000",
-    gold_price: "UGX 525,000",
-    diamond_price: "UGX 1,215,000",
-    cta_text: "Start Investing Today",
-    website_url: "www.upcashh.vercel.app"
-  };
+        const supabaseClient = supabase.createClient(
+            'https://wbodpfbmilhperccgzei.supabase.co', 
+            'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN'
+        );
 
-  async function onConfigChange(config) {
-    const c = key => config[key] || defaultConfig[key];
+        let realBalance = 0;
+        let isHidden = true;
 
-    // Colors
-    document.getElementById('flyer-wrapper').style.backgroundColor = c('background_color');
-    document.querySelectorAll('.plan-card').forEach(card => {
-      card.style.background = `linear-gradient(160deg, ${c('surface_color')} 0%, ${c('background_color')} 100%)`;
-    });
+        // Scroll reveal logic
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
 
-    // Text color
-    document.getElementById('el-brand').style.color = c('text_color');
-    document.querySelectorAll('.plan-card span[id^="el-"]').forEach(el => el.style.color = c('text_color'));
-    ['el-basic-price','el-silver-price','el-gold-price','el-diamond-price'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.color = c('text_color');
-    });
+        async function checkAuthAndLoad() {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    window.location.href = "signin.html";
+                    return;
+                }
 
-    // Primary action
-    const primaryColor = c('primary_action_color');
-    document.getElementById('el-tagline').style.color = primaryColor;
-    document.getElementById('el-cta-btn').style.background = primaryColor;
+                const userId = session.user.id;
+                const { data, error: fetchError } = await supabaseClient
+                    .from('userinfo')
+                    .select('username, available_balance, total_investment, total_withdrawn')
+                    .eq('userid', userId)
+                    .single();
 
-    // Secondary
-    document.getElementById('el-hero-desc').style.color = c('secondary_action_color');
-    document.getElementById('el-website').style.color = c('secondary_action_color');
+                if (data) {
+                    realBalance = data.available_balance || 0;
+                    document.getElementById('username').innerText = data.username || "User";
+                    updateBalanceDisplay();
+                    document.getElementById('totalInv').innerText = "UGX " + Number(data.total_investment || 0).toLocaleString();
+                    document.getElementById('totalWith').innerText = "UGX " + Number(data.total_withdrawn || 0).toLocaleString();
+                }
 
-    // Fonts
-    const font = c('font_family');
-    const baseSize = c('font_size');
-    const headingStack = `${font}, Outfit, sans-serif`;
-    const bodyStack = `${font}, DM Sans, sans-serif`;
+                // Smooth transition from skeleton to content
+                setTimeout(() => {
+                    document.getElementById('skeleton-container').classList.add('hidden');
+                    const content = document.getElementById('dashboard-content');
+                    content.classList.remove('hidden');
+                    setTimeout(() => {
+                        content.classList.remove('opacity-0');
+                        reveal(); // Initial reveal for items in viewport
+                    }, 50);
+                }, 1200);
 
-    document.getElementById('el-brand').style.fontFamily = headingStack;
-    document.getElementById('el-tagline').style.fontFamily = headingStack;
-    document.getElementById('el-cta-btn').style.fontFamily = headingStack;
-    document.getElementById('el-hero-desc').style.fontFamily = bodyStack;
+            } catch (err) { console.error(err); }
+        }
 
-    document.getElementById('el-brand').style.fontSize = `${baseSize * 2.4}px`;
-    document.getElementById('el-tagline').style.fontSize = `${baseSize * 1.3}px`;
-    document.getElementById('el-hero-desc').style.fontSize = `${baseSize * 0.94}px`;
+        function toggleBalance() {
+            isHidden = !isHidden;
+            updateBalanceDisplay();
+        }
 
-    // Text content
-    document.getElementById('el-brand').innerHTML = c('brand_name').replace('\n','<br>');
-    document.getElementById('el-tagline').textContent = c('tagline');
-    document.getElementById('el-hero-desc').textContent = c('hero_description');
-    document.getElementById('el-basic-price').textContent = c('basic_price');
-    document.getElementById('el-silver-price').textContent = c('silver_price');
-    document.getElementById('el-gold-price').textContent = c('gold_price');
-    document.getElementById('el-diamond-price').textContent = c('diamond_price');
-    document.getElementById('el-cta-btn').textContent = c('cta_text');
-    document.getElementById('el-website').innerHTML = '🌐 ' + c('website_url');
-  }
+        function updateBalanceDisplay() {
+            const balanceSpan = document.getElementById('balance');
+            const eyeIcon = document.getElementById('eyeIcon');
+            if (isHidden) {
+                balanceSpan.innerText = "*****";
+                eyeIcon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                balanceSpan.innerText = Number(realBalance).toLocaleString();
+                eyeIcon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
 
-  function mapToCapabilities(config) {
-    const c = key => config[key] || defaultConfig[key];
-    function mut(key) {
-      return {
-        get: () => c(key),
-        set: (v) => { config[key] = v; window.elementSdk.setConfig({ [key]: v }); }
-      };
-    }
-    return {
-      recolorables: [mut('background_color'), mut('surface_color'), mut('text_color'), mut('primary_action_color'), mut('secondary_action_color')],
-      borderables: [],
-      fontEditable: mut('font_family'),
-      fontSizeable: mut('font_size')
-    };
-  }
+        async function copyLink() {
+            const btnText = document.getElementById('ref-text');
+            const btnIcon = document.getElementById('ref-icon');
+            
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) return;
+                
+                const { data } = await supabaseClient.from('userinfo').select('username').eq('userid', session.user.id).single();
+                
+                if (data) {
+                    const link = `https://upcashh.github.io/upcash/index.html?ref=${data.username}`;
+                    await navigator.clipboard.writeText(link);
+                    
+                    btnText.innerText = "Link Copied!";
+                    btnText.style.color = "#00CE9C";
+                    btnIcon.setAttribute('data-lucide', 'check');
+                    lucide.createIcons();
+                    
+                    setTimeout(() => {
+                        btnText.innerText = "Referral Link";
+                        btnText.style.color = "";
+                        btnIcon.setAttribute('data-lucide', 'share-2');
+                        lucide.createIcons();
+                    }, 2500);
+                }
+            } catch (err) { console.error(err); }
+        }
 
-  function mapToEditPanelValues(config) {
-    const c = key => config[key] || defaultConfig[key];
-    return new Map([
-      ["brand_name", c("brand_name")],
-      ["tagline", c("tagline")],
-      ["hero_description", c("hero_description")],
-      ["basic_price", c("basic_price")],
-      ["silver_price", c("silver_price")],
-      ["gold_price", c("gold_price")],
-      ["diamond_price", c("diamond_price")],
-      ["cta_text", c("cta_text")],
-      ["website_url", c("website_url")]
-    ]);
-  }
+        function toggleMenu() {
+            const menu = document.getElementById('side-menu');
+            const backdrop = document.getElementById('side-menu-backdrop');
+            const isOpening = menu.classList.contains('translate-x-full');
 
-  window.elementSdk.init({ defaultConfig, onConfigChange, mapToCapabilities, mapToEditPanelValues });
-</script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e172a5bc2d72065',t:'MTc3NDM3MDkyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-  </html>
+            if (isOpening) {
+                menu.classList.remove('translate-x-full');
+                backdrop.classList.remove('opacity-0', 'pointer-events-none');
+                lucide.createIcons();
+            } else {
+                menu.classList.add('translate-x-full');
+                backdrop.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function logout() {
+            const modal = document.getElementById('logout-modal');
+            const content = document.getElementById('logout-modal-content');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-90');
+            content.classList.add('scale-100');
+            lucide.createIcons();
+        }
+
+        function closeLogoutModal() {
+            const modal = document.getElementById('logout-modal');
+            const content = document.getElementById('logout-modal-content');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+        }
+
+        async function confirmLogout() {
+            try {
+                await supabaseClient.auth.signOut();
+                window.location.href = "signin.html";
+            } catch (err) {
+                console.error(err);
+                closeLogoutModal();
+            }
+        }
+        
+        checkAuthAndLoad();
+  </script>
+ </body>
+</html>
