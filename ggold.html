@@ -1,479 +1,243 @@
-<!doctype html>
-<html lang="en">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0a0f1a">
-  <title>UPCASH | Professional Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-        * { box-sizing: border-box; }
-        
-        html, body { 
-            height: 100%;
-            width: 100%;
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0f1a"> 
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>UPCASH | AI-Driven Quantitative Management</title>
+    
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --mint: #00ce9c;
+            --dark-navy: #0a0f1a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--dark-navy);
+            color: #ffffff;
             margin: 0;
-            padding: 0;
-        }
-        
-        body { 
-            font-family: 'DM Sans', sans-serif; 
-            background-color: #0a0f1a;
-            min-height: 100vh; 
-            color: #e2e8f0; 
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(0, 206, 156, 0.08) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(0, 206, 156, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        .glass-card { 
-            background: linear-gradient(160deg, #111827 0%, #0d1321 100%); 
-            backdrop-filter: blur(12px); 
-            border: 1px solid rgba(0, 206, 156, 0.15); 
-            box-shadow: 0 0 0 1px rgba(0, 206, 156, 0.1), 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-        
-        .diamond-glow {
-            background: linear-gradient(160deg, #0c2a23 0%, #0d1321 100%);
-            border: 1px solid rgba(0, 206, 156, 0.25);
-            position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
-        .shimmer { 
-            background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.08) 50%, transparent 70%); 
-            background-size: 200% 100%; 
-            animation: shimmer 3s infinite; 
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-        }
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        h1, h2, h3, .logo-text { font-family: 'Outfit', sans-serif; }
 
-        .btn-gradient { 
-            background: #00CE9C; 
-            border: none; 
-            color: #0a0f1a; 
-            transition: all 0.3s ease; 
-            font-family: 'Outfit', sans-serif; 
-            font-weight: 700; 
-        }
-        
-        .btn-gradient:hover { 
-            box-shadow: 0 0 24px rgba(0, 206, 156, 0.4); 
-            transform: translateY(-2px); 
-        }
-        
-        .header-bg {
-            background: rgba(10, 15, 26, 0.8);
-            border-bottom: 1px solid rgba(0, 206, 156, 0.1);
-            backdrop-filter: blur(15px);
-        }
-
-        .plan-row:hover {
-            background: rgba(0, 206, 156, 0.05) !important;
-            transform: scale(1.01);
-        }
-
-        .skeleton { background: rgba(0, 206, 156, 0.05); overflow: hidden; position: relative; }
-
-        /* --- PERIODIC SHAKE ANIMATION --- */
-        @keyframes periodic-shake {
-            0%, 90%, 100% { transform: rotate(0deg); }
-            92% { transform: rotate(10deg); }
-            94% { transform: rotate(-10deg); }
-            96% { transform: rotate(10deg); }
-            98% { transform: rotate(-10deg); }
-        }
-
-        .shake-icon {
-            animation: periodic-shake 4s infinite ease-in-out;
-            display: inline-block;
-        }
-
-        /* --- ENTRANCE ANIMATION (FADE-IN UP) --- */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-reveal {
-            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        /* --- Scroll Reveal --- */
+        .reveal {
             opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-        .delay-5 { animation-delay: 0.5s; }
+        /* --- AI Terminal Typing Animation --- */
+        .typing::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
 
+        /* --- UI Enhancements --- */
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+        }
+
+        .glow-mint {
+            box-shadow: 0 0 20px rgba(0, 206, 156, 0.2);
+        }
+
+        nav {
+            background: rgba(10, 15, 26, 0.8);
+            padding: 1rem 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+        }
+
+        .ai-status-pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--mint);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 206, 156, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 206, 156, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 206, 156, 0); }
+        }
     </style>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
- </head>
- <body class="pb-20">
+</head>
+<body>
 
-  <header class="header-bg flex items-center justify-between p-5 sticky top-0 z-50">
-   <div class="flex items-center gap-2">
-    <div class="bg-[#00CE9C] p-2 rounded-lg">
-     <svg class="w-5 h-5 text-[#0a0f1a]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+<nav>
+    <div class="flex items-center gap-3">
+        <div class="bg-[#00ce9c] p-2 rounded-xl glow-mint">
+            <i data-lucide="trending-up" class="w-5 h-5 text-[#0a0f1a] stroke-[3px]"></i>
+        </div>
+        <span class="logo-text text-2xl font-black tracking-tighter uppercase">
+            UP<span class="text-[#00ce9c]">CASH</span>
+        </span>
     </div>
-    <h1 class="text-xl font-bold tracking-tight font-['Outfit'] text-white">UP<span style="color: #00CE9C;">CASH</span></h1>
-   </div>
-   <div class="flex items-center gap-4">
-    <a href="profile.html" class="block">
-        <button class="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-400">
-            <i data-lucide="user" class="w-6 h-6"></i>
-        </button>
+    <a href="dashboard.html" class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all">
+        <i data-lucide="arrow-left" class="w-5 h-5"></i>
     </a>
-    <button onclick="toggleMenu()" class="p-2 hover:bg-white/5 rounded-full transition-colors text-[#00CE9C]">
-        <i data-lucide="menu" class="w-7 h-7 shake-icon"></i>
-    </button>
-   </div>
-  </header>
+</nav>
 
-  <div id="skeleton-container" class="p-4 max-w-lg mx-auto space-y-6">
-   <div class="rounded-3xl p-6 h-56 skeleton border border-white/5"></div>
-  </div>
-
-  <div id="dashboard-content" class="hidden">
-   <div class="flex items-center justify-between w-full px-5 py-4 animate-reveal">
-    <p class="text-slate-400 text-sm font-medium">Welcome back, <span class="font-bold text-[#00CE9C]" id="username">User</span></p>
-    <span id="verified-badge" class="bg-[#00CE9C]/10 border border-[#00CE9C]/20 text-[#00CE9C] text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest"> Verified Account </span>
-   </div>
-
-   <main class="p-4 max-w-lg mx-auto space-y-6">
-    <div class="diamond-glow rounded-[32px] p-6 shadow-2xl animate-reveal delay-1">
-     <div class="shimmer"></div>
-     <div class="relative z-10">
-        <div class="flex justify-between items-start mb-1">
-          <p class="text-emerald-100/60 text-xs font-bold tracking-widest uppercase">Available Balance</p>
-          <button onclick="toggleBalance()" class="text-white/40 hover:text-white transition-colors">
-            <i id="eyeIcon" data-lucide="eye-off" class="w-5 h-5 shake-icon"></i>
-          </button>
+<div class="max-w-5xl mx-auto px-6 pt-12">
+    
+    <div class="glass-panel p-6 mb-10 border-[#00ce9c]/20 reveal">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="p-3 bg-[#00ce9c]/10 rounded-full">
+                <i data-lucide="cpu" class="text-[#00ce9c] w-6 h-6 animate-spin-slow"></i>
+            </div>
+            <div>
+                <h3 class="text-xs font-black tracking-[3px] text-[#00ce9c] uppercase">Neural Engine Active</h3>
+                <p class="text-sm text-gray-400">UPCASH AI is currently scanning 4,200+ global assets.</p>
+            </div>
         </div>
-        <h3 class="text-4xl font-black mb-6 text-white font-['Outfit']">UGX <span id="balance">*****</span></h3>
-        <div class="grid grid-cols-2 gap-4">
-          <div class="bg-white/5 backdrop-blur-md rounded-2xl p-3 border border-white/5">
-           <p class="text-[10px] text-white/40 uppercase font-bold tracking-tighter">Total Investment</p>
-           <p class="font-bold text-lg text-white" id="totalInv">UGX 0</p>
-          </div>
-          <div class="bg-white/5 backdrop-blur-md rounded-2xl p-3 border border-white/5">
-           <p class="text-[10px] text-white/40 uppercase font-bold tracking-tighter">Total Withdrawn</p>
-           <p class="font-bold text-lg text-white" id="totalWith">UGX 0</p>
-          </div>
+        <div class="bg-black/40 rounded-xl p-4 font-mono text-[11px] text-[#00ce9c]/80 leading-relaxed border border-white/5">
+            <div>> [SYS]: CALIBRATING RISK_PARAMETERS... <span class="text-white">DONE</span></div>
+            <div>> [AI]: DETECTING VOLATILITY CLUSTERS... <span class="text-white">MINIMIZED</span></div>
+            <div class="typing">> [SIGNAL]: EXECUTING OPTIMAL ALPHA DEPLOYMENT...</div>
         </div>
-     </div>
     </div>
 
-    <div class="flex gap-4 animate-reveal delay-2">
-     <a href="transactions.html" class="flex-1"> 
-        <button class="btn-gradient w-full h-14 rounded-2xl flex items-center justify-center gap-2 text-sm shadow-lg">
-            <i data-lucide="file-text" class="w-5 h-5 shake-icon"></i>Transactions 
-        </button> 
-     </a> 
-     <a href="withdraw.html" class="flex-1"> 
-        <button class="glass-card w-full h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-white">
-            <i data-lucide="arrow-up-circle" class="w-5 h-5 text-[#00CE9C] shake-icon"></i>Withdraw 
-        </button> 
-     </a>
-    </div>
-
-    <div class="grid grid-cols-2 gap-4 animate-reveal delay-3">
-     <button onclick="copyLink()" id="referral-btn" class="glass-card h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-white transition-all active:scale-95">
-        <i id="ref-icon" data-lucide="share-2" class="w-4 h-4 text-[#00CE9C] shake-icon"></i><span id="ref-text">Referral Link</span>
-     </button> 
-     <a href="https://chat.whatsapp.com/HEusxMonb275LAHnJbooY2" target="_blank" class="bg-[#00CE9C]/10 border border-[#00CE9C]/20 h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-[#00CE9C]">
-        <i data-lucide="users" class="w-4 h-4 shake-icon"></i> Community
-     </a>
-    </div>
-
-    <div class="space-y-3 animate-reveal delay-4">
-     <h4 class="text-lg font-bold flex items-center gap-2 font-['Outfit']">
-      <i data-lucide="briefcase" class="text-[#00CE9C] w-5 h-5 shake-icon"></i> Investment Plans
-     </h4>
-     <div class="glass-card rounded-2xl overflow-hidden">
-      <table class="w-full text-left text-sm table-fixed">
-       <thead class="bg-white/5 text-slate-500 text-[10px] uppercase font-bold">
-        <tr>
-         <th class="p-4 w-1/4">Plan</th>
-         <th class="p-4 w-1/4 text-center">ROI</th>
-         <th class="p-4 w-1/4 text-center">Days</th>
-         <th class="p-4 w-1/4 text-right">Min</th>
-        </tr>
-       </thead>
-       <tbody class="divide-y divide-white/5 text-white">
-        <tr onclick="location.href='basic.html'" class="plan-row cursor-pointer transition-all">
-         <td class="p-4 font-bold text-emerald-400">Basic</td>
-         <td class="p-4 text-center">8%</td>
-         <td class="p-4 text-center">40</td>
-         <td class="p-4 text-right font-medium">10,000</td>
-        </tr>
-        <tr onclick="location.href='silver.html'" class="plan-row cursor-pointer transition-all">
-         <td class="p-4 font-bold text-cyan-400">Silver</td>
-         <td class="p-4 text-center">10%</td>
-         <td class="p-4 text-center">30</td>
-         <td class="p-4 text-right font-medium">108,000</td>
-        </tr>
-        <tr onclick="location.href='gold.html'" class="plan-row cursor-pointer transition-all">
-         <td class="p-4 font-bold text-amber-400">Gold</td>
-         <td class="p-4 text-center">12%</td>
-         <td class="p-4 text-center">25</td>
-         <td class="p-4 text-right font-medium">525,000</td>
-        </tr>
-        <tr onclick="location.href='diamond.html'" class="plan-row cursor-pointer transition-all">
-         <td class="p-4 font-bold text-orange-400">Diamond</td>
-         <td class="p-4 text-center">14%</td>
-         <td class="p-4 text-center">21</td>
-         <td class="p-4 text-right font-medium">1,215,000</td>
-        </tr>
-       </tbody>
-      </table>
-     </div>
-    </div>
-
-    <div class="space-y-3 pb-8 animate-reveal delay-5">
-     <h4 class="text-lg font-bold flex items-center gap-2 font-['Outfit']">
-      <i data-lucide="users-2" class="text-[#00CE9C] w-5 h-5 shake-icon"></i> Affiliate Bonuses
-     </h4>
-     <div class="glass-card rounded-2xl overflow-hidden">
-      <table class="w-full text-left text-sm table-fixed">
-       <thead class="bg-white/5 text-slate-500 text-[10px] uppercase font-bold">
-        <tr>
-         <th class="p-3 w-1/2">Type</th>
-         <th class="p-3 w-1/4 text-center">Bonus</th>
-         <th class="p-3 w-1/4 text-right">Example</th>
-        </tr>
-       </thead>
-       <tbody class="divide-y divide-white/5 text-white">
-        <tr class="plan-row">
-         <td class="p-3 font-bold text-emerald-400">Direct Referral</td>
-         <td class="p-3 text-center">10%</td>
-         <td class="p-3 text-right font-medium">10,000</td>
-        </tr>
-        <tr class="plan-row">
-         <td class="p-3 font-bold text-cyan-400">First Indirect</td>
-         <td class="p-3 text-center">2%</td>
-         <td class="p-3 text-right font-medium">2,000</td>
-        </tr>
-       </tbody>
-      </table>
-     </div>
-    </div>
-   </main>
-  </div>
-
-  <div id="side-menu-backdrop" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300"></div>
-
-  <div id="side-menu" class="fixed top-0 right-0 h-full w-[280px] glass-card z-[70] translate-x-full transition-transform duration-300 ease-out flex flex-col border-l border-white/10">
-      <div class="p-6 border-b border-white/5 flex justify-between items-center">
-          <h2 class="font-['Outfit'] font-extrabold text-lg text-white tracking-tight">MENU</h2>
-          <button onclick="toggleMenu()" class="p-2 hover:bg-white/5 rounded-full text-slate-400 transition-colors">
-              <i data-lucide="x" class="w-6 h-6"></i>
-          </button>
-      </div>
-
-      <div class="flex-1 overflow-y-auto p-4 space-y-6">
-          <div>
-              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Network</p>
-              <div class="space-y-1">
-                  <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="user-check" class="w-5 h-5 text-[#00CE9C] shake-icon"></i>
-                      <span class="text-sm font-medium text-slate-200">My Affiliates</span>
-                  </a>
-                  <a href="affiliates.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="award" class="w-5 h-5 text-[#00CE9C] shake-icon"></i>
-                      <span class="text-sm font-medium text-slate-200">Affiliate Bonuses</span>
-                  </a>
-              </div>
-          </div>
-
-          <div>
-              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Records</p>
-              <div class="space-y-1">
-                  <a href="transactions.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="arrow-down-to-line" class="w-5 h-5 text-emerald-400 shake-icon"></i>
-                      <span class="text-sm font-medium text-slate-200">Deposits</span>
-                  </a>
-                  <a href="withdraw.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="arrow-up-from-line" class="w-5 h-5 text-orange-400 shake-icon"></i>
-                      <span class="text-sm font-medium text-slate-200">Withdrawals</span>
-                  </a>
-              </div>
-          </div>
-      </div>
-
-      <div class="p-6 border-t border-white/5 space-y-4 bg-black/20">
-          <button onclick="logout()" class="w-full flex items-center justify-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-sm font-bold hover:bg-red-500/20 transition-all">
-              <i data-lucide="log-out" class="w-4 h-4 shake-icon"></i> Sign Out
-          </button>
-      </div>
-  </div>
-
-  <div id="logout-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-      <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-      <div class="glass-card relative w-full max-w-sm rounded-[32px] p-8 text-center border border-white/10 scale-90 transition-transform duration-300" id="logout-modal-content">
-          <div class="mb-6 flex justify-center">
-              <div class="bg-red-500/10 p-4 rounded-full border border-red-500/20">
-                  <i data-lucide="log-out" class="w-10 h-10 text-red-500 animate-pulse"></i>
-              </div>
-          </div>
-          <h3 class="text-2xl font-bold font-['Outfit'] text-white mb-2">Sign Out?</h3>
-          <p class="text-slate-400 text-sm mb-8">Are you sure you want to end your current session?</p>
-          <div class="flex flex-col gap-3">
-              <button onclick="confirmLogout()" class="w-full h-14 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-500/20">
-                  <i data-lucide="check-circle" class="w-5 h-5"></i> Log Me Out
-              </button>
-              <button onclick="closeLogoutModal()" class="w-full h-14 bg-white/5 hover:bg-white/10 text-slate-300 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all">
-                  Stay Logged In
-              </button>
-          </div>
-      </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-        lucide.createIcons();
-
-        const supabaseClient = supabase.createClient(
-            'https://wbodpfbmilhperccgzei.supabase.co', 
-            'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN'
-        );
-
-        let realBalance = 0;
-        let isHidden = true;
-
-        async function checkAuthAndLoad() {
-            try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (!session) {
-                    window.location.href = "signin.html";
-                    return;
-                }
-
-                const userId = session.user.id;
-                const { data } = await supabaseClient
-                    .from('userinfo')
-                    .select('username, available_balance, total_investment, total_withdrawn')
-                    .eq('userid', userId)
-                    .single();
-
-                // Hide skeleton and show content
-                document.getElementById('skeleton-container').classList.add('hidden');
-                document.getElementById('dashboard-content').classList.remove('hidden');
-
-                if (data) {
-                    realBalance = data.available_balance || 0;
-                    document.getElementById('username').innerText = data.username || "User";
-                    updateBalanceDisplay();
-                    document.getElementById('totalInv').innerText = "UGX " + Number(data.total_investment || 0).toLocaleString();
-                    document.getElementById('totalWith').innerText = "UGX " + Number(data.total_withdrawn || 0).toLocaleString();
-                }
-            } catch (err) { console.error(err); }
-        }
-
-        function toggleBalance() {
-            isHidden = !isHidden;
-            updateBalanceDisplay();
-        }
-
-        function updateBalanceDisplay() {
-            const balanceSpan = document.getElementById('balance');
-            const eyeIcon = document.getElementById('eyeIcon');
-            if (isHidden) {
-                balanceSpan.innerText = "*****";
-                eyeIcon.setAttribute('data-lucide', 'eye-off');
-            } else {
-                balanceSpan.innerText = Number(realBalance).toLocaleString();
-                eyeIcon.setAttribute('data-lucide', 'eye');
-            }
-            lucide.createIcons();
-        }
-
-        async function copyLink() {
-            const btnText = document.getElementById('ref-text');
-            const btnIcon = document.getElementById('ref-icon');
-            
-            try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (!session) return;
-                
-                const { data } = await supabaseClient.from('userinfo').select('username').eq('userid', session.user.id).single();
-                
-                if (data) {
-                    const link = `https://upcashh.github.io/upcash/index.html?ref=${data.username}`;
-                    await navigator.clipboard.writeText(link);
-                    
-                    btnText.innerText = "Link Copied!";
-                    btnText.style.color = "#00CE9C";
-                    btnIcon.setAttribute('data-lucide', 'check');
-                    lucide.createIcons();
-                    
-                    setTimeout(() => {
-                        btnText.innerText = "Referral Link";
-                        btnText.style.color = "";
-                        btnIcon.setAttribute('data-lucide', 'share-2');
-                        lucide.createIcons();
-                    }, 2500);
-                }
-            } catch (err) { console.error(err); }
-        }
-
-        function toggleMenu() {
-            const menu = document.getElementById('side-menu');
-            const backdrop = document.getElementById('side-menu-backdrop');
-            const isOpening = menu.classList.contains('translate-x-full');
-
-            if (isOpening) {
-                menu.classList.remove('translate-x-full');
-                backdrop.classList.remove('opacity-0', 'pointer-events-none');
-                lucide.createIcons();
-            } else {
-                menu.classList.add('translate-x-full');
-                backdrop.classList.add('opacity-0', 'pointer-events-none');
-            }
-        }
-
-        function logout() {
-            const modal = document.getElementById('logout-modal');
-            const content = document.getElementById('logout-modal-content');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-90');
-            content.classList.add('scale-100');
-            lucide.createIcons();
-        }
-
-        function closeLogoutModal() {
-            const modal = document.getElementById('logout-modal');
-            const content = document.getElementById('logout-modal-content');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-100');
-            content.classList.add('scale-90');
-        }
-
-        async function confirmLogout() {
-            try {
-                await supabaseClient.auth.signOut();
-                window.location.href = "signin.html";
-            } catch (err) { console.error(err); }
-        }
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         
-        checkAuthAndLoad();
-  </script>
- </body>
+        <div class="glass-panel p-8 reveal">
+            <div class="flex justify-between items-start mb-6">
+                <h2 class="text-2xl font-bold">Quantitative Analysis</h2>
+                <i data-lucide="activity" class="text-[#00ce9c] w-6 h-6"></i>
+            </div>
+            <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+                Our AI-driven execution model filters market noise to identify high-probability entry points, ensuring your capital works with institutional precision.
+            </p>
+            
+            <div class="rounded-2xl overflow-hidden border border-white/5 bg-black/20">
+                <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                    {
+                        "interval": "1m",
+                        "width": "100%",
+                        "isTransparent": true,
+                        "height": 300,
+                        "symbol": "NASDAQ:NVDA",
+                        "showIntervalTabs": true,
+                        "displayMode": "single",
+                        "locale": "en",
+                        "colorTheme": "dark"
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel p-8 reveal">
+            <div class="flex justify-between items-start mb-6">
+                <h2 class="text-2xl font-bold">Safety Protocol</h2>
+                <i data-lucide="lock" class="text-[#00ce9c] w-6 h-6"></i>
+            </div>
+            
+            <div class="space-y-4 mb-8">
+                <div class="flex justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                    <span class="text-gray-400 text-sm">Execution Model</span>
+                    <span class="text-[#00ce9c] font-bold text-sm">Non-Speculative</span>
+                </div>
+                <div class="flex justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                    <span class="text-gray-400 text-sm">Hedged Positions</span>
+                    <span class="text-[#00ce9c] font-bold text-sm">100% Active</span>
+                </div>
+                <div class="flex justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                    <span class="text-gray-400 text-sm">Liquidity Tier</span>
+                    <span class="text-[#00ce9c] font-bold text-sm">Grade-A Reserves</span>
+                </div>
+            </div>
+
+            <div class="p-5 bg-[#00ce9c]/5 border border-dashed border-[#00ce9c]/30 rounded-2xl flex gap-4">
+                <i data-lucide="shield-check" class="w-12 h-12 text-[#00ce9c] shrink-0"></i>
+                <p class="text-[11px] text-gray-300 leading-relaxed">
+                    <strong class="text-white">Principal Protection:</strong> AI algorithms monitor collateralized positions 24/7 to insulate capital from market anomalies and black-swan events.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="reveal rounded-2xl overflow-hidden border border-white/10 mb-20 shadow-2xl">
+        <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+            {
+                "symbols": [
+                    {"proName": "NASDAQ:AAPL", "title": "APPLE"},
+                    {"proName": "NASDAQ:GOOGL", "title": "GOOGLE"},
+                    {"proName": "NASDAQ:TSLA", "title": "TESLA"},
+                    {"proName": "BINANCE:BTCUSDT", "title": "BITCOIN"}
+                ],
+                "showSymbolLogo": true,
+                "colorTheme": "dark",
+                "isTransparent": false,
+                "displayMode": "adaptive",
+                "locale": "en"
+            }
+            </script>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="max-w-3xl mx-auto px-6 py-12 text-center">
+        <div class="flex justify-center items-center mb-6">
+            <span class="ai-status-pulse"></span>
+            <span class="text-[10px] tracking-[4px] font-black text-[#00ce9c] uppercase">AI Surveillance Active</span>
+        </div>
+        <p class="text-[#5a6477] text-[10px] leading-loose mb-8">
+            UPCASH IS A QUANTITATIVE ASSET MANAGEMENT PLATFORM. ALL RETURNS ARE DERIVED FROM AI-OPTIMIZED TRADING PROFITS GENERATED VIA REGULATED LIQUIDITY NODES. WE DO NOT OFFER FINANCIAL ADVICE.
+        </p>
+        <p class="text-white/20 font-bold text-[9px] tracking-[2px] uppercase">
+            &copy; 2026 UPCASH NEURAL NETWORKS | ALL RIGHTS RESERVED
+        </p>
+    </div>
+</footer>
+
+<script>
+    lucide.createIcons();
+
+    // Scroll Reveal Intersection Observer
+    const observerOptions = { threshold: 0.1 };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
 </html>
