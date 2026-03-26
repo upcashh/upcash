@@ -3,241 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0a0f1a"> 
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <title>UPCASH | AI-Driven Quantitative Management</title>
+    <title>UPCASH | Live Market Terminal</title>
+    <meta name="theme-color" content="#0a0f1a">
     
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --mint: #00ce9c;
-            --dark-navy: #0a0f1a;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.08);
-        }
+        body { font-family: 'DM Sans', sans-serif; background-color: #0a0f1a; color: #ffffff; margin: 0; overflow: hidden; }
+        .font-outfit { font-family: 'Outfit', sans-serif; }
 
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background-color: var(--dark-navy);
-            color: #ffffff;
-            margin: 0;
-            overflow-x: hidden;
-        }
-
-        h1, h2, h3, .logo-text { font-family: 'Outfit', sans-serif; }
-
-        /* --- Scroll Reveal --- */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* --- AI Terminal Typing Animation --- */
-        .typing::after {
-            content: '|';
-            animation: blink 1s infinite;
-        }
-        @keyframes blink { 50% { opacity: 0; } }
-
-        /* --- UI Enhancements --- */
         .glass-panel {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .glow-mint {
-            box-shadow: 0 0 20px rgba(0, 206, 156, 0.2);
-        }
+        /* Chart Container sizing */
+        #chart-wrapper { height: calc(100vh - 180px); }
 
-        nav {
-            background: rgba(10, 15, 26, 0.8);
-            padding: 1rem 6%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(12px);
-        }
+        .glow-mint { box-shadow: 0 0 20px rgba(0, 206, 156, 0.2); }
+        
+        /* Custom scrollbar for order book */
+        .custom-scroll::-webkit-scrollbar { width: 2px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #00ce9c; }
 
-        .ai-status-pulse {
-            width: 8px;
-            height: 8px;
-            background: var(--mint);
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 206, 156, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 206, 156, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 206, 156, 0); }
-        }
+        @keyframes pulse-slow { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .animate-pulse-slow { animation: pulse-slow 3s infinite; }
     </style>
 </head>
-<body>
+<body class="h-full flex flex-col">
 
-<nav>
-    <div class="flex items-center gap-3">
-        <div class="bg-[#00ce9c] p-2 rounded-xl glow-mint">
-            <i data-lucide="trending-up" class="w-5 h-5 text-[#0a0f1a] stroke-[3px]"></i>
-        </div>
-        <span class="logo-text text-2xl font-black tracking-tighter uppercase">
-            UP<span class="text-[#00ce9c]">CASH</span>
-        </span>
-    </div>
-    <a href="dashboard.html" class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all">
-        <i data-lucide="arrow-left" class="w-5 h-5"></i>
-    </a>
-</nav>
-
-<div class="max-w-5xl mx-auto px-6 pt-12">
-    
-    <div class="glass-panel p-6 mb-10 border-[#00ce9c]/20 reveal">
-        <div class="flex items-center gap-4 mb-4">
-            <div class="p-3 bg-[#00ce9c]/10 rounded-full">
-                <i data-lucide="cpu" class="text-[#00ce9c] w-6 h-6 animate-spin-slow"></i>
+    <nav class="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#0a0f1a]/80 backdrop-blur-md z-50">
+        <div class="flex items-center gap-3">
+            <div class="bg-[#00ce9c] p-2 rounded-xl glow-mint">
+                <i data-lucide="trending-up" class="w-5 h-5 text-[#0a0f1a] stroke-[3px]"></i>
             </div>
             <div>
-                <h3 class="text-xs font-black tracking-[3px] text-[#00ce9c] uppercase">Neural Engine Active</h3>
-                <p class="text-sm text-gray-400">UPCASH AI is currently scanning 4,200+ global assets.</p>
+                <h1 class="font-outfit text-xl font-black tracking-tighter uppercase">
+                    UP<span class="text-[#00ce9c]">CASH</span>
+                </h1>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-[#00ce9c] animate-pulse"></span>
+                    <span class="text-[9px] text-[#00ce9c] font-bold uppercase tracking-widest">Live Node Connection</span>
+                </div>
             </div>
         </div>
-        <div class="bg-black/40 rounded-xl p-4 font-mono text-[11px] text-[#00ce9c]/80 leading-relaxed border border-white/5">
-            <div>> [SYS]: CALIBRATING RISK_PARAMETERS... <span class="text-white">DONE</span></div>
-            <div>> [AI]: DETECTING VOLATILITY CLUSTERS... <span class="text-white">MINIMIZED</span></div>
-            <div class="typing">> [SIGNAL]: EXECUTING OPTIMAL ALPHA DEPLOYMENT...</div>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         
-        <div class="glass-panel p-8 reveal">
-            <div class="flex justify-between items-start mb-6">
-                <h2 class="text-2xl font-bold">Quantitative Analysis</h2>
-                <i data-lucide="activity" class="text-[#00ce9c] w-6 h-6"></i>
-            </div>
-            <p class="text-gray-400 text-sm mb-8 leading-relaxed">
-                Our AI-driven execution model filters market noise to identify high-probability entry points, ensuring your capital works with institutional precision.
-            </p>
-            
-            <div class="rounded-2xl overflow-hidden border border-white/5 bg-black/20">
-                <div class="tradingview-widget-container">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
-                    {
-                        "interval": "1m",
-                        "width": "100%",
-                        "isTransparent": true,
-                        "height": 300,
-                        "symbol": "NASDAQ:NVDA",
-                        "showIntervalTabs": true,
-                        "displayMode": "single",
+        <a href="dashboard.html" class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-[#00ce9c] hover:text-[#0a0f1a] transition-all">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </a>
+    </nav>
+
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        
+        <section class="flex-1 p-4 relative">
+            <div id="chart-wrapper" class="glass-panel rounded-3xl overflow-hidden border-[#00ce9c]/20">
+                <div class="tradingview-widget-container" style="height:100%;width:100%">
+                    <div id="tradingview_chart" style="height:100%;width:100%"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                    <script type="text/javascript">
+                    new TradingView.widget({
+                        "autosize": true,
+                        "symbol": "BINANCE:BTCUSDT",
+                        "interval": "15",
+                        "timezone": "Etc/UTC",
+                        "theme": "dark",
+                        "style": "1",
                         "locale": "en",
-                        "colorTheme": "dark"
-                    }
+                        "toolbar_bg": "#0a0f1a",
+                        "enable_publishing": false,
+                        "hide_top_toolbar": false,
+                        "hide_legend": false,
+                        "save_image": false,
+                        "container_id": "tradingview_chart",
+                        "backgroundColor": "#0a0f1a",
+                        "gridColor": "rgba(0, 206, 156, 0.05)",
+                        "paletteColor": "#00ce9c"
+                    });
                     </script>
                 </div>
-            </div>
-        </div>
+                </div>
+        </section>
 
-        <div class="glass-panel p-8 reveal">
-            <div class="flex justify-between items-start mb-6">
-                <h2 class="text-2xl font-bold">Safety Protocol</h2>
-                <i data-lucide="lock" class="text-[#00ce9c] w-6 h-6"></i>
-            </div>
+        <aside class="w-full lg:w-80 p-4 border-l border-white/5 bg-black/20 flex flex-col gap-4 overflow-y-auto custom-scroll">
             
-            <div class="space-y-4 mb-8">
-                <div class="flex justify-between p-4 bg-white/5 rounded-xl border border-white/5">
-                    <span class="text-gray-400 text-sm">Execution Model</span>
-                    <span class="text-[#00ce9c] font-bold text-sm">Non-Speculative</span>
-                </div>
-                <div class="flex justify-between p-4 bg-white/5 rounded-xl border border-white/5">
-                    <span class="text-gray-400 text-sm">Hedged Positions</span>
-                    <span class="text-[#00ce9c] font-bold text-sm">100% Active</span>
-                </div>
-                <div class="flex justify-between p-4 bg-white/5 rounded-xl border border-white/5">
-                    <span class="text-gray-400 text-sm">Liquidity Tier</span>
-                    <span class="text-[#00ce9c] font-bold text-sm">Grade-A Reserves</span>
+            <div class="glass-panel p-4 rounded-2xl">
+                <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1">Market Volume</span>
+                <div class="flex justify-between items-end">
+                    <h2 class="font-outfit text-2xl font-bold">BTC / USDT</h2>
+                    <span class="text-[#00ce9c] text-xs font-mono font-bold">+2.41%</span>
                 </div>
             </div>
 
-            <div class="p-5 bg-[#00ce9c]/5 border border-dashed border-[#00ce9c]/30 rounded-2xl flex gap-4">
-                <i data-lucide="shield-check" class="w-12 h-12 text-[#00ce9c] shrink-0"></i>
-                <p class="text-[11px] text-gray-300 leading-relaxed">
-                    <strong class="text-white">Principal Protection:</strong> AI algorithms monitor collateralized positions 24/7 to insulate capital from market anomalies and black-swan events.
-                </p>
+            <div class="glass-panel p-4 rounded-2xl border-l-2 border-[#00ce9c]">
+                <div class="flex items-center gap-2 mb-2">
+                    <i data-lucide="cpu" class="w-4 h-4 text-[#00ce9c]"></i>
+                    <h3 class="text-xs font-bold uppercase tracking-wider">AI Execution</h3>
+                </div>
+                <p class="text-[11px] text-gray-400 mb-3 leading-relaxed">Quant Node scanning for arbitrage liquidity...</p>
+                <div class="w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                    <div class="bg-[#00ce9c] h-full w-2/3 animate-pulse"></div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="reveal rounded-2xl overflow-hidden border border-white/10 mb-20 shadow-2xl">
-        <div class="tradingview-widget-container">
-            <div class="tradingview-widget-container__widget"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-            {
-                "symbols": [
-                    {"proName": "NASDAQ:AAPL", "title": "APPLE"},
-                    {"proName": "NASDAQ:GOOGL", "title": "GOOGLE"},
-                    {"proName": "NASDAQ:TSLA", "title": "TESLA"},
-                    {"proName": "BINANCE:BTCUSDT", "title": "BITCOIN"}
-                ],
-                "showSymbolLogo": true,
-                "colorTheme": "dark",
-                "isTransparent": false,
-                "displayMode": "adaptive",
-                "locale": "en"
+            <div class="flex-1 glass-panel rounded-2xl p-4 flex flex-col overflow-hidden">
+                <h3 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Real-Time Alpha Flow</h3>
+                <div id="order-book" class="space-y-2 font-mono text-[10px] flex-1 overflow-hidden">
+                    </div>
+            </div>
+
+        </aside>
+    </main>
+
+    <footer class="h-12 border-t border-white/5 bg-black/40 flex items-center overflow-hidden">
+        <div class="flex items-center gap-8 animate-marquee whitespace-nowrap px-6">
+            <span class="text-[10px] font-bold"><span class="text-gray-500">ETH:</span> $3,421.12 <span class="text-[#00ce9c]">+1.2%</span></span>
+            <span class="text-[10px] font-bold"><span class="text-gray-500">SOL:</span> $142.05 <span class="text-red-500">-0.4%</span></span>
+            <span class="text-[10px] font-bold"><span class="text-gray-500">BNB:</span> $589.90 <span class="text-[#00ce9c]">+0.8%</span></span>
+            <span class="text-[10px] font-bold"><span class="text-gray-500">ADA:</span> $0.45 <span class="text-[#00ce9c]">+3.1%</span></span>
+            <span class="text-[10px] font-bold"><span class="text-gray-500">DOT:</span> $7.12 <span class="text-gray-400">0.0%</span></span>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Simulate Live AI Orders
+        const orderBook = document.getElementById('order-book');
+        const types = ['BUY', 'SELL'];
+        
+        function addOrder() {
+            const type = types[Math.floor(Math.random() * types.length)];
+            const price = (65000 + Math.random() * 1000).toFixed(2);
+            const amount = (Math.random() * 0.5).toFixed(4);
+            const color = type === 'BUY' ? 'text-[#00ce9c]' : 'text-red-400';
+            
+            const orderHtml = `
+                <div class="flex justify-between border-b border-white/5 pb-1 opacity-0 transform translate-x-4 transition-all duration-500 active-order">
+                    <span class="${color} font-bold">${type}</span>
+                    <span class="text-gray-300">${price}</span>
+                    <span class="text-gray-500">${amount} BTC</span>
+                </div>
+            `;
+            
+            orderBook.insertAdjacentHTML('afterbegin', orderHtml);
+            
+            const newOrder = orderBook.firstChild;
+            setTimeout(() => {
+                newOrder.style.opacity = '1';
+                newOrder.style.transform = 'translateX(0)';
+            }, 50);
+
+            if (orderBook.children.length > 15) {
+                orderBook.removeChild(orderBook.lastChild);
             }
-            </script>
-        </div>
-    </div>
-</div>
+        }
 
-<footer class="footer">
-    <div class="max-w-3xl mx-auto px-6 py-12 text-center">
-        <div class="flex justify-center items-center mb-6">
-            <span class="ai-status-pulse"></span>
-            <span class="text-[10px] tracking-[4px] font-black text-[#00ce9c] uppercase">AI Surveillance Active</span>
-        </div>
-        <p class="text-[#5a6477] text-[10px] leading-loose mb-8">
-            UPCASH IS A QUANTITATIVE ASSET MANAGEMENT PLATFORM. ALL RETURNS ARE DERIVED FROM AI-OPTIMIZED TRADING PROFITS GENERATED VIA REGULATED LIQUIDITY NODES. WE DO NOT OFFER FINANCIAL ADVICE.
-        </p>
-        <p class="text-white/20 font-bold text-[9px] tracking-[2px] uppercase">
-            &copy; 2026 UPCASH NEURAL NETWORKS | ALL RIGHTS RESERVED
-        </p>
-    </div>
-</footer>
+        setInterval(addOrder, 1500);
+    </script>
 
-<script>
-    lucide.createIcons();
-
-    // Scroll Reveal Intersection Observer
-    const observerOptions = { threshold: 0.1 };
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-            }
-        });
-    }, observerOptions);
-
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-</script>
-
+    <style>
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            animation: marquee 20s linear infinite;
+        }
+    </style>
 </body>
 </html>
