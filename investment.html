@@ -28,7 +28,6 @@
             box-shadow: 0 10px 30px rgba(0, 206, 156, 0.15);
         }
 
-        /* --- Scroll Animation Styles --- */
         .reveal {
             opacity: 0;
             transform: translateY(30px);
@@ -39,17 +38,16 @@
             transform: translateY(0);
         }
 
-        /* Animated SVG Icons */
         .svg-icon { width: 50px; height: 50px; margin-right: 15px; filter: drop-shadow(0 0 8px rgba(0,206,156,0.3)); }
         
         @keyframes pulse-grow { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
         .animate-svg { animation: pulse-grow 3s infinite ease-in-out; }
 
-        /* Silver Popular Glow */
+        /* Enhanced Silver Shimmer */
         .popular-card {
-            border: 1px solid rgba(0, 206, 156, 0.5) !important;
-            box-shadow: 0 0 25px rgba(0, 206, 156, 0.25);
-            background: rgba(0, 206, 156, 0.08); 
+            border: 1px solid rgba(0, 206, 156, 0.6) !important;
+            box-shadow: 0 0 30px rgba(0, 206, 156, 0.3);
+            background: rgba(0, 206, 156, 0.12); 
             position: relative;
             overflow: hidden; 
         }
@@ -64,11 +62,12 @@
             top: 15px;
             right: 15px;
             text-transform: uppercase;
+            z-index: 30;
         }
         .shimmer {
-            background: linear-gradient(110deg, transparent 30%, rgba(0,206,156,0.15) 50%, transparent 70%);
+            background: linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, 0.2) 50%, transparent 80%);
             background-size: 200% 100%;
-            animation: shimmer 3s infinite;
+            animation: shimmer 2.5s infinite linear;
             position: absolute;
             inset: 0;
             pointer-events: none;
@@ -105,16 +104,21 @@
             margin-right: 8px;
             color: #00ce9c; 
         }
+
+        .profit-subtext {
+            font-size: 11px;
+            color: #00ce9c;
+            font-weight: 600;
+            margin-top: 2px;
+            display: block;
+        }
     </style>
 </head>
 <body class="h-full">
 
     <div class="max-w-md mx-auto px-5 py-6">
         <header class="flex items-center justify-between mb-10 reveal">
-            <a href="dashboard.html" class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all ml-auto">
-                <i data-lucide="arrow-left" class="w-5 h-5"></i>
-            </a>
-            <div class="flex items-center absolute left-1/2 -translate-x-1/2">
+            <div class="flex items-center">
                 <div class="bg-[#00ce9c] p-2 rounded-xl shadow-[0_0_15px_rgba(0,206,156,0.4)] mr-2">
                     <i data-lucide="trending-up" class="w-5 h-5 text-[#0a0f1a] stroke-[3px]"></i>
                 </div>
@@ -122,6 +126,10 @@
                     UP<span class="text-[#00ce9c]">CASH</span>
                 </h1>
             </div>
+            
+            <a href="dashboard.html" class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
         </header>
 
         <p class="text-center text-[#00ce9c] font-['Outfit'] tracking-[2px] text-sm mb-8 uppercase font-light reveal">Select Your Investment Plan</p>
@@ -133,7 +141,7 @@
                     <svg class="svg-icon animate-svg" viewBox="0 0 24 24" fill="none" stroke="#00ce9c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                     <div>
                         <h2 class="text-xl font-bold font-['Outfit'] text-white">Basic Plan</h2>
-                        <p class="text-sm text-gray-400">Starter Investment for Steady Growth</p>
+                        <p class="text-sm text-gray-400">Starter Investment</p>
                     </div>
                 </div>
                 
@@ -141,6 +149,7 @@
                     <div>
                         <p class="text-[10px] text-gray-500 uppercase tracking-wider">Min Invest</p>
                         <p class="text-lg font-extrabold text-white font-['Outfit']">UGX 10,000</p>
+                        <span class="profit-subtext">Est. Profit: UGX 32,000</span>
                     </div>
                     <div>
                         <p class="text-[10px] text-gray-500 uppercase tracking-wider">Daily Return</p>
@@ -151,20 +160,18 @@
                 <ul class="feature-list mb-4 relative z-20">
                     <li><i data-lucide="check-circle"></i> 40-Day Duration</li>
                     <li><i data-lucide="check-circle"></i> Instant Payouts</li>
-                    <li><i data-lucide="check-circle"></i> Referral Bonuses</li>
                 </ul>
-
                 <a href="basic.html" class="btn-choose-plan mx-auto relative z-20">Choose Plan</a>
             </div>
 
             <div class="glass-card popular-card flex flex-col justify-between relative reveal">
                 <div class="shimmer"></div>
-                <span class="popular-tag relative z-20">Popular</span>
+                <span class="popular-tag">Popular</span>
                 <div class="flex items-center mb-4 relative z-20">
                     <svg class="svg-icon animate-svg" viewBox="0 0 24 24" fill="none" stroke="#00ce9c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     <div>
                         <h2 class="text-xl font-bold font-['Outfit'] text-white">Silver Plan</h2>
-                        <p class="text-sm text-gray-400">Growth Investment - Most Chosen</p>
+                        <p class="text-sm text-gray-400">Growth Investment</p>
                     </div>
                 </div>
                 
@@ -172,6 +179,7 @@
                     <div>
                         <p class="text-[10px] text-gray-500 uppercase tracking-wider">Min Invest</p>
                         <p class="text-lg font-extrabold text-white font-['Outfit']">UGX 108,000</p>
+                        <span class="profit-subtext">Est. Profit: UGX 324,000</span>
                     </div>
                     <div>
                         <p class="text-[10px] text-gray-500 uppercase tracking-wider">Daily Return</p>
@@ -182,9 +190,7 @@
                 <ul class="feature-list mb-4 relative z-20">
                     <li><i data-lucide="check-circle"></i> 30-Day Duration <span class="text-green-400 ml-2 text-[10px]">(Fast Profits!)</span></li>
                     <li><i data-lucide="check-circle"></i> Priority Support</li>
-                    <li><i data-lucide="check-circle"></i> Advanced Analytics</li>
                 </ul>
-
                 <a href="silver.html" class="btn-choose-plan mx-auto relative z-20">Choose Plan</a>
             </div>
 
@@ -193,7 +199,7 @@
                     <svg class="svg-icon animate-svg" viewBox="0 0 24 24" fill="none" stroke="#FFC300" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
                     <div>
                         <h2 class="text-xl font-bold font-['Outfit'] text-white">Gold Plan</h2>
-                        <p class="text-sm text-gray-400">Premium Investment for High Yields</p>
+                        <p class="text-sm text-gray-400">Premium Yields</p>
                     </div>
                 </div>
                 
@@ -201,6 +207,7 @@
                     <div>
                         <p class="text-[10px] text-gray-500 uppercase tracking-wider">Min Invest</p>
                         <p class="text-lg font-extrabold text-white font-['Outfit']">UGX 525,000</p>
+                        <span class="profit-subtext" style="color:#FFC300">Est. Profit: UGX 1,575,000</span>
                     </div>
                     <div>
                         <p class="text-[10px] text-gray-500 uppercase tracking-wider">Daily Return</p>
@@ -209,11 +216,9 @@
                 </div>
 
                 <ul class="feature-list mb-4 relative z-20">
-                    <li><i data-lucide="check-circle" style="color:#FFC300"></i> 25-Day Duration <span class="text-green-400 ml-2 text-[10px]">(Faster Profits!)</span></li>
-                    <li><i data-lucide="check-circle" style="color:#FFC300"></i> Dedicated Account Manager</li>
-                    <li><i data-lucide="check-circle" style="color:#FFC300"></i> Exclusive Event Access</li>
+                    <li><i data-lucide="check-circle" style="color:#FFC300"></i> 25-Day Duration</li>
+                    <li><i data-lucide="check-circle" style="color:#FFC300"></i> VIP Events</li>
                 </ul>
-
                 <a href="gold.html" class="btn-choose-plan mx-auto relative z-20" style="background:#FFC300;">Choose Plan</a>
             </div>
 
@@ -222,7 +227,7 @@
                     <svg class="svg-icon animate-svg" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M11 3L8 9l3 12 3-12-3-6z"/><path d="M2 9h20"/></svg>
                     <div>
                         <h2 class="text-xl font-bold font-['Outfit'] text-white">Diamond Plan</h2>
-                        <p class="text-sm text-gray-400">Elite Investment with Maximum Returns</p>
+                        <p class="text-sm text-gray-400">Elite Maximum Yield</p>
                     </div>
                 </div>
                 
@@ -230,6 +235,7 @@
                     <div>
                         <p class="text-[10px] text-gray-500 uppercase tracking-wider">Min Invest</p>
                         <p class="text-lg font-extrabold text-white font-['Outfit']">UGX 1,215,000</p>
+                        <span class="profit-subtext" style="color:#00BFFF">Est. Profit: UGX 3,572,100</span>
                     </div>
                     <div>
                         <p class="text-[10px] text-gray-500 uppercase tracking-wider">Daily Return</p>
@@ -238,12 +244,20 @@
                 </div>
 
                 <ul class="feature-list mb-4 relative z-20">
-                    <li><i data-lucide="check-circle" style="color:#00BFFF"></i> 21-Day Duration <span class="text-green-400 ml-2 text-[10px]">(Fastest Profits!)</span></li>
-                    <li><i data-lucide="check-circle" style="color:#00BFFF"></i> Compounding Bonuses</li>
-                    <li><i data-lucide="check-circle" style="color:#00BFFF"></i> VIP Exclusive Perks</li>
+                    <li><i data-lucide="check-circle" style="color:#00BFFF"></i> 21-Day Duration</li>
+                    <li><i data-lucide="check-circle" style="color:#00BFFF"></i> VIP Perks</li>
                 </ul>
-
                 <a href="diamond.html" class="btn-choose-plan mx-auto relative z-20" style="background:#00BFFF;">Choose Plan</a>
+            </div>
+
+            <div class="glass-card border-dashed border-[#00ce9c]/40 reveal" style="background: rgba(0, 206, 156, 0.03);">
+                <div class="flex items-center mb-3">
+                    <i data-lucide="shield-check" class="text-[#00ce9c] w-6 h-6 mr-3"></i>
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-white">Capital Insulation Protocol</h3>
+                </div>
+                <p class="text-[11px] text-gray-400 leading-relaxed">
+                    Our multi-layer <strong>Transparency Protocol</strong> utilizes automated quantitative hedging to mitigate volatility risk. User capital is isolated in <strong>Grade-A Liquidity Reserves</strong>, ensuring 100% principal protection against market black-swan events via real-time algorithmic balancing.
+                </p>
             </div>
 
         </div>
@@ -261,13 +275,12 @@
     <script>
         lucide.createIcons();
 
-        // Scroll Reveal Script
         function reveal() {
             var reveals = document.querySelectorAll(".reveal");
             for (var i = 0; i < reveals.length; i++) {
                 var windowHeight = window.innerHeight;
                 var elementTop = reveals[i].getBoundingClientRect().top;
-                var elementVisible = 100; // Trigger when element is 100px into view
+                var elementVisible = 100;
                 if (elementTop < windowHeight - elementVisible) {
                     reveals[i].classList.add("active");
                 }
@@ -275,7 +288,6 @@
         }
 
         window.addEventListener("scroll", reveal);
-        // Run once on load to show elements already in view
         window.addEventListener("load", reveal);
     </script>
 </body>
