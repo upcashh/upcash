@@ -1,38 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UPCASH | Secure Withdrawal</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a0f1a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>UPCASH | Sign In</title>
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        body { 
-            font-family: 'DM Sans', sans-serif; 
-            background-color: #0a0f1a;
-            min-height: 100vh; 
-            color: #e2e8f0; 
-            -webkit-font-smoothing: antialiased;
-        }
+        body { background-color: #0a0f1a; font-family: 'DM Sans', sans-serif; }
         .outfit { font-family: 'Outfit', sans-serif; }
-
-        .glass-card { 
-            background: linear-gradient(160deg, #111827 0%, #0d1321 100%); 
-            border: 1px solid rgba(0, 206, 156, 0.15);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        }
-
+        
         .icon-box {
             background: #00ce9c;
             border-radius: 12px;
@@ -43,243 +24,186 @@
             box-shadow: 0 0 20px rgba(0, 206, 156, 0.4);
         }
 
-        .btn-primary { 
-            background: #00ce9c; 
-            color: #0a0f1a; 
-            transition: all 0.3s ease; 
-            box-shadow: 0 10px 20px rgba(0,206,156,0.2);
+        .glass-card { 
+            background: linear-gradient(160deg, #111827 0%, #0d1321 100%); 
+            border: 1px solid rgba(0, 206, 156, 0.15);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
         
-        .badge-pending { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
-        .badge-completed { background: rgba(0, 206, 156, 0.1); color: #00ce9c; border: 1px solid rgba(0, 206, 156, 0.2); }
+        .input-container { position: relative; }
 
-        .skeleton { background: rgba(0, 206, 156, 0.05); animation: pulse 1.5s infinite; border-radius: 12px; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .field { 
+            width: 100%; 
+            padding: 1rem 3.5rem 1rem 3rem; 
+            border-radius: 0.75rem; 
+            background: rgba(10, 15, 26, 0.5); 
+            border: 1px solid rgba(255,255,255,0.08); 
+            color: white; 
+            outline: none; 
+            transition: all 0.3s ease; 
         }
-        .animate-reveal { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
+
+        .floating-label {
+            position: absolute;
+            left: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #101624; 
+            padding: 0 6px;
+            color: #5a6477;
+            font-size: 0.875rem;
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+
+        .field:focus + .floating-label,
+        .field:not(:placeholder-shown) + .floating-label {
+            top: 0;
+            font-size: 0.75rem;
+            color: #00CE9C;
+            transform: translateY(-50%) scale(0.9);
+        }
+
+        .field:focus { border-color: #00CE9C; box-shadow: 0 0 10px rgba(0, 206, 156, 0.1); }
+        
+        .input-icon { position: absolute; left: 1rem; top: 1.1rem; color: #00CE9C; opacity: 0.7; z-index: 10; }
+        
+        .toggle-icon { 
+            position: absolute; 
+            right: 1rem; 
+            top: 1.1rem; 
+            color: #5a6477; 
+            cursor: pointer; 
+            z-index: 10; 
+            transition: color 0.3s ease;
+        }
+        .toggle-icon:hover { color: #00CE9C; }
+        
+        .btn-primary {
+            background: #00CE9C;
+            color: #0a0f1a;
+            box-shadow: 0 10px 20px rgba(0,206,156,0.2);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-up { animation: fadeUp 0.6s ease forwards; }
     </style>
 </head>
-<body class="pb-20">
-
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-8">
+    
     <div style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:0;">
         <div style="position:absolute;top:-20%;right:-15%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.08) 0%,transparent 70%);"></div>
         <div style="position:absolute;bottom:-10%;left:-10%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,206,156,0.05) 0%,transparent 70%);"></div>
     </div>
 
-    <header class="w-full bg-[#0a0f1a]/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-[999]">
-        <div class="max-w-lg mx-auto flex items-center justify-between px-5 py-4">
-            <div class="flex items-center gap-3">
-                <div class="icon-box">
-                    <i data-lucide="trending-up" class="w-5 h-5 text-[#0a0f1a]" style="stroke-width: 3px;"></i>
-                </div>
-                <h1 class="outfit text-xl font-bold tracking-tight uppercase text-white">UP<span style="color: #00ce9c;">CASH</span></h1>
+    <div class="relative z-10 w-full max-w-md fade-up">
+        
+        <header class="text-center mb-8">
+            <div class="flex items-center justify-center gap-4 mb-4">
+               <div class="icon-box">
+                 <i data-lucide="trending-up" style="width: 32px; height: 32px; color: #0a0f1a; stroke-width: 3px;"></i>
+               </div>
+               <h1 class="outfit font-900 text-5xl tracking-tighter text-white uppercase">
+                   UP<span style="color:#00ce9c;">CASH</span>
+               </h1>
             </div>
-            <a href="dashboard.html" class="p-2 bg-white/5 rounded-full text-slate-400 border border-white/10">
-                <i data-lucide="arrow-left" class="w-6 h-6"></i>
-            </a>
-        </div>
-    </header>
+            <p class="outfit font-bold text-sm text-white/90 uppercase tracking-widest px-4">Welcome back to our business platform</p>
+            <p class="text-slate-500 text-xs mt-2">Enter your credentials to access your dashboard</p>
+        </header>
 
-    <div id="skeleton-ui" class="p-4 max-w-lg mx-auto space-y-6">
-        <div class="h-32 skeleton"></div>
-        <div class="h-20 skeleton"></div>
-        <div class="h-56 skeleton"></div>
+        <div class="glass-card rounded-3xl p-8 sm:p-10">
+            <form id="signinForm" class="space-y-6">
+                
+                <div class="input-container">
+                    <i data-lucide="mail" class="input-icon w-5 h-5"></i>
+                    <input type="email" id="email" required placeholder=" " class="field">
+                    <label class="floating-label">Email Address</label>
+                </div>
+
+                <div class="input-container">
+                    <i data-lucide="lock" class="input-icon w-5 h-5"></i>
+                    <input type="password" id="password" required placeholder=" " class="field">
+                    <label class="floating-label">Password</label>
+                    <div class="toggle-icon" onclick="togglePasswordVisibility()">
+                        <i id="eye-icon" data-lucide="eye" class="w-5 h-5"></i>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <a href="forgot-password.html" class="text-xs text-slate-500 hover:text-[#00CE9C] transition-colors">Forgot Password?</a>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-primary w-full py-4 rounded-xl outfit font-bold text-lg">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="mt-8 text-center pt-4 border-t border-white/5">
+                <p class="text-slate-500 text-sm">New to the platform? <a href="register.html" class="text-[#00CE9C] font-bold hover:underline">Create Account</a></p>
+            </div>
+        </div>
+        
+        <footer class="mt-8 text-center">
+            <div class="flex flex-wrap justify-center gap-4 text-[10px] text-[#3e4a5c] outfit tracking-widest uppercase">
+                <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3 h-3"></i> Encrypted Session</span>
+                <span class="flex items-center gap-1"><i data-lucide="globe" class="w-3 h-3"></i> Uganda Server</span>
+            </div>
+            <p class="mt-4 text-[#2a3441] text-[10px]">© UPCASH BUSINESS PLATFORM 2026</p>
+        </footer>
     </div>
 
-    <main id="main-content" class="relative z-10 p-4 max-w-lg mx-auto space-y-6 hidden">
-        <div class="rounded-3xl p-6 shadow-2xl border border-[#00ce9c]/20 animate-reveal" style="background: linear-gradient(135deg, #0c2a23, #0d1321);">
-            <p class="text-[#00ce9c]/70 text-sm font-medium mb-1 outfit tracking-wider uppercase">Available for Cash-out</p>
-            <h3 class="outfit text-4xl font-black text-white" id="availBalance">UGX 0</h3>
-        </div>
-
-        <div class="glass-card rounded-2xl p-4 flex items-center gap-4 border-white/10 animate-reveal delay-1">
-            <div class="bg-[#00ce9c]/10 p-3 rounded-xl">
-                <i data-lucide="smartphone" class="w-6 h-6 text-[#00ce9c]"></i>
-            </div>
-            <div>
-                <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Recipient Number</p>
-                <p class="outfit font-bold text-lg text-white" id="recipientNum">---</p>
-            </div>
-        </div>
-
-        <div class="glass-card rounded-3xl p-6 border-white/10 animate-reveal delay-2">
-            <label class="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-4 outfit">Amount to Withdraw</label>
-            <div class="relative mb-6">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#00ce9c] font-bold outfit">UGX</span>
-                <input type="number" id="withdrawAmount" placeholder="Min 10,000" class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-4 pl-14 pr-4 text-xl font-bold text-white focus:outline-none focus:border-[#00ce9c] transition outfit">
-            </div>
-            <button id="withdrawBtn" onclick="handleWithdraw()" class="w-full py-4 rounded-xl btn-primary font-black text-lg shadow-xl active:scale-95 transition flex items-center justify-center gap-2 outfit uppercase">
-                <i data-lucide="wallet" class="w-5 h-5"></i>
-                <span id="btnText">Initiate Cash-Out</span>
-            </button>
-        </div>
-
-        <div class="space-y-4">
-            <h4 class="outfit text-lg font-bold flex items-center gap-2 text-white">
-                <i data-lucide="history" class="w-5 h-5 text-[#00ce9c]"></i>
-                Withdrawal History
-            </h4>
-            <div class="glass-card rounded-2xl overflow-hidden border-white/10">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-white/5 text-slate-500 text-[10px] uppercase tracking-widest font-bold outfit">
-                        <tr>
-                            <th class="p-4">Details</th>
-                            <th class="p-4 text-center">Status</th>
-                            <th class="p-4 text-right">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody id="withdrawTableBody" class="divide-y divide-white/5">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <footer class="mt-8 text-center pb-10">
-        <p class="outfit text-[10px] font-bold text-slate-600 tracking-widest uppercase">© UPCASH BUSINESS PLATFORM 2026</p>
-    </footer>
-    
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+    // Initialize Icons
     lucide.createIcons();
-    const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
 
-    async function loadUserData() {
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) {
-                window.location.href = "signin.html";
-                return;
-            }
-
-            const { data: profile } = await supabaseClient
-                .from('userinfo')
-                .select('available_balance, telephone')
-                .eq('userid', user.id)
-                .single();
-
-            if (profile) {
-                document.getElementById('availBalance').textContent = 'UGX ' + Number(profile.available_balance || 0).toLocaleString();
-                document.getElementById('recipientNum').textContent = profile.telephone || "Not Set";
-            }
-
-            const { data: history } = await supabaseClient
-                .from('user_history')
-                .select('created_at, amount, status, category, description')
-                .eq('userid', user.id)
-                .ilike('category', '%Withdraw%') 
-                .order('created_at', { ascending: false });
-
-            const tbody = document.getElementById('withdrawTableBody');
-            
-            if (history && history.length > 0) {
-                tbody.innerHTML = history.map(row => {
-                    const statusStr = row.status ? row.status.toLowerCase() : 'pending';
-                    const statusClass = statusStr === 'completed' ? 'badge-completed' : 'badge-pending';
-                    const amt = row.amount ? Math.abs(row.amount) : 0;
-                    const isReinvest = (row.category && row.category.toLowerCase().includes('reinvest')) || 
-                                       (row.description && row.description.toLowerCase().includes('reinvest'));
-                    
-                    const methodLabel = isReinvest ? 'Reinvested' : 'Mobile Money';
-                    const methodClass = isReinvest ? 'text-[#00ce9c]' : 'text-slate-600';
-
-                    return `
-                    <tr class="hover:bg-white/[0.02]">
-                        <td class="p-4">
-                            <span class="text-white font-semibold text-xs block outfit">${new Date(row.created_at).toLocaleDateString()}</span>
-                            <span class="text-[9px] text-slate-500 uppercase font-mono">${new Date(row.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                        </td>
-                        <td class="p-4 text-center">
-                            <span class="px-2 py-1 rounded-full text-[8px] font-black uppercase ${statusClass} outfit">
-                                ${row.status || 'Processing'}
-                            </span>
-                        </td>
-                        <td class="p-4 text-right">
-                            <span class="font-bold text-red-400 block outfit">UGX ${amt.toLocaleString()}</span>
-                            <span class="text-[9px] font-bold uppercase ${methodClass}">${methodLabel}</span>
-                        </td>
-                    </tr>`;
-                }).join('');
-            } else {
-                tbody.innerHTML = `<tr><td class="p-10 text-center text-slate-500 italic text-xs outfit" colspan="3">No withdrawal records.</td></tr>`;
-            }
-
-        } catch (err) {
-            console.error("Load Error:", err);
-        } finally {
-            document.getElementById('skeleton-ui').classList.add('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
-            lucide.createIcons();
-        }
-    }
-
-    async function handleWithdraw() {
-        const input = document.getElementById('withdrawAmount');
-        const btn = document.getElementById('withdrawBtn');
-        const btnText = document.getElementById('btnText');
-        const amount = parseFloat(input.value);
+    // Password Visibility Toggle
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
         
-        if (!navigator.onLine) {
-            btnText.innerText = "NO INTERNET CONNECTION";
-            return;
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.setAttribute('data-lucide', 'eye-off');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.setAttribute('data-lucide', 'eye');
         }
-
-        if (!amount || amount < 10000) {
-            btnText.innerText = "MIN UGX 10,000 REQUIRED";
-            btn.classList.replace('btn-primary', 'bg-red-500/20');
-            btn.style.color = "#ef4444";
-            setTimeout(() => {
-                btnText.innerText = "INITIATE CASH-OUT";
-                btn.classList.replace('bg-red-500/20', 'btn-primary');
-                btn.style.color = "";
-            }, 2000);
-            return;
-        }
-
-        btn.disabled = true;
-        btnText.innerText = "PROCESSING...";
-
-        try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if(!user) throw new Error("No user");
-
-            const { data, error } = await supabaseClient.rpc('withdraw_funds', { 
-                user_id_param: user.id, 
-                amount_to_withdraw: amount 
-            });
-
-            if (error) throw error;
-
-            // Check if the RPC returned a success boolean inside the data object
-            const isSuccessful = data && (data.success === true || data === true);
-
-            if (isSuccessful) { 
-                btnText.innerText = "REQUEST SENT!";
-                setTimeout(() => location.reload(), 1500);
-            } else { 
-                // Handle case where RPC returns success: false
-                btnText.innerText = data?.message?.toUpperCase() || "INSUFFICIENT FUNDS";
-                btn.disabled = false;
-                setTimeout(() => btnText.innerText = "INITIATE CASH-OUT", 2500);
-            }
-        } catch (err) {
-            console.error("Withdraw Error:", err);
-            btnText.innerText = "TRANSACTION FAILED";
-            btn.disabled = false;
-            setTimeout(() => btnText.innerText = "INITIATE CASH-OUT", 2500);
-        }
+        lucide.createIcons();
     }
 
-    window.onload = loadUserData;
+    // Initialize Supabase
+    const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
+    const form = document.getElementById('signinForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // UI Feedback
+        submitBtn.innerText = "Authenticating...";
+        submitBtn.disabled = true;
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+            alert("Login Failed: " + error.message);
+            submitBtn.innerText = "Sign In";
+            submitBtn.disabled = false;
+        } else {
+            // Successful login
+            window.location.href = "dashboard.html";
+        }
+    });
 </script>
 </body>
-  </html>
-  
+</html>
