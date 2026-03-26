@@ -30,12 +30,11 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
         
-        /* Floating Label Logic */
         .input-container { position: relative; }
 
         .field { 
             width: 100%; 
-            padding: 1rem 1rem 1rem 3rem; 
+            padding: 1rem 3.5rem 1rem 3rem; 
             border-radius: 0.75rem; 
             background: rgba(10, 15, 26, 0.5); 
             border: 1px solid rgba(255,255,255,0.08); 
@@ -69,6 +68,17 @@
         
         .input-icon { position: absolute; left: 1rem; top: 1.1rem; color: #00CE9C; opacity: 0.7; z-index: 10; }
         
+        .toggle-icon { 
+            position: absolute; 
+            right: 1rem; 
+            top: 1.1rem; 
+            color: #5a6477; 
+            cursor: pointer; 
+            z-index: 10; 
+            transition: color 0.3s ease;
+        }
+        .toggle-icon:hover { color: #00CE9C; }
+        
         .btn-primary {
             background: #00CE9C;
             color: #0a0f1a;
@@ -92,7 +102,7 @@
     <div class="relative z-10 w-full max-w-md fade-up">
         
         <header class="text-center mb-8">
-            <div class="flex items-center justify-center gap-4 mb-2">
+            <div class="flex items-center justify-center gap-4 mb-4">
                <div class="icon-box">
                  <i data-lucide="trending-up" style="width: 32px; height: 32px; color: #0a0f1a; stroke-width: 3px;"></i>
                </div>
@@ -100,7 +110,8 @@
                    UP<span style="color:#00ce9c;">CASH</span>
                </h1>
             </div>
-            <p class="outfit font-300 text-sm text-[#00CE9C] tracking-[3px] uppercase mt-2">Welcome Back Trader</p>
+            <p class="outfit font-bold text-sm text-white/90 uppercase tracking-widest px-4">Welcome back to our business platform</p>
+            <p class="text-slate-500 text-xs mt-2">Enter your credentials to access your dashboard</p>
         </header>
 
         <div class="glass-card rounded-3xl p-8 sm:p-10">
@@ -116,6 +127,9 @@
                     <i data-lucide="lock" class="input-icon w-5 h-5"></i>
                     <input type="password" id="password" required placeholder=" " class="field">
                     <label class="floating-label">Password</label>
+                    <div class="toggle-icon" onclick="togglePasswordVisibility()">
+                        <i id="eye-icon" data-lucide="eye" class="w-5 h-5"></i>
+                    </div>
                 </div>
 
                 <div class="flex justify-end">
@@ -145,6 +159,21 @@
 <script>
     // Initialize Icons
     lucide.createIcons();
+
+    // Password Visibility Toggle
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.setAttribute('data-lucide', 'eye-off');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.setAttribute('data-lucide', 'eye');
+        }
+        lucide.createIcons();
+    }
 
     // Initialize Supabase
     const supabaseClient = supabase.createClient('https://wbodpfbmilhperccgzei.supabase.co', 'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN');
@@ -177,5 +206,4 @@
     });
 </script>
 </body>
-    </html>
-                
+</html>
