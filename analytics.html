@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0f1a"> 
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>UPCASH | Strategic Asset Management</title>
+    
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --mint: #00ce9c;
+            --dark-navy: #0a0f1a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--dark-navy);
+            color: #ffffff;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .logo-text { font-family: 'Outfit', sans-serif; }
+
+        /* --- Scroll Reveal Animations --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Header / Nav --- */
+        nav {
+            background: var(--dark-navy);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn {
+            padding: 0.6rem;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover { background: rgba(255,255,255,0.1); }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .trending-box {
+            background: var(--mint);
+            padding: 6px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 206, 156, 0.3);
+        }
+
+        /* --- Cards & UI --- */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--mint);
+            transform: translateY(-5px);
+        }
+
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mint-text { color: var(--mint); font-weight: 700; }
+        .dim-text { color: #8a95a8; font-size: 0.9rem; }
+
+        .badge-secure {
+            background: rgba(0, 206, 156, 0.1);
+            border: 1px dashed var(--mint);
+            padding: 1rem;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            display: flex;
+            gap: 12px;
+            margin-top: 1.5rem;
+        }
+
+        footer {
+            background: #05080f;
+            padding: 4rem 5%;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo-container">
+        <div class="trending-box">
+            <i data-lucide="trending-up" class="w-5 h-5 text-[#0a0f1a] stroke-[3px]"></i>
+        </div>
+        <span class="logo-text text-xl font-black tracking-tighter uppercase">
+            UP<span class="text-[#00ce9c]">CASH</span>
+        </span>
+    </div>
+
+    <a href="dashboard.html" class="back-btn">
+        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+    </a>
+</nav>
+
+<div class="max-w-4xl mx-auto px-6 pt-16 pb-8 text-center reveal">
+    <h1 class="text-4xl md:text-5xl font-black mb-4 tracking-tight">Strategic Capital Deployment</h1>
+    <p class="text-[#8a95a8] text-lg leading-relaxed">
+        UPCASH leverages real-time quantitative analysis to secure sustainable growth across global digital assets and equity markets.
+    </p>
+</div>
+
+<div class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+    
+    <div class="card reveal">
+        <div class="flex items-center gap-4 mb-6">
+            <div class="p-3 bg-white/5 rounded-2xl">
+                <i data-lucide="bar-chart-3" class="text-[#00ce9c] w-8 h-8"></i>
+            </div>
+            <div>
+                <span class="text-[10px] uppercase tracking-[2px] text-[#00ce9c] font-bold">Node Intelligence</span>
+                <h2 class="text-2xl font-bold">Market Sentiment</h2>
+            </div>
+        </div>
+        
+        <p class="text-[#8a95a8] mb-6">Our algorithms process high-frequency volatility data to mitigate downside risk while maximizing capital velocity for all plan holders.</p>
+        
+        <div class="bg-black/40 rounded-2xl p-4 border border-white/5 min-h-[300px] flex flex-col justify-center">
+             <div class="tradingview-widget-container">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                {
+                    "interval": "1m",
+                    "width": "100%",
+                    "isTransparent": true,
+                    "height": 330,
+                    "symbol": "NASDAQ:TSLA",
+                    "showIntervalTabs": true,
+                    "displayMode": "single",
+                    "locale": "en",
+                    "colorTheme": "dark"
+                }
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <div class="card reveal">
+        <div class="flex items-center gap-4 mb-6">
+            <div class="p-3 bg-white/5 rounded-2xl">
+                <i data-lucide="shield-check" class="text-[#00ce9c] w-8 h-8"></i>
+            </div>
+            <div>
+                <span class="text-[10px] uppercase tracking-[2px] text-[#00ce9c] font-bold">Protocol Status</span>
+                <h2 class="text-2xl font-bold">Transparency Report</h2>
+            </div>
+        </div>
+
+        <div class="space-y-1 mb-6">
+            <div class="stat-line">
+                <span class="dim-text">Primary Source</span>
+                <span class="mint-text">Equity Derivatives</span>
+            </div>
+            <div class="stat-line">
+                <span class="dim-text">Daily Alpha Target</span>
+                <span class="mint-text">+1.42% Avg</span>
+            </div>
+            <div class="stat-line">
+                <span class="dim-text">Liquidity Status</span>
+                <span class="mint-text">Tier-1 Reserves</span>
+            </div>
+            <div class="stat-line">
+                <span class="dim-text">Execution Engine</span>
+                <span class="mint-text">Algorithmic Node</span>
+            </div>
+        </div>
+
+        <div class="badge-secure">
+            <i data-lucide="lock" class="w-10 h-10 text-[#00ce9c]"></i>
+            <p class="text-[12px] leading-relaxed">
+                <strong class="text-white">Principal Protection:</strong> We utilize advanced hedging strategies and real-time risk modeling to insulate user capital from extreme market events.
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<div class="max-w-6xl mx-auto px-6 mb-16 reveal">
+    <div class="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+        <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+            {
+                "symbols": [
+                    {"proName": "NASDAQ:NVDA", "title": "NVIDIA"},
+                    {"proName": "NASDAQ:MSFT", "title": "MSFT"},
+                    {"proName": "NASDAQ:AMD", "title": "AMD"},
+                    {"proName": "NASDAQ:META", "title": "META"}
+                ],
+                "showSymbolLogo": true,
+                "colorTheme": "dark",
+                "isTransparent": false,
+                "displayMode": "adaptive",
+                "locale": "en"
+            }
+            </script>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="max-w-3xl mx-auto">
+        <div class="flex justify-center gap-3 items-center mb-6">
+            <div class="w-2 h-2 rounded-full bg-[#00ce9c] animate-pulse"></div>
+            <span class="text-[10px] tracking-[3px] uppercase font-bold text-[#8a95a8]">Analytical Node Active</span>
+        </div>
+        <h3 class="text-white text-lg font-bold mb-3">Institutional Risk Disclosure</h3>
+        <p class="text-[#5a6477] text-xs leading-loose px-4">
+            UPCASH operates as a specialized quantitative trading entity. Capital payouts are generated exclusively from realized P&L derived from active market positions. We do not engage in speculative credit lending. All trading operations are executed through certified liquidity providers to ensure operational integrity and fund safety.
+        </p>
+        <p class="mt-8 text-[#00ce9c] font-black text-[10px] tracking-[4px] uppercase">
+            &copy; 2026 UPCASH ASSET MANAGEMENT | SYSTEMS ONLINE
+        </p>
+    </div>
+</footer>
+
+<script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Scroll Reveal Logic
+    function reveal() {
+        var reveals = document.querySelectorAll(".reveal");
+        for (var i = 0; i < reveals.length; i++) {
+            var windowHeight = window.innerHeight;
+            var elementTop = reveals[i].getBoundingClientRect().top;
+            var elementVisible = 100;
+            if (elementTop < windowHeight - elementVisible) {
+                reveals[i].classList.add("active");
+            }
+        }
+    }
+
+    window.addEventListener("scroll", reveal);
+    window.addEventListener("load", reveal);
+</script>
+
+</body>
+</html>
