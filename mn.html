@@ -56,7 +56,7 @@
             box-shadow: 0 0 15px rgba(0, 206, 156, 0.3);
         }
 
-        /* Tree Connector Lines */
+        /* Tree Styles */
         .tree-line {
             position: absolute;
             left: 19px;
@@ -100,9 +100,10 @@
         </div>
 
         <h3 class="outfit text-lg font-bold text-white flex items-center gap-2 mb-4 px-1">
-            <i data-lucide="list" class="w-5 h-5 text-[#00ce9c]"></i>
-            Bonus History
+            <i data-lucide="users" class="w-5 h-5 text-[#00ce9c]"></i>
+            Affiliate Network
         </h3>
+
         <div class="glass-card rounded-3xl overflow-hidden mb-8">
             <table class="w-full text-left text-sm border-collapse">
                 <thead>
@@ -113,49 +114,30 @@
                     </tr>
                 </thead>
                 <tbody id="affiliate-list" class="divide-y divide-white/5">
-                    <tr><td colspan="3" class="p-4 text-center text-slate-600">Loading...</td></tr>
-                </tbody>
+                    </tbody>
             </table>
         </div>
 
         <h3 class="outfit text-lg font-bold text-white flex items-center gap-2 mb-4 px-1">
             <i data-lucide="network" class="w-5 h-5 text-[#00ce9c]"></i>
-            Referral Tree
+            Network Tree
         </h3>
-
         <div class="glass-card p-6 rounded-3xl relative">
             <div class="flex items-center gap-4 mb-10 relative z-10">
                 <div class="w-10 h-10 rounded-full bg-[#00ce9c] flex items-center justify-center border-4 border-[#0a0f1a] shadow-[0_0_15px_rgba(0,206,156,0.4)]">
                     <i data-lucide="user" class="w-5 h-5 text-[#0a0f1a]"></i>
                 </div>
-                <div>
-                    <p class="text-[10px] text-[#00ce9c] font-black uppercase tracking-tighter">Main Upline</p>
-                    <p class="outfit text-white font-bold">You (Me)</p>
-                </div>
+                <div><p class="text-[10px] text-[#00ce9c] font-black uppercase tracking-tighter">Root</p><p class="outfit text-white font-bold text-sm">You</p></div>
                 <div class="tree-line"></div>
             </div>
-
             <div class="flex items-center gap-4 mb-10 ml-8 relative z-10">
-                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border-2 border-[#00ce9c]/30">
-                    <i data-lucide="users" class="w-4 h-4 text-[#00ce9c]"></i>
-                </div>
-                <div>
-                    <p class="text-[10px] text-slate-500 font-black uppercase tracking-tighter">Level 1</p>
-                    <p class="outfit text-white font-bold text-sm">Direct Referrals</p>
-                    <p id="count-l1" class="text-[10px] text-[#00ce9c] font-bold">0 Active Members</p>
-                </div>
+                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border-2 border-[#00ce9c]/30"><i data-lucide="arrow-down-right" class="w-4 h-4 text-[#00ce9c]"></i></div>
+                <div><p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Directs</p><p id="tree-l1-count" class="outfit text-white font-bold text-xs">0 Members</p></div>
                 <div class="absolute left-[-23px] top-4 w-[23px] h-[2px] bg-[#00ce9c]/20"></div>
             </div>
-
             <div class="flex items-center gap-4 ml-16 relative z-10">
-                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border-2 border-cyan-400/30">
-                    <i data-lucide="share-2" class="w-4 h-4 text-cyan-400"></i>
-                </div>
-                <div>
-                    <p class="text-[10px] text-slate-500 font-black uppercase tracking-tighter">Level 2</p>
-                    <p class="outfit text-white font-bold text-sm">1st Indirect Referrals</p>
-                    <p id="count-l2" class="text-[10px] text-cyan-400 font-bold">0 Active Members</p>
-                </div>
+                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border-2 border-cyan-400/30"><i data-lucide="share-2" class="w-4 h-4 text-cyan-400"></i></div>
+                <div><p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">1st Indirects</p><p id="tree-l2-count" class="outfit text-white font-bold text-xs">0 Members</p></div>
                 <div class="absolute left-[-23px] top-4 w-[23px] h-[2px] bg-cyan-400/20"></div>
                 <div class="absolute left-[-35px] top-[-40px] w-[2px] h-[45px] bg-[#00ce9c]/20"></div>
             </div>
@@ -180,67 +162,49 @@
                 .eq('type', 'referral_bonus')
                 .order('created_at', { ascending: false });
 
-            const tableBody = document.getElementById('affiliate-list');
-            const totalDisplay = document.getElementById('total-bonuses');
-            const l1CountEl = document.getElementById('count-l1');
-            const l2CountEl = document.getElementById('count-l2');
-            
-            document.getElementById('summary-skeleton').classList.add('hidden-load');
+            document.getElementById('summary-skeleton').style.display = 'none';
             document.getElementById('summary-real').classList.remove('hidden-load');
 
+            const tableBody = document.getElementById('affiliate-list');
+            const totalDisplay = document.getElementById('total-bonuses');
+            
             if (error || !data || data.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="3" class="p-10 text-center text-slate-500 text-xs tracking-tight outfit font-bold uppercase">No records.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="3" class="p-10 text-center text-slate-600 uppercase text-[10px] font-bold">No referrals found</td></tr>';
                 totalDisplay.innerText = "UGX 0";
                 return;
             }
 
             let totalSum = 0;
+            let directCount = new Set();
+            let indirectCount = new Set();
             let rowsHtml = "";
-            let l1Set = new Set();
-            let l2Set = new Set();
 
             data.forEach(tx => {
-                let isDirect = tx.description.includes('10%');
-                let isIndirect = tx.description.includes('2%');
+                const isDirect = tx.description.includes('10%');
+                const isIndirect = tx.description.includes('2%');
 
                 if (isDirect || isIndirect) {
                     totalSum += parseFloat(tx.amount);
-                    const descParts = tx.description.split(': ');
-                    const username = descParts[1] || 'Member';
+                    const username = tx.description.split(': ')[1] || 'Member';
                     
-                    if (isDirect) l1Set.add(username);
-                    if (isIndirect) l2Set.add(username);
+                    if (isDirect) directCount.add(username);
+                    if (isIndirect) indirectCount.add(username);
 
                     rowsHtml += `
-                        <tr class="transition-colors hover:bg-white/5">
-                            <td class="p-4">
-                                <div class="flex flex-col">
-                                    <span class="font-bold text-white tracking-tight outfit">${username}</span>
-                                    <span class="text-[9px] text-slate-500 font-medium">${new Date(tx.created_at).toLocaleDateString()}</span>
-                                </div>
-                            </td>
-                            <td class="p-4">
-                                <span class="px-2 py-0.5 rounded-md bg-white/5 text-[10px] font-bold ${isDirect ? 'text-[#00ce9c]' : 'text-cyan-400'} border border-white/5">
-                                    ${isDirect ? "Direct" : "1st Indirect"}
-                                </span>
-                            </td>
-                            <td class="p-4 text-right">
-                                <span class="font-bold outfit text-white">UGX ${Number(tx.amount).toLocaleString()}</span>
-                            </td>
-                        </tr>
-                    `;
+                        <tr class="hover:bg-white/5">
+                            <td class="p-4"><span class="font-bold text-white outfit">${username}</span><br><span class="text-[9px] text-slate-500">${new Date(tx.created_at).toLocaleDateString()}</span></td>
+                            <td class="p-4"><span class="px-2 py-0.5 rounded bg-white/5 text-[10px] font-bold ${isDirect ? 'text-[#00ce9c]' : 'text-cyan-400'}">${isDirect ? 'Direct' : '1st Indirect'}</span></td>
+                            <td class="p-4 text-right font-bold outfit">UGX ${Number(tx.amount).toLocaleString()}</td>
+                        </tr>`;
                 }
             });
 
-            tableBody.innerHTML = rowsHtml || '<tr><td colspan="3" class="p-10 text-center text-slate-500 text-xs tracking-tight outfit font-bold uppercase">No valid referrals.</td></tr>';
+            tableBody.innerHTML = rowsHtml;
             totalDisplay.innerText = `UGX ${totalSum.toLocaleString()}`;
-            
-            // Update Tree Counts
-            l1CountEl.innerText = `${l1Set.size} Active Members`;
-            l2CountEl.innerText = `${l2Set.size} Active Members`;
+            document.getElementById('tree-l1-count').innerText = `${directCount.size} Members`;
+            document.getElementById('tree-l2-count').innerText = `${indirectCount.size} Members`;
             lucide.createIcons();
         }
-
         window.onload = loadAffiliatePage;
     </script>
 </body>
