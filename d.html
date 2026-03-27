@@ -9,211 +9,77 @@
     
     <style>
         :root {
-            --bg-color: #f4f7f6; /* Light, not white */
+            --bg-color: #f4f7f6;
             --card-bg: #ffffff;
             --primary-text: #2d3436;
             --secondary-text: #636e72;
             --accent-blue: #0984e3;
-            
-            /* Curriculum Colors */
-            --nursery: #55efc4;
-            --primary: #74b9ff;
-            --olevel: #ff7675;
-            --alevel: #a29bfe;
+            --nursery: #55efc4; --primary: #74b9ff; --olevel: #ff7675; --alevel: #a29bfe;
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--primary-text);
-            margin: 0;
-            padding: 20px;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--primary-text); margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+        /* Search & Filters */
+        .search-container { position: relative; margin-bottom: 15px; }
+        .search-bar { width: 100%; padding: 15px 45px; border-radius: 12px; border: 1px solid #dfe6e9; font-size: 16px; outline: none; box-sizing: border-box; }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--secondary-text); }
+        
+        .filters { display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px; }
+        .chip { padding: 6px 14px; background: #e2e8f0; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; border: none; }
+        .chip.active { background: var(--accent-blue); color: white; }
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        /* Search Bar Styles */
-        .search-container {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .search-bar {
-            width: 100%;
-            padding: 15px 20px 15px 45px;
-            border-radius: 12px;
-            border: 1px solid #dfe6e9;
-            font-size: 16px;
-            box-sizing: border-box;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            outline: none;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--secondary-text);
-        }
-
-        /* Filter Chips */
-        .filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
-
-        .chip {
-            padding: 6px 15px;
-            background: #eee;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: 0.2s;
-        }
-
-        /* Document Grid - 2 items per line */
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        /* The Standing Card Design */
-        .doc-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .doc-card:hover {
-            transform: translateY(-5px);
-        }
-
-        /* PDF Preview Area */
-        .preview-area {
-            height: 180px; /* Portrait ratio height */
-            background: #dfe6e9;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .preview-image {
-            width: 80%;
-            height: 90%;
-            background: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            border: 1px solid #ddd;
-        }
-
-        .label-tag {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #fff;
-        }
-
-        /* Dynamic Label Colors */
-        .nursery-bg { background: var(--nursery); color: #1e3a34 !important; }
+        /* Grid */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .doc-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.03); display: flex; flex-direction: column; border: 1px solid #eee; }
+        
+        /* The "Standing" Preview */
+        .preview-area { height: 160px; background: #f8fafc; position: relative; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #f1f1f1; }
+        .preview-img { width: 70%; height: 85%; background: white; border: 1px solid #ddd; box-shadow: 2px 2px 5px rgba(0,0,0,0.05); }
+        
+        .label-tag { position: absolute; top: 8px; left: 8px; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; color: white; }
+        .nursery-bg { background: var(--nursery); color: #1e3a34; }
         .primary-bg { background: var(--primary); }
         .olevel-bg { background: var(--olevel); }
         .alevel-bg { background: var(--alevel); }
 
-        /* Card Content */
-        .card-content {
-            padding: 12px;
-            flex-grow: 1;
-        }
+        .card-content { padding: 10px; flex-grow: 1; }
+        .file-name { font-size: 12px; font-weight: 600; margin: 0 0 5px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 34px; }
+        .card-footer { display: flex; justify-content: space-between; font-size: 10px; color: var(--secondary-text); padding-top: 8px; border-top: 1px solid #fafafa; }
 
-        .file-name {
-            font-size: 13px;
-            font-weight: 600;
-            margin: 0 0 8px 0;
-            display: -webkit-box;
-            -webkit-line-clamp: 2; /* Truncate long Ugandan names */
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            line-height: 1.4;
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 11px;
-            color: var(--secondary-text);
-            border-top: 1px solid #f1f1f1;
-            padding-top: 10px;
-        }
-
-        .download-btn {
-            color: var(--accent-blue);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        /* Mobile Adjustments */
-        @media (max-width: 400px) {
-            .grid { gap: 10px; }
-            .preview-area { height: 150px; }
-        }
+        @media (max-width: 480px) { .grid { gap: 10px; } .preview-area { height: 140px; } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>Uganda Past Papers</h1>
-        <p>Free PDF curriculum materials for all levels</p>
+        <h1 style="margin-bottom: 5px;">Uganda Past Papers</h1>
+        <p style="color: var(--secondary-text); font-size: 14px;">Free curriculum materials for all levels</p>
     </header>
 
     <div class="search-container">
         <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" class="search-bar" placeholder="Search by name, subject, or year...">
+        <input type="text" id="searchInput" class="search-bar" placeholder="Search school, subject or year...">
     </div>
 
     <div class="filters">
-        <div class="chip">All</div>
-        <div class="chip">Nursery</div>
-        <div class="chip">Primary</div>
-        <div class="chip">O-Level</div>
-        <div class="chip">A-Level</div>
+        <button class="chip active" onclick="filterLevel('all')">All</button>
+        <button class="chip" onclick="filterLevel('nursery')">Nursery</button>
+        <button class="chip" onclick="filterLevel('primary')">Primary</button>
+        <button class="chip" onclick="filterLevel('olevel')">O-Level</button>
+        <button class="chip" onclick="filterLevel('alevel')">A-Level</button>
     </div>
 
-    <div class="grid">
-        <div class="doc-card">
+    <div class="grid" id="paperGrid">
+        <div class="doc-card" data-level="alevel" data-name="physics paper 1 mock 2024 st marys kisubi smack">
             <div class="preview-area">
                 <span class="label-tag alevel-bg">A-Level</span>
-                <div class="preview-image">
-                    <div style="font-size: 10px; padding: 10px; color: #ccc;">PDF Preview</div>
-                </div>
+                <div class="preview-img"></div>
             </div>
             <div class="card-content">
-                <h3 class="file-name">St. Mary's College Kisubi - Physics Paper 1 Mock 2024</h3>
+                <h3 class="file-name">Physics P1 Mock 2024 - St. Mary's Kisubi</h3>
                 <div class="card-footer">
                     <span>1.2 MB</span>
                     <span><i class="fa-solid fa-download"></i> 450</span>
@@ -221,56 +87,50 @@
             </div>
         </div>
 
-        <div class="doc-card">
-            <div class="preview-area">
-                <span class="label-tag olevel-bg">O-Level</span>
-                <div class="preview-image">
-                    <div style="font-size: 10px; padding: 10px; color: #ccc;">PDF Preview</div>
-                </div>
-            </div>
-            <div class="card-content">
-                <h3 class="file-name">Mathematics Paper 2 End of Term 3 - Gayaza High School</h3>
-                <div class="card-footer">
-                    <span>850 KB</span>
-                    <span><i class="fa-solid fa-download"></i> 1,120</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="doc-card">
+        <div class="doc-card" data-level="primary" data-name="p7 ple social studies sst pre-ple 2025">
             <div class="preview-area">
                 <span class="label-tag primary-bg">Primary</span>
-                <div class="preview-image">
-                    <div style="font-size: 10px; padding: 10px; color: #ccc;">PDF Preview</div>
-                </div>
+                <div class="preview-img"></div>
             </div>
             <div class="card-content">
-                <h3 class="file-name">P.7 PLE Social Studies Pre-PLE Examination 2025</h3>
+                <h3 class="file-name">P.7 SST Pre-PLE Exam 2025 - Kampala District</h3>
                 <div class="card-footer">
                     <span>2.1 MB</span>
                     <span><i class="fa-solid fa-download"></i> 89</span>
                 </div>
             </div>
         </div>
-
-        <div class="doc-card">
-            <div class="preview-area">
-                <span class="label-tag nursery-bg">Nursery</span>
-                <div class="preview-image">
-                    <div style="font-size: 10px; padding: 10px; color: #ccc;">PDF Preview</div>
-                </div>
-            </div>
-            <div class="card-content">
-                <h3 class="file-name">Literacy and Shading Exercise Book - Term 1</h3>
-                <div class="card-footer">
-                    <span>4.5 MB</span>
-                    <span><i class="fa-solid fa-download"></i> 215</span>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const cards = document.querySelectorAll('.doc-card');
+
+    // Search Logic
+    searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name');
+            card.style.display = name.includes(term) ? 'flex' : 'none';
+        });
+    });
+
+    // Category Filter Logic
+    function filterLevel(level) {
+        // Toggle Active Chip
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        event.target.classList.add('active');
+
+        cards.forEach(card => {
+            if (level === 'all' || card.getAttribute('data-level') === level) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
 
 </body>
 </html>
