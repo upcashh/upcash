@@ -1,464 +1,276 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0a0f1a">
-  <title>UPCASH | Professional Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-        * { box-sizing: border-box; }
-        
-        html, body { 
-            height: 100%;
-            width: 100%;
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uganda Academic Resource Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #f4f7f6; /* Light, not white */
+            --card-bg: #ffffff;
+            --primary-text: #2d3436;
+            --secondary-text: #636e72;
+            --accent-blue: #0984e3;
+            
+            /* Curriculum Colors */
+            --nursery: #55efc4;
+            --primary: #74b9ff;
+            --olevel: #ff7675;
+            --alevel: #a29bfe;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary-text);
             margin: 0;
-            padding: 0;
+            padding: 20px;
         }
-        
-        body { 
-            font-family: 'DM Sans', sans-serif; 
-            background-color: #0a0f1a;
-            min-height: 100vh; 
-            color: #e2e8f0; 
-            -webkit-font-smoothing: antialiased;
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
         }
-        
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(0, 206, 156, 0.08) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(0, 206, 156, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
         }
-        
-        .glass-card { 
-            background: linear-gradient(160deg, #111827 0%, #0d1321 100%); 
-            backdrop-filter: blur(12px); 
-            border: 1px solid rgba(0, 206, 156, 0.15); 
-            box-shadow: 0 0 0 1px rgba(0, 206, 156, 0.1), 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-        
-        .diamond-glow {
-            background: linear-gradient(160deg, #0c2a23 0%, #0d1321 100%);
-            border: 1px solid rgba(0, 206, 156, 0.25);
+
+        /* Search Bar Styles */
+        .search-container {
             position: relative;
-            overflow: hidden;
+            margin-bottom: 20px;
         }
 
-        .shimmer { 
-            background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.08) 50%, transparent 70%); 
-            background-size: 200% 100%; 
-            animation: shimmer 3s infinite; 
+        .search-bar {
+            width: 100%;
+            padding: 15px 20px 15px 45px;
+            border-radius: 12px;
+            border: 1px solid #dfe6e9;
+            font-size: 16px;
+            box-sizing: border-box;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            outline: none;
+        }
+
+        .search-icon {
             position: absolute;
-            inset: 0;
-            pointer-events: none;
-        }
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-        .btn-gradient { 
-            background: #00CE9C; 
-            border: none; 
-            color: #0a0f1a; 
-            transition: all 0.3s ease; 
-            font-family: 'Outfit', sans-serif; 
-            font-weight: 700; 
-        }
-        
-        .btn-gradient:hover { 
-            box-shadow: 0 0 24px rgba(0, 206, 156, 0.4); 
-            transform: translateY(-2px); 
-        }
-        
-        .header-bg {
-            background: rgba(10, 15, 26, 0.8);
-            border-bottom: 1px solid rgba(0, 206, 156, 0.1);
-            backdrop-filter: blur(15px);
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary-text);
         }
 
-        .plan-row:hover {
-            background: rgba(0, 206, 156, 0.05) !important;
-            transform: scale(1.01);
+        /* Filter Chips */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            padding-bottom: 5px;
         }
 
-        .skeleton { background: rgba(0, 206, 156, 0.05); overflow: hidden; position: relative; }
+        .chip {
+            padding: 6px 15px;
+            background: #eee;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
 
-        /* --- ICON ANIMATIONS --- */
-        svg.lucide {
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* Document Grid - 2 items per line */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
-        button:hover svg.lucide, a:hover svg.lucide {
-            transform: scale(1.2) rotate(5deg);
+
+        /* The Standing Card Design */
+        .doc-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
         }
-        .animate-pulse-slow {
-            animation: pulse-slow 3s infinite ease-in-out;
+
+        .doc-card:hover {
+            transform: translateY(-5px);
         }
-        @keyframes pulse-slow {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
+
+        /* PDF Preview Area */
+        .preview-area {
+            height: 180px; /* Portrait ratio height */
+            background: #dfe6e9;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-image {
+            width: 80%;
+            height: 90%;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+        }
+
+        .label-tag {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #fff;
+        }
+
+        /* Dynamic Label Colors */
+        .nursery-bg { background: var(--nursery); color: #1e3a34 !important; }
+        .primary-bg { background: var(--primary); }
+        .olevel-bg { background: var(--olevel); }
+        .alevel-bg { background: var(--alevel); }
+
+        /* Card Content */
+        .card-content {
+            padding: 12px;
+            flex-grow: 1;
+        }
+
+        .file-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Truncate long Ugandan names */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--secondary-text);
+            border-top: 1px solid #f1f1f1;
+            padding-top: 10px;
+        }
+
+        .download-btn {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 400px) {
+            .grid { gap: 10px; }
+            .preview-area { height: 150px; }
         }
     </style>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
- </head>
- <body class="pb-20">
+</head>
+<body>
 
-  <header class="header-bg flex items-center justify-between p-5 sticky top-0 z-50">
-   <div class="flex items-center gap-2">
-    <div class="bg-[#00CE9C] p-2 rounded-lg">
-     <svg class="w-5 h-5 text-[#0a0f1a]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+<div class="container">
+    <header>
+        <h1>Uganda Past Papers</h1>
+        <p>Free PDF curriculum materials for all levels</p>
+    </header>
+
+    <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" class="search-bar" placeholder="Search by name, subject, or year...">
     </div>
-    <h1 class="text-xl font-bold tracking-tight font-['Outfit'] text-white">UP<span style="color: #00CE9C;">CASH</span></h1>
-   </div>
-   <div class="flex items-center gap-4">
-    <a href="profile.html" class="block">
-        <button class="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-400">
-            <i data-lucide="user" class="w-6 h-6"></i>
-        </button>
-    </a>
-    <button onclick="toggleMenu()" class="p-2 hover:bg-white/5 rounded-full transition-colors text-[#00CE9C]">
-        <i data-lucide="menu" class="w-7 h-7"></i>
-    </button>
-   </div>
-  </header>
 
-  <div id="skeleton-container" class="p-4 max-w-lg mx-auto space-y-6">
-   <div class="rounded-3xl p-6 h-56 skeleton border border-white/5"></div>
-  </div>
+    <div class="filters">
+        <div class="chip">All</div>
+        <div class="chip">Nursery</div>
+        <div class="chip">Primary</div>
+        <div class="chip">O-Level</div>
+        <div class="chip">A-Level</div>
+    </div>
 
-  <div id="dashboard-content" class="hidden">
-   <div class="flex items-center justify-between w-full px-5 py-4">
-    <p class="text-slate-400 text-sm font-medium">Welcome back, <span class="font-bold text-[#00CE9C]" id="username">User</span></p>
-    <span id="verified-badge" class="bg-[#00CE9C]/10 border border-[#00CE9C]/20 text-[#00CE9C] text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest"> Verified Account </span>
-   </div>
-
-   <main class="p-4 max-w-lg mx-auto space-y-6">
-    <div class="diamond-glow rounded-[32px] p-6 shadow-2xl">
-     <div class="shimmer"></div>
-     <div class="relative z-10">
-        <div class="flex justify-between items-start mb-1">
-          <p class="text-emerald-100/60 text-xs font-bold tracking-widest uppercase">Available Balance</p>
-          <button onclick="toggleBalance()" class="text-white/40 hover:text-white transition-colors">
-            <i id="eyeIcon" data-lucide="eye-off" class="w-5 h-5 animate-pulse-slow"></i>
-          </button>
+    <div class="grid">
+        <div class="doc-card">
+            <div class="preview-area">
+                <span class="label-tag alevel-bg">A-Level</span>
+                <div class="preview-image">
+                    <div style="font-size: 10px; padding: 10px; color: #ccc;">PDF Preview</div>
+                </div>
+            </div>
+            <div class="card-content">
+                <h3 class="file-name">St. Mary's College Kisubi - Physics Paper 1 Mock 2024</h3>
+                <div class="card-footer">
+                    <span>1.2 MB</span>
+                    <span><i class="fa-solid fa-download"></i> 450</span>
+                </div>
+            </div>
         </div>
-        <h3 class="text-4xl font-black mb-6 text-white font-['Outfit']">UGX <span id="balance">*****</span></h3>
-        <div class="grid grid-cols-2 gap-4">
-          <div class="bg-white/5 backdrop-blur-md rounded-2xl p-3 border border-white/5">
-           <p class="text-[10px] text-white/40 uppercase font-bold tracking-tighter">Total Investment</p>
-           <p class="font-bold text-lg text-white" id="totalInv">UGX 0</p>
-          </div>
-          <div class="bg-white/5 backdrop-blur-md rounded-2xl p-3 border border-white/5">
-           <p class="text-[10px] text-white/40 uppercase font-bold tracking-tighter">Total Withdrawn</p>
-           <p class="font-bold text-lg text-white" id="totalWith">UGX 0</p>
-          </div>
+
+        <div class="doc-card">
+            <div class="preview-area">
+                <span class="label-tag olevel-bg">O-Level</span>
+                <div class="preview-image">
+                    <div style="font-size: 10px; padding: 10px; color: #ccc;">PDF Preview</div>
+                </div>
+            </div>
+            <div class="card-content">
+                <h3 class="file-name">Mathematics Paper 2 End of Term 3 - Gayaza High School</h3>
+                <div class="card-footer">
+                    <span>850 KB</span>
+                    <span><i class="fa-solid fa-download"></i> 1,120</span>
+                </div>
+            </div>
         </div>
-     </div>
+
+        <div class="doc-card">
+            <div class="preview-area">
+                <span class="label-tag primary-bg">Primary</span>
+                <div class="preview-image">
+                    <div style="font-size: 10px; padding: 10px; color: #ccc;">PDF Preview</div>
+                </div>
+            </div>
+            <div class="card-content">
+                <h3 class="file-name">P.7 PLE Social Studies Pre-PLE Examination 2025</h3>
+                <div class="card-footer">
+                    <span>2.1 MB</span>
+                    <span><i class="fa-solid fa-download"></i> 89</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="doc-card">
+            <div class="preview-area">
+                <span class="label-tag nursery-bg">Nursery</span>
+                <div class="preview-image">
+                    <div style="font-size: 10px; padding: 10px; color: #ccc;">PDF Preview</div>
+                </div>
+            </div>
+            <div class="card-content">
+                <h3 class="file-name">Literacy and Shading Exercise Book - Term 1</h3>
+                <div class="card-footer">
+                    <span>4.5 MB</span>
+                    <span><i class="fa-solid fa-download"></i> 215</span>
+                </div>
+            </div>
+        </div>
+
     </div>
+</div>
 
-    <div class="flex gap-4">
-     <a href="transactions.html" class="flex-1"> 
-        <button class="btn-gradient w-full h-14 rounded-2xl flex items-center justify-center gap-2 text-sm shadow-lg">
-            <i data-lucide="file-text" class="w-5 h-5"></i>Transactions 
-        </button> 
-     </a> 
-     <a href="withdraw.html" class="flex-1"> 
-        <button class="glass-card w-full h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-white">
-            <i data-lucide="arrow-up-circle" class="w-5 h-5 text-[#00CE9C]"></i>Withdraw 
-        </button> 
-     </a>
-    </div>
-
-    <div class="grid grid-cols-2 gap-4">
-     <button onclick="copyLink()" id="referral-btn" class="glass-card h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-white">
-        <i data-lucide="share-2" class="w-4 h-4 text-[#00CE9C]"></i>Referral Link 
-     </button> 
-     <a href="https://chat.whatsapp.com/HEusxMonb275LAHnJbooY2" target="_blank" class="bg-[#00CE9C]/10 border border-[#00CE9C]/20 h-14 font-bold rounded-2xl flex items-center justify-center gap-2 text-sm text-[#00CE9C]">
-        <i data-lucide="users" class="w-4 h-4"></i> Community
-     </a>
-    </div>
-
-    <div class="space-y-3">
-     <h4 class="text-lg font-bold flex items-center gap-2 font-['Outfit']">
-      <i data-lucide="briefcase" class="text-[#00CE9C] w-5 h-5"></i> Investment Plans
-     </h4>
-     <div class="glass-card rounded-2xl overflow-hidden">
-      <table class="w-full text-left text-sm table-fixed">
-       <thead class="bg-white/5 text-slate-500 text-[10px] uppercase font-bold">
-        <tr>
-         <th class="p-4 w-1/4">Plan</th>
-         <th class="p-4 w-1/4 text-center">ROI</th>
-         <th class="p-4 w-1/4 text-center">Days</th>
-         <th class="p-4 w-1/4 text-right">Min</th>
-        </tr>
-       </thead>
-       <tbody class="divide-y divide-white/5 text-white">
-        <tr onclick="location.href='basic.html'" class="plan-row cursor-pointer transition-all">
-         <td class="p-4 font-bold text-emerald-400">Basic</td>
-         <td class="p-4 text-center">8%</td>
-         <td class="p-4 text-center">40</td>
-         <td class="p-4 text-right font-medium">10,000</td>
-        </tr>
-        <tr onclick="location.href='silver.html'" class="plan-row cursor-pointer transition-all">
-         <td class="p-4 font-bold text-cyan-400">Silver</td>
-         <td class="p-4 text-center">10%</td>
-         <td class="p-4 text-center">30</td>
-         <td class="p-4 text-right font-medium">108,000</td>
-        </tr>
-        <tr onclick="location.href='gold.html'" class="plan-row cursor-pointer transition-all">
-         <td class="p-4 font-bold text-amber-400">Gold</td>
-         <td class="p-4 text-center">12%</td>
-         <td class="p-4 text-center">25</td>
-         <td class="p-4 text-right font-medium">525,000</td>
-        </tr>
-        <tr onclick="location.href='diamond.html'" class="plan-row cursor-pointer transition-all">
-         <td class="p-4 font-bold text-orange-400">Diamond</td>
-         <td class="p-4 text-center">14%</td>
-         <td class="p-4 text-center">21</td>
-         <td class="p-4 text-right font-medium">1,215,000</td>
-        </tr>
-       </tbody>
-      </table>
-     </div>
-    </div>
-
-    <div class="space-y-3 pb-8">
-     <h4 class="text-lg font-bold flex items-center gap-2 font-['Outfit']">
-      <i data-lucide="users-2" class="text-[#00CE9C] w-5 h-5"></i> Affiliate Bonuses
-     </h4>
-     <div class="glass-card rounded-2xl overflow-hidden">
-      <table class="w-full text-left text-sm table-fixed">
-       <thead class="bg-white/5 text-slate-500 text-[10px] uppercase font-bold">
-        <tr>
-         <th class="p-3 w-1/2">Type</th>
-         <th class="p-3 w-1/4 text-center">Bonus</th>
-         <th class="p-3 w-1/4 text-right">Example</th>
-        </tr>
-       </thead>
-       <tbody class="divide-y divide-white/5 text-white">
-        <tr class="plan-row">
-         <td class="p-3 font-bold text-emerald-400">Direct Referral</td>
-         <td class="p-3 text-center">10%</td>
-         <td class="p-3 text-right font-medium">10,000</td>
-        </tr>
-        <tr class="plan-row">
-         <td class="p-3 font-bold text-cyan-400">First Indirect</td>
-         <td class="p-3 text-center">2%</td>
-         <td class="p-3 text-right font-medium">2,000</td>
-        </tr>
-       </tbody>
-      </table>
-     </div>
-    </div>
-   </main>
-  </div>
-
-  <div id="side-menu-backdrop" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300"></div>
-
-  <div id="side-menu" class="fixed top-0 right-0 h-full w-[280px] glass-card z-[70] translate-x-full transition-transform duration-300 ease-out flex flex-col border-l border-white/10">
-      <div class="p-6 border-b border-white/5 flex justify-between items-center">
-          <h2 class="font-['Outfit'] font-extrabold text-lg text-white tracking-tight">MENU</h2>
-          <button onclick="toggleMenu()" class="p-2 hover:bg-white/5 rounded-full text-slate-400 transition-colors">
-              <i data-lucide="x" class="w-6 h-6"></i>
-          </button>
-      </div>
-
-      <div class="flex-1 overflow-y-auto p-4 space-y-6">
-          <div>
-              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Network</p>
-              <div class="space-y-1">
-                  <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="user-check" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform"></i>
-                      <span class="text-sm font-medium text-slate-200">My Affiliates</span>
-                  </a>
-                  <a href="affiliates.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="award" class="w-5 h-5 text-[#00CE9C] group-hover:scale-110 transition-transform"></i>
-                      <span class="text-sm font-medium text-slate-200">Affiliate Bonuses</span>
-                  </a>
-              </div>
-          </div>
-
-          <div>
-              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Records</p>
-              <div class="space-y-1">
-                  <a href="transactions.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="arrow-down-to-line" class="w-5 h-5 text-emerald-400 group-hover:translate-y-0.5 transition-transform"></i>
-                      <span class="text-sm font-medium text-slate-200">Deposits</span>
-                  </a>
-                  <a href="withdraw.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="arrow-up-from-line" class="w-5 h-5 text-orange-400 group-hover:-translate-y-0.5 transition-transform"></i>
-                      <span class="text-sm font-medium text-slate-200">Withdrawals</span>
-                  </a>
-                  <a href="transactions.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="list" class="w-5 h-5 text-slate-400 group-hover:scale-110 transition-transform"></i>
-                      <span class="text-sm font-medium text-slate-200">All Transactions</span>
-                  </a>
-                  <a href="profile.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                      <i data-lucide="pie-chart" class="w-5 h-5 text-cyan-400 group-hover:rotate-12 transition-transform"></i>
-                      <span class="text-sm font-medium text-slate-200">My Running Plans</span>
-                  </a>
-              </div>
-          </div>
-
-          <div>
-              <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[2px] mb-2 font-['Outfit']">Investment Plans</p>
-              <a href="investment.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#00CE9C]/5 group transition-all">
-                  <i data-lucide="trending-up" class="w-5 h-5 text-[#00CE9C] group-hover:scale-125 transition-transform"></i>
-                  <span class="text-sm font-medium text-slate-200">Explore Plans</span>
-              </a>
-          </div>
-      </div>
-
-      <div class="p-6 border-t border-white/5 space-y-4 bg-black/20">
-          <button onclick="logout()" class="w-full flex items-center justify-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-sm font-bold hover:bg-red-500/20 transition-all">
-              <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
-          </button>
-          <div class="flex flex-col items-center gap-1 opacity-50">
-              <div class="flex items-center gap-1">
-                  <i data-lucide="trending-up" class="w-3 h-3 text-[#00CE9C]"></i>
-                  <h1 class="text-[10px] font-bold font-['Outfit'] tracking-tighter text-white uppercase">UP<span style="color: #00CE9C;">CASH</span></h1>
-              </div>
-              <p class="text-[7px] text-slate-500 font-bold uppercase tracking-widest">Business Platform 2026</p>
-          </div>
-      </div>
-  </div>
-
-  <div id="logout-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-      <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-      <div class="glass-card relative w-full max-w-sm rounded-[32px] p-8 text-center border border-white/10 scale-90 transition-transform duration-300" id="logout-modal-content">
-          <div class="mb-6 flex justify-center">
-              <div class="bg-red-500/10 p-4 rounded-full border border-red-500/20">
-                  <i data-lucide="log-out" class="w-10 h-10 text-red-500 animate-pulse"></i>
-              </div>
-          </div>
-          <h3 class="text-2xl font-bold font-['Outfit'] text-white mb-2">Sign Out?</h3>
-          <p class="text-slate-400 text-sm mb-8">Are you sure you want to end your current session?</p>
-          <div class="flex flex-col gap-3">
-              <button onclick="confirmLogout()" class="w-full h-14 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-500/20">
-                  <i data-lucide="check-circle" class="w-5 h-5"></i> Log Me Out
-              </button>
-              <button onclick="closeLogoutModal()" class="w-full h-14 bg-white/5 hover:bg-white/10 text-slate-300 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all">
-                  Stay Logged In
-              </button>
-          </div>
-      </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-        lucide.createIcons();
-
-        const supabaseClient = supabase.createClient(
-            'https://wbodpfbmilhperccgzei.supabase.co', 
-            'sb_publishable_CTQy3-UTfBu_U8kl3lWLXQ_7Ki4gukN'
-        );
-
-        let realBalance = 0;
-        let isHidden = true;
-
-        async function checkAuthAndLoad() {
-            document.getElementById('skeleton-container').classList.add('hidden');
-            document.getElementById('dashboard-content').classList.remove('hidden');
-
-            try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (!session) {
-                    window.location.href = "signin.html";
-                    return;
-                }
-
-                const userId = session.user.id;
-                const { data, error: fetchError } = await supabaseClient
-                    .from('userinfo')
-                    .select('username, available_balance, total_investment, total_withdrawn')
-                    .eq('userid', userId)
-                    .single();
-
-                if (data) {
-                    realBalance = data.available_balance || 0;
-                    document.getElementById('username').innerText = data.username || "User";
-                    updateBalanceDisplay();
-                    document.getElementById('totalInv').innerText = "UGX " + Number(data.total_investment || 0).toLocaleString();
-                    document.getElementById('totalWith').innerText = "UGX " + Number(data.total_withdrawn || 0).toLocaleString();
-                }
-            } catch (err) { console.error(err); }
-        }
-
-        function updateBalanceDisplay() {
-            const balanceSpan = document.getElementById('balance');
-            const eyeIcon = document.getElementById('eyeIcon');
-            if (isHidden) {
-                balanceSpan.innerText = "*****";
-                eyeIcon.setAttribute('data-lucide', 'eye-off');
-            } else {
-                balanceSpan.innerText = Number(realBalance).toLocaleString();
-                eyeIcon.setAttribute('data-lucide', 'eye');
-            }
-            lucide.createIcons();
-        }
-
-        async function copyLink() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session) return;
-            const { data } = await supabaseClient.from('userinfo').select('username').eq('userid', session.user.id).single();
-            if (data) {
-                const link = `https://upcashh.github.io/upcash/index.html?ref=${data.username}`;
-                navigator.clipboard.writeText(link);
-                alert("Link Copied!");
-            }
-        }
-
-        function toggleMenu() {
-            const menu = document.getElementById('side-menu');
-            const backdrop = document.getElementById('side-menu-backdrop');
-            const isOpening = menu.classList.contains('translate-x-full');
-
-            if (isOpening) {
-                menu.classList.remove('translate-x-full');
-                backdrop.classList.remove('opacity-0', 'pointer-events-none');
-                lucide.createIcons();
-            } else {
-                menu.classList.add('translate-x-full');
-                backdrop.classList.add('opacity-0', 'pointer-events-none');
-            }
-        }
-
-        function logout() {
-            const modal = document.getElementById('logout-modal');
-            const content = document.getElementById('logout-modal-content');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-90');
-            content.classList.add('scale-100');
-            lucide.createIcons();
-        }
-
-        function closeLogoutModal() {
-            const modal = document.getElementById('logout-modal');
-            const content = document.getElementById('logout-modal-content');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-100');
-            content.classList.add('scale-90');
-        }
-
-        async function confirmLogout() {
-            try {
-                await supabaseClient.auth.signOut();
-                window.location.href = "signin.html";
-            } catch (err) {
-                console.error(err);
-                closeLogoutModal();
-            }
-        }
-        
-        checkAuthAndLoad();
-  </script>
- </body>
+</body>
 </html>
