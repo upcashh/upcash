@@ -3,278 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoldStandard | Institutional Finance Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Quantum Capital | Finance Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --emerald: #022c22;    /* Deep Emerald */
-            --gold: #D4AF37;       /* Gold */
-            --dark-bg: #0B0B0B;    /* Neutral Background */
-            --slate: #2C2C2C;      /* Dark Teal */
-            --white: #F5F5F5;      /* Light Neutral */
+            /* Palette: Xanthous & Burgundy */
+            --burgundy: #780115;    /* Deep burgundy */
+            --xanthous: #F7B638;    /* Bright Xanthous */
+            --off-white: #fdfdfd;
+            --soft-gray: #f4f4f4;
+            --text-dark: #2d0008;
             --success: #10b981;
             --danger: #ef4444;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--dark-bg); color: var(--white); display: flex; min-height: 100vh; overflow: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background-color: var(--soft-gray); color: var(--text-dark); display: flex; min-height: 100vh; }
 
         /* --- Sidebar Navigation --- */
         nav {
-            width: 260px;
-            background: var(--emerald);
-            padding: 30px 20px;
+            width: 280px;
+            background: var(--burgundy);
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
-            border-right: 1px solid rgba(212, 175, 55, 0.2);
-            transition: 0.3s;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
         }
 
         .brand {
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
-            color: var(--gold);
+            color: var(--xanthous);
             margin-bottom: 50px;
+            text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .nav-item {
+        .nav-link {
             display: flex;
             align-items: center;
             gap: 15px;
-            padding: 14px 18px;
-            color: rgba(245, 245, 245, 0.6);
+            padding: 15px 20px;
             text-decoration: none;
+            color: rgba(255,255,255,0.7);
             border-radius: 12px;
-            margin-bottom: 8px;
-            transition: 0.3s;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
             font-weight: 500;
         }
 
-        .nav-item:hover, .nav-item.active {
-            background: rgba(212, 175, 55, 0.1);
-            color: var(--gold);
+        .nav-link:hover, .nav-link.active {
+            background: rgba(247, 182, 56, 0.15);
+            color: var(--xanthous);
+            transform: translateX(5px);
         }
 
-        .nav-item svg { width: 20px; transition: 0.3s; }
-        .nav-item:hover svg { transform: scale(1.1); stroke: var(--gold); }
+        .nav-link svg { width: 22px; transition: transform 0.3s; }
+        .nav-link:hover svg { transform: scale(1.1); stroke: var(--xanthous); }
 
-        /* --- Main Canvas --- */
-        main { flex: 1; padding: 40px; overflow-y: auto; height: 100vh; }
-        
-        .header {
+        /* --- Main Content --- */
+        main { flex: 1; margin-left: 280px; padding: 40px; }
+
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 40px;
         }
 
-        .user-profile {
+        .search-bar {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            background: var(--slate);
-            padding: 8px 20px;
-            border-radius: 50px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            gap: 10px;
+            width: 400px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
         }
+
+        .search-bar input { border: none; outline: none; width: 100%; font-size: 14px; }
 
         /* --- Stats Widgets --- */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
             margin-bottom: 40px;
         }
 
-        .card {
-            background: var(--slate);
-            padding: 25px;
+        .stat-card {
+            background: white;
+            padding: 30px;
             border-radius: 24px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 10px 25px rgba(120, 1, 21, 0.05);
+            border-top: 5px solid var(--xanthous);
             transition: 0.3s;
         }
 
-        .card:hover { transform: translateY(-5px); border-color: var(--gold); }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-card h3 { font-size: 14px; color: #888; text-transform: uppercase; margin-bottom: 15px; }
+        .stat-card .value { font-size: 32px; font-weight: 700; color: var(--burgundy); }
+        .stat-card .trend { font-size: 13px; margin-top: 10px; display: flex; align-items: center; gap: 5px; }
 
-        .card h3 { font-size: 14px; color: rgba(245, 245, 245, 0.5); text-transform: uppercase; margin-bottom: 15px; }
-        .card .value { font-size: 28px; font-weight: 700; margin-bottom: 10px; }
-        .card .trend { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
-        .trend.up { color: var(--success); }
-        .trend.down { color: var(--danger); }
-
-        /* --- Market Table --- */
-        .market-section {
-            background: var(--slate);
-            border-radius: 24px;
+        /* --- Stock Table --- */
+        .table-container {
+            background: white;
             padding: 30px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.02);
         }
 
-        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
         table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 15px; color: rgba(245, 245, 245, 0.4); font-size: 13px; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        td { padding: 18px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+        th { text-align: left; padding: 15px; color: #888; font-weight: 500; border-bottom: 1px solid #eee; }
+        td { padding: 20px 15px; border-bottom: 1px solid #f9f9f9; font-weight: 600; }
 
-        .asset-info { display: flex; align-items: center; gap: 12px; font-weight: 600; }
-        .asset-icon { width: 32px; height: 32px; background: var(--emerald); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--gold); }
-
-        .btn-trade {
-            background: var(--gold);
-            color: var(--emerald);
-            border: none;
+        .btn-action {
+            background: var(--xanthous);
+            color: var(--burgundy);
             padding: 8px 18px;
             border-radius: 8px;
+            border: none;
             font-weight: 700;
-            font-size: 12px;
             cursor: pointer;
             transition: 0.3s;
         }
 
-        .btn-trade:hover { filter: brightness(1.2); letter-spacing: 0.5px; }
+        .btn-action:hover { filter: brightness(1.1); transform: scale(1.05); }
 
-        /* --- SVG Animation --- */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+        /* SVG Animations */
+        @keyframes pulse {
+            0% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.8; transform: scale(1); }
         }
-        .animated-logo { animation: float 4s ease-in-out infinite; }
+        .live-icon { animation: pulse 2s infinite; color: var(--xanthous); }
 
-        @media (max-width: 1024px) {
-            nav { width: 80px; padding: 30px 10px; }
-            .brand span, .nav-item span { display: none; }
-            main { padding: 20px; }
-        }
     </style>
 </head>
 <body>
 
 <nav>
     <div class="brand">
-        <svg class="animated-logo" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-        </svg>
-        <span>GOLDSTANDARD</span>
+        <svg class="live-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Quantum Cap
     </div>
 
-    <a href="#" class="nav-item active">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        <span>Overview</span>
+    <a href="#" class="nav-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Portfolio
     </a>
-    <a href="#" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
-        <span>Markets</span>
+    <a href="#" class="nav-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Market Analysis
     </a>
-    <a href="#" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-        <span>Portfolio</span>
+    <a href="#" class="nav-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+        Wealth Advisor
     </a>
-    <a href="#" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span>Advisory</span>
-    </a>
-    <a href="#" class="nav-item" style="margin-top: auto;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        <span>Settings</span>
+    <a href="#" class="nav-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Transactions
     </a>
 </nav>
 
 <main>
-    <div class="header">
-        <div>
-            <h1 style="font-size: 24px; font-weight: 700;">Investment Performance</h1>
-            <p style="color: rgba(245,245,245,0.4); font-size: 14px;">Market status: <span style="color: var(--success);">● Open</span></p>
+    <header>
+        <div class="search-bar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Search Tickers, Stocks, or News...">
         </div>
-        <div class="user-profile">
-            <div style="width: 32px; height: 32px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--emerald); font-weight: 700;">AM</div>
-            <span style="font-size: 14px; font-weight: 600;">Aldrine M.</span>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="text-align: right;">
+                <p style="font-weight: 700; color: var(--burgundy);">Aldrine Pro</p>
+                <p style="font-size: 12px; color: #888;">Executive Tier</p>
+            </div>
+            <div style="width: 45px; height: 45px; background: var(--xanthous); border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></div>
         </div>
-    </div>
+    </header>
 
     <div class="stats-grid">
-        <div class="card">
-            <h3>Total Portfolio Value</h3>
-            <div class="value">$1,248,650.00</div>
-            <div class="trend up">
+        <div class="stat-card">
+            <h3>Total Assets Value</h3>
+            <p class="value">$1,842,500.00</p>
+            <p class="trend" style="color: var(--success);">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                +12.4% ($154k)
-            </div>
+                +14.2% This Month
+            </p>
         </div>
-        <div class="card">
-            <h3>Available Liquidity</h3>
-            <div class="value">$84,200.45</div>
-            <div style="font-size: 12px; color: rgba(245,245,245,0.4);">6.7% of total allocation</div>
+        <div class="stat-card">
+            <h3>Investment Returns</h3>
+            <p class="value">$245,310.50</p>
+            <p class="trend" style="color: var(--success);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                +$12,400.00 (Today)
+            </p>
         </div>
-        <div class="card">
-            <h3>Yield (Annualized)</h3>
-            <div class="value">8.92%</div>
-            <div class="trend down">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
-                -0.4% from last month
-            </div>
+        <div class="stat-card">
+            <h3>Buying Power</h3>
+            <p class="value">$64,000.00</p>
+            <p class="trend" style="color: #888;">0.4% Interest p.a.</p>
         </div>
     </div>
 
-    <div class="market-section">
+    <div class="table-container">
         <div class="table-header">
-            <h2 style="font-size: 18px;">Top Performing Assets</h2>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" placeholder="Search assets..." style="background: var(--dark-bg); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px 15px; border-radius: 8px; font-size: 13px;">
-            </div>
+            <h2 style="color: var(--burgundy);">Market Watchlist</h2>
+            <button class="btn-action" style="border-radius: 30px;">+ Add Ticker</button>
         </div>
         <table>
             <thead>
                 <tr>
-                    <th>Asset Name</th>
+                    <th>Symbol</th>
                     <th>Price</th>
-                    <th>24h Change</th>
-                    <th>Market Cap</th>
-                    <th>Action</th>
+                    <th>Day Change</th>
+                    <th>Holdings</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>
-                        <div class="asset-info">
-                            <div class="asset-icon">XAU</div>
-                            Gold Spot
-                        </div>
-                    </td>
-                    <td>$2,345.10</td>
-                    <td style="color: var(--success);">+1.45%</td>
-                    <td>$14.2T</td>
-                    <td><button class="btn-trade">Buy</button></td>
+                    <td><span style="color: var(--burgundy); font-weight: 700;">TSLA</span> <span style="font-weight: 400; font-size: 12px; color: #888;">Tesla Inc.</span></td>
+                    <td>$241.05</td>
+                    <td style="color: var(--success);">+2.45%</td>
+                    <td>250 Shares</td>
+                    <td><button class="btn-action">Trade</button></td>
                 </tr>
                 <tr>
-                    <td>
-                        <div class="asset-info">
-                            <div class="asset-icon" style="background: var(--slate); color: var(--gold); border: 1px solid var(--gold);">AAPL</div>
-                            Apple Inc.
-                        </div>
-                    </td>
-                    <td>$189.43</td>
-                    <td style="color: var(--danger);">-0.82%</td>
-                    <td>$2.9T</td>
-                    <td><button class="btn-trade">Buy</button></td>
+                    <td><span style="color: var(--burgundy); font-weight: 700;">NVDA</span> <span style="font-weight: 400; font-size: 12px; color: #888;">Nvidia Corp.</span></td>
+                    <td>$875.20</td>
+                    <td style="color: var(--success);">+5.12%</td>
+                    <td>120 Shares</td>
+                    <td><button class="btn-action">Trade</button></td>
                 </tr>
                 <tr>
-                    <td>
-                        <div class="asset-info">
-                            <div class="asset-icon">BTC</div>
-                            Bitcoin
-                        </div>
-                    </td>
-                    <td>$67,120.00</td>
-                    <td style="color: var(--success);">+4.10%</td>
-                    <td>$1.3T</td>
-                    <td><button class="btn-trade">Buy</button></td>
+                    <td><span style="color: var(--burgundy); font-weight: 700;">AAPL</span> <span style="font-weight: 400; font-size: 12px; color: #888;">Apple Inc.</span></td>
+                    <td>$172.50</td>
+                    <td style="color: var(--danger);">-1.10%</td>
+                    <td>400 Shares</td>
+                    <td><button class="btn-action">Trade</button></td>
                 </tr>
             </tbody>
         </table>
